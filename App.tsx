@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import {
   BookOpen, Award, BarChart2, Settings, Brain, ChevronRight,
   CheckCircle, XCircle, RefreshCw, MessageCircle, Clock, Key, LogOut, Zap
-} from './components/Icons';
+} from './components/GameIcons';
 import { TimeAttackGame } from './components/TimeAttackGame';
 import useSound from 'use-sound';
 import { AnswerFeedback, LevelUpModal } from './components/GameFeedback';
