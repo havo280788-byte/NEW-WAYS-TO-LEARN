@@ -159,7 +159,7 @@ export const LEARNING_QUEST_POOL = [
       { id: 'F', text: "False" },
       { id: 'DS', text: "Doesn't say" }
     ],
-    correctAnswerId: "T"
+    correctAnswerId: "DS"
   },
   {
     id: 'lq2',

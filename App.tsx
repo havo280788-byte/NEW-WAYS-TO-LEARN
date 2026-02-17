@@ -416,11 +416,11 @@ export default function App() {
                 <h2 className="text-2xl font-extrabold text-slate-800">Learning Evolution Quest</h2>
               </div>
               <p className="text-slate-500 text-lg max-w-lg mb-6 leading-relaxed">
-                Embark on a journey through 10 stages of educational evolution. Challenge yourself and become a Digital Learning Champion!
+                Embark on a journey through 8 stages of educational evolution. Challenge yourself and become a Digital Learning Champion!
               </p>
               <div className="flex items-center gap-4">
                 <span className="flex items-center gap-1 text-sm font-bold text-slate-400 bg-slate-100 px-3 py-1 rounded-full">
-                  10 Stages
+                  8 Stages
                 </span>
                 <span className="flex items-center gap-1 text-sm font-bold text-slate-400 bg-slate-100 px-3 py-1 rounded-full">
                   Story Mode
