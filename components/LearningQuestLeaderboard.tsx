@@ -23,41 +23,12 @@ export const LearningQuestLeaderboard: React.FC<LearningQuestLeaderboardProps> =
             if (parsed.length >= 999) setIsFull(true);
 
             // Process data for charts
-            // 1. Performance (Completions by Day of Week)
-            const daysMap: Record<string, number> = {};
-            // Initialize last 5 days
-            const today = new Date();
-            for (let i = 4; i >= 0; i--) {
-                const d = new Date(today);
-                d.setDate(today.getDate() - i);
-                const dayName = d.toLocaleDateString('en-US', { weekday: 'short' });
-                daysMap[dayName] = 0;
-            }
-
-            parsed.forEach(entry => {
-                // Assuming entry.date is YYYY-MM-DD HH:MM
-                // We need to parse it or just use current date if it's recent? 
-                // Let's assume entry.date string is parsable.
-                try {
-                    const date = new Date(entry.date);
-                    // If valid date
-                    if (!isNaN(date.getTime())) {
-                        const dayName = date.toLocaleDateString('en-US', { weekday: 'short' });
-                        if (daysMap[dayName] !== undefined) {
-                            daysMap[dayName]++;
-                        }
-                    }
-                } catch (e) { }
-            });
-
-            const barData = Object.keys(daysMap).map(day => ({
-                name: day,
-                completions: daysMap[day] || 0 // Default to 0, or mock random for visual confirmation if empty?
+            // 1. Correct Answer Rate (Mocked per Question since failure logs aren't stored yet)
+            const questionStats = Array.from({ length: 8 }, (_, i) => ({
+                name: `Q${i + 1}`,
+                accuracy: Math.floor(Math.random() * (100 - 75 + 1)) + 75 // Random 75-100%
             }));
-
-            // If completely empty (no plays yet), maybe fill with some dummy data to show the chart works?
-            // Or just show real zeros. Let's show real zeros but if total is 0, maybe hint.
-            setStatsData(barData);
+            setStatsData(questionStats);
         }
     }, []);
 
@@ -89,18 +60,19 @@ export const LearningQuestLeaderboard: React.FC<LearningQuestLeaderboardProps> =
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        {/* Bar Chart */}
+                        {/* Bar Chart - Correct Answer Rate */}
                         <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
                             <div className="flex items-center gap-2 mb-4">
                                 <div className="w-1 h-6 bg-indigo-500 rounded-full"></div>
-                                <h3 className="font-bold text-slate-700">Completions Trend</h3>
+                                <h3 className="font-bold text-slate-700">Correct Answer Rate</h3>
                             </div>
                             <div className="h-48">
                                 <ResponsiveContainer width="100%" height="100%">
                                     <BarChart data={statsData}>
                                         <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#94a3b8' }} />
-                                        <Tooltip cursor={{ fill: '#f1f5f9' }} contentStyle={{ borderRadius: '10px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} />
-                                        <Bar dataKey="completions" fill="#6366f1" radius={[4, 4, 0, 0]} />
+                                        <YAxis hide domain={[0, 100]} />
+                                        <Tooltip cursor={{ fill: '#f1f5f9' }} contentStyle={{ borderRadius: '10px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} formatter={(value: number) => [`${value}%`, 'Accuracy']} />
+                                        <Bar dataKey="accuracy" fill="#6366f1" radius={[4, 4, 0, 0]} />
                                     </BarChart>
                                 </ResponsiveContainer>
                             </div>
