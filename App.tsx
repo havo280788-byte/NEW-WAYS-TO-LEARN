@@ -11,6 +11,12 @@ import { DEFAULT_PASSAGES, INITIAL_PROGRESS, SOUNDS } from './constants';
 import { AppSettings, Passage, UserProgress, GameSession, Question, QuestionType, MODELS } from './types';
 import { GeminiService } from './services/geminiService';
 import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip } from 'recharts';
+import { SaveTheOceanIntro } from './components/SaveTheOceanIntro';
+import { OceanGameMap } from './components/OceanGameMap';
+import { OceanGameOver } from './components/OceanGameOver';
+import { OceanGameWin } from './components/OceanGameWin';
+import { OceanLeaderboard } from './components/OceanLeaderboard';
+import { OceanGameParticipant, OceanLeaderboardEntry } from './types';
 
 // --- Components ---
 
@@ -104,6 +110,11 @@ export default function App() {
   // Feedback State
   const [levelUpModalOpen, setLevelUpModalOpen] = useState(false);
   const [lastFeedbackType, setLastFeedbackType] = useState<'correct' | 'incorrect' | null>(null);
+
+  // Save The Ocean State
+  const [showOceanIntro, setShowOceanIntro] = useState(false);
+  const [oceanParticipant, setOceanParticipant] = useState<OceanGameParticipant | null>(null);
+  const [oceanGameState, setOceanGameState] = useState<'intro' | 'playing' | 'gameover' | 'win' | 'leaderboard'>('intro');
 
   // Sounds
   const [playCorrect] = useSound(SOUNDS.correct);
@@ -288,10 +299,70 @@ export default function App() {
     }
   };
 
+
   const handleTimeAttackComplete = (score: number) => {
     updateProgress(score, false);
+
+    // Save Ocean Game Result if active
+    if (oceanParticipant) {
+      const result = {
+        ...oceanParticipant,
+        score,
+        endTime: Date.now()
+      };
+
+      const existingResults = JSON.parse(localStorage.getItem('ocean_game_results') || '[]');
+      existingResults.push(result);
+      localStorage.setItem('ocean_game_results', JSON.stringify(existingResults));
+
+      setOceanParticipant(null); // Reset
+      showToast(`Result saved for ${oceanParticipant.name}!`, 'success');
+    }
+
     setActiveTab('home');
     showToast(`Time Attack Complete! +${score} pts`, 'success');
+  };
+
+  const handleOceanStart = (name: string, className: string) => {
+    setOceanParticipant({ name, className, startTime: Date.now() });
+    setShowOceanIntro(false);
+    setOceanGameState('playing');
+    setActiveTab('time-attack'); // Reusing this tab view or create a new one. Let's strictly use a conditional render in App return to override everything if playing.
+  };
+
+  const handleOceanGameOver = () => {
+    setOceanGameState('gameover');
+  };
+
+  const handleOceanWin = () => {
+    setOceanGameState('win');
+  };
+
+  const handleOceanPlayAgain = () => {
+    setOceanGameState('intro');
+    setOceanParticipant(null);
+    setShowOceanIntro(true);
+  };
+
+  const saveOceanToLeaderboard = () => {
+    if (!oceanParticipant) return;
+    const elapsedSeconds = Math.round((Date.now() - oceanParticipant.startTime) / 1000);
+    const dateStr = new Date().toISOString().slice(0, 16).replace('T', ' ');
+
+    const entry: OceanLeaderboardEntry = {
+      name: oceanParticipant.name,
+      className: oceanParticipant.className,
+      time: elapsedSeconds,
+      date: dateStr
+    };
+
+    const saved = localStorage.getItem('leaderboardNEWWAYSTOLEARN');
+    let existing: OceanLeaderboardEntry[] = saved ? JSON.parse(saved) : [];
+
+    if (existing.length < 999) {
+      existing.push(entry);
+      localStorage.setItem('leaderboardNEWWAYSTOLEARN', JSON.stringify(existing));
+    }
   };
 
   // --- Views ---
@@ -369,6 +440,28 @@ export default function App() {
           </div>
           <div className="absolute -right-4 -bottom-4 opacity-20 rotate-12">
             <Clock size={120} />
+          </div>
+        </div>
+
+        {/* Save The Ocean Card */}
+        <div
+          onClick={() => setShowOceanIntro(true)}
+          className="bg-gradient-to-r from-blue-500 to-cyan-500 rounded-2xl p-6 text-white shadow-lg relative overflow-hidden cursor-pointer hover:scale-[1.02] transition-transform"
+        >
+          <div className="relative z-10 flex items-center justify-between">
+            <div>
+              <div className="flex items-center gap-2 mb-2">
+                <span className="text-2xl">🌊</span>
+                <h2 className="text-2xl font-bold">New Ways to Learn</h2>
+              </div>
+              <p className="text-cyan-100 max-w-sm">Join the Save The Ocean adventure! Enter your details and start the challenge.</p>
+            </div>
+            <div className="bg-white/20 p-3 rounded-full">
+              <ChevronRight size={32} />
+            </div>
+          </div>
+          <div className="absolute -right-4 -bottom-4 opacity-20 rotate-12">
+            <span style={{ fontSize: '120px' }}>🦈</span>
           </div>
         </div>
 
@@ -639,6 +732,41 @@ export default function App() {
       )}
 
       <LevelUpModal isOpen={levelUpModalOpen} level={progress.level} onClose={() => setLevelUpModalOpen(false)} />
+
+      {/* Ocean Game Overlays */}
+      {showOceanIntro && (
+        <SaveTheOceanIntro
+          onStart={handleOceanStart}
+          onClose={() => setShowOceanIntro(false)}
+        />
+      )}
+
+      {oceanGameState === 'playing' && (
+        <OceanGameMap
+          onGameOver={handleOceanGameOver}
+          onWin={handleOceanWin}
+        />
+      )}
+
+      {oceanGameState === 'gameover' && (
+        <OceanGameOver onPlayAgain={handleOceanPlayAgain} />
+      )}
+
+      {oceanGameState === 'win' && oceanParticipant && (
+        <OceanGameWin
+          name={oceanParticipant.name}
+          completionTime={Math.round((Date.now() - oceanParticipant.startTime) / 1000)}
+          onPlayAgain={handleOceanPlayAgain}
+          onLeaderboard={() => {
+            saveOceanToLeaderboard();
+            setOceanGameState('leaderboard');
+          }}
+        />
+      )}
+
+      {oceanGameState === 'leaderboard' && (
+        <OceanLeaderboard onClose={handleOceanPlayAgain} />
+      )}
 
       {/* Settings Modal */}
       <Modal isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} title="Settings">

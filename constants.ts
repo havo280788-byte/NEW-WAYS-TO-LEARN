@@ -134,3 +134,96 @@ export const SOUNDS = {
   levelUp: 'https://assets.mixkit.co/active_storage/sfx/1435/1435-preview.mp3',
   click: 'https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3',
 };
+
+export const OCEAN_QUESTION_POOL = [
+  {
+    id: 'oq1',
+    question: "Boyan Slat invented System 600/B.",
+    options: [
+      { id: 'A', text: "TRUE" },
+      { id: 'B', text: "FALSE" },
+      { id: 'C', text: "DOESN’T SAY" }
+    ],
+    correctAnswerId: "B"
+  },
+  {
+    id: 'oq2',
+    question: "Boyan used recycle material to make his machine.",
+    options: [
+      { id: 'A', text: "TRUE" },
+      { id: 'B', text: "FALSE" },
+      { id: 'C', text: "DOESN’T SAY" }
+    ],
+    correctAnswerId: "C"
+  },
+  {
+    id: 'oq3',
+    question: "The machine uses ocean currents and wind to move.",
+    options: [
+      { id: 'A', text: "TRUE" },
+      { id: 'B', text: "FALSE" },
+      { id: 'C', text: "DOESN’T SAY" }
+    ],
+    correctAnswerId: "A"
+  },
+  {
+    id: 'oq4',
+    question: "Boyan asked for help online to raise money.",
+    options: [
+      { id: 'A', text: "TRUE" },
+      { id: 'B', text: "FALSE" },
+      { id: 'C', text: "DOESN’T SAY" }
+    ],
+    correctAnswerId: "A"
+  },
+  {
+    id: 'oq5',
+    question: "Boyan believes hard work is more important than fundraising",
+    options: [
+      { id: 'A', text: "TRUE" },
+      { id: 'B', text: "FALSE" },
+      { id: 'C', text: "DOESN’T SAY" }
+    ],
+    correctAnswerId: "C"
+  },
+  {
+    id: 'oq6',
+    question: "The Great Pacific Garbage Patch is between ____.",
+    options: [
+      { id: 'A', text: "South Korea and Japan" },
+      { id: 'B', text: "North America and Japan" },
+      { id: 'C', text: "South America and Africa" }
+    ],
+    correctAnswerId: "B"
+  },
+  {
+    id: 'oq7',
+    question: "Boyan’s machine is primarily used to ____.",
+    options: [
+      { id: 'A', text: "clean industrial pipes" },
+      { id: 'B', text: "filter wastewater" },
+      { id: 'C', text: "catch ocean rubbish" }
+    ],
+    correctAnswerId: "C"
+  },
+  {
+    id: 'oq8',
+    question: "Over 80 engineers, scientists and environmental experts work for ____",
+    options: [
+      { id: 'A', text: "Planet Earth" },
+      { id: 'B', text: "Garbage Patch" },
+      { id: 'C', text: "Ocean Cleanup" }
+    ],
+    correctAnswerId: "C"
+  },
+  {
+    id: 'oq9',
+    question: "System 001/B is a huge floating barrier of pipes which is ______ .",
+    options: [
+      { id: 'A', text: "a net" },
+      { id: 'B', text: "six hundred metres" },
+      { id: 'C', text: "above the water" }
+    ],
+    correctAnswerId: "B"
+  },
+];

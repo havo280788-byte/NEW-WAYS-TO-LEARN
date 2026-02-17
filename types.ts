@@ -61,7 +61,20 @@ export interface AppSettings {
 }
 
 export const MODELS = [
-  'gemini-3-flash-preview', 
-  'gemini-3-pro-preview', 
+  'gemini-3-flash-preview',
+  'gemini-3-pro-preview',
   'gemini-2.5-flash'
 ];
+
+export interface OceanGameParticipant {
+  name: string;
+  className: string; // 'class' is reserved
+  startTime: number;
+}
+
+export interface OceanLeaderboardEntry {
+  name: string;
+  className: string;
+  time: number; // seconds
+  date: string; // YYYY-MM-DD HH:MM
+}
