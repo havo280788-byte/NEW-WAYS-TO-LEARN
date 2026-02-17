@@ -136,134 +136,104 @@ export const SOUNDS = {
 };
 
 export const LEARNING_QUEST_PASSAGE = `
-# The Evolution of Learning
+# New Ways to Learn
 
-Education has changed dramatically over the years. Traditionally, learning took place exclusively in physical classrooms where teachers delivered lectures and students took notes. However, the digital revolution has introduced "New Ways to Learn" that are transforming this landscape.
+The first educational apps appeared over 50 years ago, believe it or not! While we didn't have smartphones back then, early computer programs were designed to help students learn reading and math. Today, educational apps have evolved significantly.
 
-**Mobile Devices and Apps**
-Smartphones and tablets have become powerful educational tools. Educational apps like Duolingo or Quizlet turn learning into a game, making it more engaging. Instead of banning mobile devices, many modern schools now integrate them into lessons to provide instant access to information.
+**Not Just for Smartphones**
+You can use educational apps on many different devices, not just smartphones. Tablets, laptops, and desktop computers all run powerful learning software. This allows students to access their lessons from anywhere, whether at home, in the library, or on the go.
 
-**Blended Learning**
-One of the most popular modern approaches is **blended learning**, which combines online digital media with traditional classroom methods. This allows students to have some element of control over time, place, path, or pace. For example, students might watch video lectures at home and use class time for discussions and problem-solving.
+**Augmented Reality (AR)**
+Some modern apps already use **Augmented Reality (AR)**. AR brings lessons to life by overlaying digital information onto the real world. For example, pointing a phone at a map might show 3D buildings pop up. Far from making lessons boring, AR makes them interactive, exciting, and easier to remember.
 
-**Online and Distance Learning**
-Distance learning allows students to learn from home using the internet. This is particularly useful for those who cannot attend physical schools. Online courses offer flexibility, meaning students can study whenever and wherever they want. Virtual education usually takes place on digital platforms where materials are stored in **cloud libraries**, allowing easy access to textbooks and resources.
+**The Future of Apps**
+Educators believe that apps will not make us lazy. Instead, they encourage active learning. The author’s purpose in writing about this is to **explain predictions about future technology in education**. Educational apps usually present information **in short and easy-to-understand chunks**, preventing students from feeling overwhelmed.
 
-**Artificial Intelligence**
-AI is the newest frontier in education. AI assistants and tutors can personalize learning paths for students, identifying their weak points and suggesting specific resources. While some fear AI might replace teachers, its true value lies in supporting them and creating more effective, personalized learning experiences.
-
-In conclusion, technology is not replacing traditional education but enhancing it. Digital tools support more effective learning, helping students prepare for a future driven by innovation.
+What does the future hold? Experts suggest that apps will become **even more advanced and useful**. They won't disappear; they will become smarter, helping students learn faster and more effectively than ever before.
 `;
 
 export const LEARNING_QUEST_POOL = [
   {
     id: 'lq1',
-    question: "Distance learning allows students to ____.",
+    question: "The first apps appeared over 50 years ago.",
     options: [
-      { id: 'A', text: "study without teachers" },
-      { id: 'B', text: "learn from home using the Internet" },
-      { id: 'C', text: "avoid homework" },
-      { id: 'D', text: "skip exams" }
+      { id: 'T', text: "True" },
+      { id: 'F', text: "False" },
+      { id: 'DS', text: "Doesn't say" }
     ],
-    correctAnswerId: "B"
+    correctAnswerId: "T"
   },
   {
     id: 'lq2',
-    question: "Which is an example of an educational app?",
+    question: "You can only use educational apps on smartphones.",
     options: [
-      { id: 'A', text: "Duolingo" },
-      { id: 'B', text: "Facebook" },
-      { id: 'C', text: "YouTube Music" },
-      { id: 'D', text: "Google Maps" }
+      { id: 'T', text: "True" },
+      { id: 'F', text: "False" },
+      { id: 'DS', text: "Doesn't say" }
     ],
-    correctAnswerId: "A"
+    correctAnswerId: "F"
   },
   {
     id: 'lq3',
-    question: "Cloud libraries help students to ____.",
+    question: "Some apps already use augmented reality.",
     options: [
-      { id: 'A', text: "store physical books" },
-      { id: 'B', text: "access digital materials online" },
-      { id: 'C', text: "print documents" },
-      { id: 'D', text: "play games" }
+      { id: 'T', text: "True" },
+      { id: 'F', text: "False" },
+      { id: 'DS', text: "Doesn't say" }
     ],
-    correctAnswerId: "B"
+    correctAnswerId: "T"
   },
   {
     id: 'lq4',
-    question: "Virtual education usually takes place ____.",
+    question: "AR apps make lessons boring.",
     options: [
-      { id: 'A', text: "in a traditional classroom" },
-      { id: 'B', text: "on digital platforms" },
-      { id: 'C', text: "in outdoor camps" },
-      { id: 'D', text: "in libraries only" }
+      { id: 'T', text: "True" },
+      { id: 'F', text: "False" },
+      { id: 'DS', text: "Doesn't say" }
     ],
-    correctAnswerId: "B"
+    correctAnswerId: "F"
   },
   {
     id: 'lq5',
-    question: "One advantage of online courses is that they are ____.",
+    question: "Everyone believes apps will make us lazy.",
     options: [
-      { id: 'A', text: "always free" },
-      { id: 'B', text: "flexible in time and place" },
-      { id: 'C', text: "easier than school" },
-      { id: 'D', text: "without teachers" }
+      { id: 'T', text: "True" },
+      { id: 'F', text: "False" },
+      { id: 'DS', text: "Doesn't say" }
     ],
-    correctAnswerId: "B"
+    correctAnswerId: "F"
   },
   {
     id: 'lq6',
-    question: "Blended learning combines ____.",
+    question: "The author’s purpose is to …",
     options: [
-      { id: 'A', text: "books and music" },
-      { id: 'B', text: "online and face-to-face learning" },
-      { id: 'C', text: "tests and homework" },
-      { id: 'D', text: "videos and games" }
+      { id: 'A', text: "give us information about how apps are developing." },
+      { id: 'B', text: "explain predictions about future technology in education." },
+      { id: 'C', text: "inform us how to use the apps more efficiently." },
+      { id: 'D', text: "give us tips on choosing apps." }
     ],
     correctAnswerId: "B"
   },
   {
     id: 'lq7',
-    question: "AI in education can help by ____.",
+    question: "How do educational apps usually present information?",
     options: [
-      { id: 'A', text: "replacing all teachers" },
-      { id: 'B', text: "personalizing learning paths" },
-      { id: 'C', text: "removing exams" },
-      { id: 'D', text: "reducing study time" }
+      { id: 'A', text: "In long and complicated paragraphs" },
+      { id: 'B', text: "In short and easy-to-understand chunks" },
+      { id: 'C', text: "Only through videos" },
+      { id: 'D', text: "Without any explanation" }
     ],
     correctAnswerId: "B"
   },
   {
     id: 'lq8',
-    question: "Online tests are useful because they ____.",
+    question: "What does the writer suggest about the future of apps?",
     options: [
-      { id: 'A', text: "give instant feedback" },
-      { id: 'B', text: "eliminate mistakes" },
-      { id: 'C', text: "replace study" },
-      { id: 'D', text: "require no preparation" }
-    ],
-    correctAnswerId: "A"
-  },
-  {
-    id: 'lq9',
-    question: "Which skill is important in digital learning?",
-    options: [
-      { id: 'A', text: "Ignoring information" },
-      { id: 'B', text: "Memorizing without thinking" },
-      { id: 'C', text: "Evaluating online sources" },
-      { id: 'D', text: "Avoiding technology" }
+      { id: 'A', text: "Apps will disappear soon." },
+      { id: 'B', text: "Apps will become more limited." },
+      { id: 'C', text: "Apps will become even more advanced and useful." },
+      { id: 'D', text: "Apps will stop using technology." }
     ],
     correctAnswerId: "C"
-  },
-  {
-    id: 'lq10',
-    question: "The main message of 'New Ways to Learn' is that ____.",
-    options: [
-      { id: 'A', text: "technology replaces traditional education" },
-      { id: 'B', text: "digital tools support more effective learning" },
-      { id: 'C', text: "schools are no longer necessary" },
-      { id: 'D', text: "AI controls education" }
-    ],
-    correctAnswerId: "B"
   }
 ];
