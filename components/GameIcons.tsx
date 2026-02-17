@@ -13,7 +13,9 @@ import {
     Clock,
     LogOut,
     Key,
-    Zap
+    Zap,
+    Trophy,
+    Map
 } from 'lucide-react';
 
 export {
@@ -30,5 +32,7 @@ export {
     Clock,
     LogOut,
     Key,
-    Zap
+    Zap,
+    Trophy,
+    Map
 };

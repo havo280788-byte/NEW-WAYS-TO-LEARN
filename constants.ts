@@ -135,95 +135,135 @@ export const SOUNDS = {
   click: 'https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3',
 };
 
-export const OCEAN_QUESTION_POOL = [
+export const LEARNING_QUEST_PASSAGE = `
+# The Evolution of Learning
+
+Education has changed dramatically over the years. Traditionally, learning took place exclusively in physical classrooms where teachers delivered lectures and students took notes. However, the digital revolution has introduced "New Ways to Learn" that are transforming this landscape.
+
+**Mobile Devices and Apps**
+Smartphones and tablets have become powerful educational tools. Educational apps like Duolingo or Quizlet turn learning into a game, making it more engaging. Instead of banning mobile devices, many modern schools now integrate them into lessons to provide instant access to information.
+
+**Blended Learning**
+One of the most popular modern approaches is **blended learning**, which combines online digital media with traditional classroom methods. This allows students to have some element of control over time, place, path, or pace. For example, students might watch video lectures at home and use class time for discussions and problem-solving.
+
+**Online and Distance Learning**
+Distance learning allows students to learn from home using the internet. This is particularly useful for those who cannot attend physical schools. Online courses offer flexibility, meaning students can study whenever and wherever they want. Virtual education usually takes place on digital platforms where materials are stored in **cloud libraries**, allowing easy access to textbooks and resources.
+
+**Artificial Intelligence**
+AI is the newest frontier in education. AI assistants and tutors can personalize learning paths for students, identifying their weak points and suggesting specific resources. While some fear AI might replace teachers, its true value lies in supporting them and creating more effective, personalized learning experiences.
+
+In conclusion, technology is not replacing traditional education but enhancing it. Digital tools support more effective learning, helping students prepare for a future driven by innovation.
+`;
+
+export const LEARNING_QUEST_POOL = [
   {
-    id: 'oq1',
-    question: "Boyan Slat invented System 600/B.",
+    id: 'lq1',
+    question: "Distance learning allows students to ____.",
     options: [
-      { id: 'A', text: "TRUE" },
-      { id: 'B', text: "FALSE" },
-      { id: 'C', text: "DOESN’T SAY" }
+      { id: 'A', text: "study without teachers" },
+      { id: 'B', text: "learn from home using the Internet" },
+      { id: 'C', text: "avoid homework" },
+      { id: 'D', text: "skip exams" }
     ],
     correctAnswerId: "B"
   },
   {
-    id: 'oq2',
-    question: "Boyan used recycle material to make his machine.",
+    id: 'lq2',
+    question: "Which is an example of an educational app?",
     options: [
-      { id: 'A', text: "TRUE" },
-      { id: 'B', text: "FALSE" },
-      { id: 'C', text: "DOESN’T SAY" }
-    ],
-    correctAnswerId: "C"
-  },
-  {
-    id: 'oq3',
-    question: "The machine uses ocean currents and wind to move.",
-    options: [
-      { id: 'A', text: "TRUE" },
-      { id: 'B', text: "FALSE" },
-      { id: 'C', text: "DOESN’T SAY" }
+      { id: 'A', text: "Duolingo" },
+      { id: 'B', text: "Facebook" },
+      { id: 'C', text: "YouTube Music" },
+      { id: 'D', text: "Google Maps" }
     ],
     correctAnswerId: "A"
   },
   {
-    id: 'oq4',
-    question: "Boyan asked for help online to raise money.",
+    id: 'lq3',
+    question: "Cloud libraries help students to ____.",
     options: [
-      { id: 'A', text: "TRUE" },
-      { id: 'B', text: "FALSE" },
-      { id: 'C', text: "DOESN’T SAY" }
+      { id: 'A', text: "store physical books" },
+      { id: 'B', text: "access digital materials online" },
+      { id: 'C', text: "print documents" },
+      { id: 'D', text: "play games" }
+    ],
+    correctAnswerId: "B"
+  },
+  {
+    id: 'lq4',
+    question: "Virtual education usually takes place ____.",
+    options: [
+      { id: 'A', text: "in a traditional classroom" },
+      { id: 'B', text: "on digital platforms" },
+      { id: 'C', text: "in outdoor camps" },
+      { id: 'D', text: "in libraries only" }
+    ],
+    correctAnswerId: "B"
+  },
+  {
+    id: 'lq5',
+    question: "One advantage of online courses is that they are ____.",
+    options: [
+      { id: 'A', text: "always free" },
+      { id: 'B', text: "flexible in time and place" },
+      { id: 'C', text: "easier than school" },
+      { id: 'D', text: "without teachers" }
+    ],
+    correctAnswerId: "B"
+  },
+  {
+    id: 'lq6',
+    question: "Blended learning combines ____.",
+    options: [
+      { id: 'A', text: "books and music" },
+      { id: 'B', text: "online and face-to-face learning" },
+      { id: 'C', text: "tests and homework" },
+      { id: 'D', text: "videos and games" }
+    ],
+    correctAnswerId: "B"
+  },
+  {
+    id: 'lq7',
+    question: "AI in education can help by ____.",
+    options: [
+      { id: 'A', text: "replacing all teachers" },
+      { id: 'B', text: "personalizing learning paths" },
+      { id: 'C', text: "removing exams" },
+      { id: 'D', text: "reducing study time" }
+    ],
+    correctAnswerId: "B"
+  },
+  {
+    id: 'lq8',
+    question: "Online tests are useful because they ____.",
+    options: [
+      { id: 'A', text: "give instant feedback" },
+      { id: 'B', text: "eliminate mistakes" },
+      { id: 'C', text: "replace study" },
+      { id: 'D', text: "require no preparation" }
     ],
     correctAnswerId: "A"
   },
   {
-    id: 'oq5',
-    question: "Boyan believes hard work is more important than fundraising",
+    id: 'lq9',
+    question: "Which skill is important in digital learning?",
     options: [
-      { id: 'A', text: "TRUE" },
-      { id: 'B', text: "FALSE" },
-      { id: 'C', text: "DOESN’T SAY" }
+      { id: 'A', text: "Ignoring information" },
+      { id: 'B', text: "Memorizing without thinking" },
+      { id: 'C', text: "Evaluating online sources" },
+      { id: 'D', text: "Avoiding technology" }
     ],
     correctAnswerId: "C"
   },
   {
-    id: 'oq6',
-    question: "The Great Pacific Garbage Patch is between ____.",
+    id: 'lq10',
+    question: "The main message of 'New Ways to Learn' is that ____.",
     options: [
-      { id: 'A', text: "South Korea and Japan" },
-      { id: 'B', text: "North America and Japan" },
-      { id: 'C', text: "South America and Africa" }
+      { id: 'A', text: "technology replaces traditional education" },
+      { id: 'B', text: "digital tools support more effective learning" },
+      { id: 'C', text: "schools are no longer necessary" },
+      { id: 'D', text: "AI controls education" }
     ],
     correctAnswerId: "B"
-  },
-  {
-    id: 'oq7',
-    question: "Boyan’s machine is primarily used to ____.",
-    options: [
-      { id: 'A', text: "clean industrial pipes" },
-      { id: 'B', text: "filter wastewater" },
-      { id: 'C', text: "catch ocean rubbish" }
-    ],
-    correctAnswerId: "C"
-  },
-  {
-    id: 'oq8',
-    question: "Over 80 engineers, scientists and environmental experts work for ____",
-    options: [
-      { id: 'A', text: "Planet Earth" },
-      { id: 'B', text: "Garbage Patch" },
-      { id: 'C', text: "Ocean Cleanup" }
-    ],
-    correctAnswerId: "C"
-  },
-  {
-    id: 'oq9',
-    question: "System 001/B is a huge floating barrier of pipes which is ______ .",
-    options: [
-      { id: 'A', text: "a net" },
-      { id: 'B', text: "six hundred metres" },
-      { id: 'C', text: "above the water" }
-    ],
-    correctAnswerId: "B"
-  },
+  }
 ];

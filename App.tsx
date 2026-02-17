@@ -1,29 +1,29 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   BookOpen, Award, BarChart2, Settings, Brain, ChevronRight,
-  CheckCircle, XCircle, RefreshCw, MessageCircle, Clock, Key, LogOut, Zap
+  CheckCircle, XCircle, RefreshCw, MessageCircle, Clock, Key, LogOut, Zap, Trophy, Map
 } from './components/GameIcons';
-import { TimeAttackGame } from './components/TimeAttackGame';
 import useSound from 'use-sound';
 import { AnswerFeedback, LevelUpModal } from './components/GameFeedback';
 import { DEFAULT_PASSAGES, INITIAL_PROGRESS, SOUNDS } from './constants';
-import { AppSettings, Passage, UserProgress, GameSession, Question, QuestionType, MODELS } from './types';
+import { AppSettings, Passage, UserProgress, GameSession, MODELS, OceanLeaderboardEntry } from './types';
 import { GeminiService } from './services/geminiService';
 import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip } from 'recharts';
-import { SaveTheOceanIntro } from './components/SaveTheOceanIntro';
-import { OceanGameMap } from './components/OceanGameMap';
-import { OceanGameOver } from './components/OceanGameOver';
-import { OceanGameWin } from './components/OceanGameWin';
-import { OceanLeaderboard } from './components/OceanLeaderboard';
-import { OceanGameParticipant, OceanLeaderboardEntry } from './types';
+
+// Learning Quest Components
+import { LearningQuestIntro } from './components/LearningQuestIntro';
+import { LearningQuestMap } from './components/LearningQuestMap';
+import { LearningQuestGameOver } from './components/LearningQuestGameOver';
+import { LearningQuestWin } from './components/LearningQuestWin';
+import { LearningQuestLeaderboard } from './components/LearningQuestLeaderboard';
 
 // --- Components ---
 
 const Modal = ({ isOpen, onClose, title, children }: { isOpen: boolean; onClose: () => void; title: string; children?: React.ReactNode }) => {
   if (!isOpen) return null;
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4 backdrop-blur-sm">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm">
       <div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in duration-300">
         <div className="px-6 py-4 border-b flex justify-between items-center bg-slate-50">
           <h3 className="text-lg font-bold text-slate-800">{title}</h3>
@@ -51,7 +51,7 @@ const Header = ({
   <header className="sticky top-0 z-40 w-full bg-white/80 backdrop-blur-md border-b border-slate-200 shadow-sm">
     <div className="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
       <div className="flex items-center gap-2">
-        <div className="bg-blue-600 text-white p-2 rounded-lg">
+        <div className="bg-indigo-600 text-white p-2 rounded-lg">
           <BookOpen size={20} />
         </div>
         <span className="font-bold text-slate-800 hidden sm:block">Eng10: New Ways to Learn</span>
@@ -81,7 +81,7 @@ const Header = ({
 
 export default function App() {
   // State
-  const [activeTab, setActiveTab] = useState<'home' | 'learn' | 'stats' | 'time-attack'>('home');
+  const [activeTab, setActiveTab] = useState<'home' | 'learn' | 'stats'>('home');
   const [passages, setPassages] = useState<Passage[]>(DEFAULT_PASSAGES);
   const [progress, setProgress] = useState<UserProgress>(INITIAL_PROGRESS);
   const [settings, setSettings] = useState<AppSettings>({
@@ -111,16 +111,15 @@ export default function App() {
   const [levelUpModalOpen, setLevelUpModalOpen] = useState(false);
   const [lastFeedbackType, setLastFeedbackType] = useState<'correct' | 'incorrect' | null>(null);
 
-  // Save The Ocean State
-  const [showOceanIntro, setShowOceanIntro] = useState(false);
-  const [oceanParticipant, setOceanParticipant] = useState<OceanGameParticipant | null>(null);
-  const [oceanGameState, setOceanGameState] = useState<'intro' | 'playing' | 'gameover' | 'win' | 'leaderboard'>('intro');
+  // Learning Quest State
+  const [showQuestIntro, setShowQuestIntro] = useState(false);
+  const [questParticipant, setQuestParticipant] = useState<{ name: string, className: string, startTime: number } | null>(null);
+  const [questState, setQuestState] = useState<'intro' | 'playing' | 'gameover' | 'win' | 'leaderboard'>('intro');
 
   // Sounds
   const [playCorrect] = useSound(SOUNDS.correct);
   const [playIncorrect] = useSound(SOUNDS.incorrect);
   const [playLevelUp] = useSound(SOUNDS.levelUp);
-  // const [playClick] = useSound(SOUNDS.click); // Optional for buttons
 
   // Refs
   const bottomChatRef = useRef<HTMLDivElement>(null);
@@ -159,8 +158,7 @@ export default function App() {
     newProgress.totalPoints += points;
     newProgress.totalQuestionsAnswered += 1;
 
-    // Level Calculation: Level 1 + sqrt(points / 100)
-    // 0pts = L1, 100pts = L2, 400pts = L3, 900pts = L4
+    // Level Calculation
     const newLevel = 1 + Math.floor(Math.sqrt(newProgress.totalPoints / 100));
 
     if (newLevel > (newProgress.level || 1)) {
@@ -168,7 +166,6 @@ export default function App() {
       if (settings.soundEnabled) playLevelUp();
       setLevelUpModalOpen(true);
     } else {
-      // Ensure level is set even if not leveling up (migration)
       newProgress.level = newLevel;
     }
 
@@ -212,11 +209,9 @@ export default function App() {
       updateProgress(10, false);
       if (settings.soundEnabled) playCorrect();
       setLastFeedbackType('correct');
-      // showToast('Correct! +10 Points', 'success'); // Replaced by AnswerFeedback
     } else {
       if (settings.soundEnabled) playIncorrect();
       setLastFeedbackType('incorrect');
-      // showToast('Incorrect. Try to review.', 'error'); // Replaced by AnswerFeedback
     }
 
     setTimeout(() => setLastFeedbackType(null), 2000);
@@ -262,7 +257,7 @@ export default function App() {
           questions: data.questions.map((q: any, idx: number) => ({
             ...q,
             id: `q_gen_${Date.now()}_${idx}`,
-            correctAnswerId: q.correctAnswerId.toString(), // ensure string
+            correctAnswerId: q.correctAnswerId.toString(),
             options: q.options.map((o: any) => ({ ...o, id: o.id.toString() }))
           })),
           topic: 'AI Generated',
@@ -299,69 +294,46 @@ export default function App() {
     }
   };
 
+  // --- Learning Quest Handlers ---
 
-  const handleTimeAttackComplete = (score: number) => {
-    updateProgress(score, false);
-
-    // Save Ocean Game Result if active
-    if (oceanParticipant) {
-      const result = {
-        ...oceanParticipant,
-        score,
-        endTime: Date.now()
-      };
-
-      const existingResults = JSON.parse(localStorage.getItem('ocean_game_results') || '[]');
-      existingResults.push(result);
-      localStorage.setItem('ocean_game_results', JSON.stringify(existingResults));
-
-      setOceanParticipant(null); // Reset
-      showToast(`Result saved for ${oceanParticipant.name}!`, 'success');
-    }
-
-    setActiveTab('home');
-    showToast(`Time Attack Complete! +${score} pts`, 'success');
+  const handleQuestStart = (name: string, className: string) => {
+    setQuestParticipant({ name, className, startTime: Date.now() });
+    setShowQuestIntro(false);
+    setQuestState('playing');
   };
 
-  const handleOceanStart = (name: string, className: string) => {
-    setOceanParticipant({ name, className, startTime: Date.now() });
-    setShowOceanIntro(false);
-    setOceanGameState('playing');
-    setActiveTab('time-attack'); // Reusing this tab view or create a new one. Let's strictly use a conditional render in App return to override everything if playing.
+  const handleQuestGameOver = () => {
+    setQuestState('gameover');
   };
 
-  const handleOceanGameOver = () => {
-    setOceanGameState('gameover');
+  const handleQuestWin = () => {
+    setQuestState('win');
   };
 
-  const handleOceanWin = () => {
-    setOceanGameState('win');
+  const handleQuestPlayAgain = () => {
+    setQuestState('intro');
+    setQuestParticipant(null);
+    setShowQuestIntro(true);
   };
 
-  const handleOceanPlayAgain = () => {
-    setOceanGameState('intro');
-    setOceanParticipant(null);
-    setShowOceanIntro(true);
-  };
-
-  const saveOceanToLeaderboard = () => {
-    if (!oceanParticipant) return;
-    const elapsedSeconds = Math.round((Date.now() - oceanParticipant.startTime) / 1000);
+  const saveQuestToLeaderboard = () => {
+    if (!questParticipant) return;
+    const elapsedSeconds = Math.round((Date.now() - questParticipant.startTime) / 1000);
     const dateStr = new Date().toISOString().slice(0, 16).replace('T', ' ');
 
     const entry: OceanLeaderboardEntry = {
-      name: oceanParticipant.name,
-      className: oceanParticipant.className,
+      name: questParticipant.name,
+      className: questParticipant.className,
       time: elapsedSeconds,
       date: dateStr
     };
 
-    const saved = localStorage.getItem('leaderboardNEWWAYSTOLEARN');
+    const saved = localStorage.getItem('leaderboardNEW_WAYS_TO_LEARN');
     let existing: OceanLeaderboardEntry[] = saved ? JSON.parse(saved) : [];
 
     if (existing.length < 999) {
       existing.push(entry);
-      localStorage.setItem('leaderboardNEWWAYSTOLEARN', JSON.stringify(existing));
+      localStorage.setItem('leaderboardNEW_WAYS_TO_LEARN', JSON.stringify(existing));
     }
   };
 
@@ -377,136 +349,94 @@ export default function App() {
 
     return (
       <div className="space-y-8 animate-in slide-in-from-bottom-4 duration-500">
-        <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl p-8 text-white shadow-lg relative overflow-hidden">
+        <div className="bg-gradient-to-r from-indigo-800 to-blue-900 rounded-3xl p-8 text-white shadow-xl relative overflow-hidden">
           <div className="relative z-10">
-            <div className="flex justify-between items-start mb-4">
+            <div className="flex justify-between items-start mb-6">
               <div>
-                <h1 className="text-3xl font-bold mb-2">Welcome back! 👋</h1>
-                <p className="text-blue-100">Ready to master "New Ways to Learn"?</p>
+                <h1 className="text-3xl font-extrabold mb-2 tracking-tight">Welcome back! 👋</h1>
+                <p className="text-indigo-200">Ready to unlock your potential?</p>
               </div>
-              <div className="bg-white/20 backdrop-blur-md p-3 rounded-xl border border-white/20 flex flex-col items-center min-w-[80px]">
-                <Award className="text-yellow-300 mb-1" size={28} />
-                <span className="font-bold text-xl">{currentLevel}</span>
-                <span className="text-[10px] uppercase tracking-wider font-semibold opacity-80">Level</span>
+              <div className="bg-white/10 backdrop-blur-md p-3 rounded-2xl border border-white/20 flex flex-col items-center min-w-[90px]">
+                <Award className="text-yellow-300 mb-1" size={32} />
+                <span className="font-bold text-2xl">{currentLevel}</span>
+                <span className="text-[10px] uppercase tracking-wider font-bold text-indigo-200">Level</span>
               </div>
             </div>
 
-            <div className="bg-black/20 p-4 rounded-xl backdrop-blur-sm border border-white/10 mb-6">
-              <div className="flex justify-between text-sm font-medium mb-2 text-blue-100">
+            <div className="bg-black/20 p-5 rounded-2xl backdrop-blur-sm border border-white/5 mb-8">
+              <div className="flex justify-between text-sm font-bold mb-3 text-indigo-100">
                 <span>Level {currentLevel}</span>
                 <span>{Math.round(progressToNext)}% to Level {currentLevel + 1}</span>
               </div>
-              <div className="h-3 bg-indigo-900/40 rounded-full overflow-hidden border border-white/10">
+              <div className="h-4 bg-indigo-900/50 rounded-full overflow-hidden border border-white/10">
                 <motion.div
                   initial={{ width: 0 }}
                   animate={{ width: `${progressToNext}%` }}
                   transition={{ duration: 1, ease: "easeOut" }}
-                  className="h-full bg-gradient-to-r from-yellow-400 to-amber-500 rounded-full"
+                  className="h-full bg-gradient-to-r from-cyan-400 to-blue-500 rounded-full shadow-[0_0_15px_rgba(56,189,248,0.5)]"
                 />
               </div>
-              <div className="mt-2 text-xs text-blue-200 text-right">
-                {Math.round(pointsForNextLevel - progress.totalPoints)} pts needed
+              <div className="mt-3 text-xs font-medium text-indigo-300 text-right">
+                {Math.round(pointsForNextLevel - progress.totalPoints)} XP needed
               </div>
             </div>
 
-            <button
-              onClick={() => setActiveTab('learn')}
-              className="bg-white text-blue-600 px-6 py-3 rounded-xl font-bold shadow-md hover:bg-blue-50 transition-transform active:scale-95 flex items-center gap-2"
-            >
-              Start Learning <ChevronRight size={20} />
-            </button>
+            <div className="flex gap-4">
+              <button
+                onClick={() => setActiveTab('learn')}
+                className="bg-white text-indigo-900 px-8 py-4 rounded-xl font-bold shadow-lg hover:bg-indigo-50 hover:shadow-xl transition-all active:scale-95 flex items-center gap-2"
+              >
+                Start Learning <ChevronRight size={20} />
+              </button>
+              <button
+                onClick={() => setShowQuestIntro(true)}
+                className="bg-gradient-to-r from-pink-500 to-rose-600 text-white px-8 py-4 rounded-xl font-bold shadow-lg hover:shadow-xl hover:scale-105 transition-all flex items-center gap-2 border border-white/20"
+              >
+                <Trophy size={20} />
+                <span>QUEST</span>
+              </button>
+            </div>
           </div>
-          <div className="absolute right-0 top-0 h-full w-1/3 opacity-10 pointer-events-none">
-            <Brain size={240} />
+          <div className="absolute right-0 top-0 h-full w-1/3 opacity-5 pointer-events-none">
+            <Brain size={300} />
           </div>
         </div>
 
-        {/* Time Attack Card */}
+        {/* Learning Quest Card (Big Feature) */}
         <div
-          onClick={() => setActiveTab('time-attack')}
-          className="bg-gradient-to-r from-amber-500 to-orange-500 rounded-2xl p-6 text-white shadow-lg relative overflow-hidden cursor-pointer hover:scale-[1.02] transition-transform"
+          onClick={() => setShowQuestIntro(true)}
+          className="bg-white rounded-3xl p-8 shadow-lg border border-indigo-50 relative overflow-hidden cursor-pointer hover:shadow-xl hover:border-indigo-100 transition-all group"
         >
           <div className="relative z-10 flex items-center justify-between">
-            <div>
-              <div className="flex items-center gap-2 mb-2">
-                <Zap className="text-yellow-200" size={24} />
-                <h2 className="text-2xl font-bold">Time Attack Mode</h2>
-              </div>
-              <p className="text-amber-100 max-w-sm">Race against the clock! Answer as many questions as you can in 60 seconds.</p>
-            </div>
-            <div className="bg-white/20 p-3 rounded-full">
-              <ChevronRight size={32} />
-            </div>
-          </div>
-          <div className="absolute -right-4 -bottom-4 opacity-20 rotate-12">
-            <Clock size={120} />
-          </div>
-        </div>
-
-        {/* Save The Ocean Card */}
-        <div
-          onClick={() => setShowOceanIntro(true)}
-          className="bg-gradient-to-r from-blue-500 to-cyan-500 rounded-2xl p-6 text-white shadow-lg relative overflow-hidden cursor-pointer hover:scale-[1.02] transition-transform"
-        >
-          <div className="relative z-10 flex items-center justify-between">
-            <div>
-              <div className="flex items-center gap-2 mb-2">
-                <span className="text-2xl">🌊</span>
-                <h2 className="text-2xl font-bold">New Ways to Learn</h2>
-              </div>
-              <p className="text-cyan-100 max-w-sm">Join the Save The Ocean adventure! Enter your details and start the challenge.</p>
-            </div>
-            <div className="bg-white/20 p-3 rounded-full">
-              <ChevronRight size={32} />
-            </div>
-          </div>
-          <div className="absolute -right-4 -bottom-4 opacity-20 rotate-12">
-            <span style={{ fontSize: '120px' }}>🦈</span>
-          </div>
-        </div>
-
-        <div>
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-xl font-bold text-slate-800">Available Lessons</h2>
-            <button
-              onClick={handleGenerateQuiz}
-              disabled={isLoading}
-              className="text-sm bg-indigo-50 text-indigo-600 px-4 py-2 rounded-lg font-semibold hover:bg-indigo-100 flex items-center gap-2 transition-colors"
-            >
-              {isLoading ? <RefreshCw className="animate-spin" size={16} /> : <Brain size={16} />}
-              Generate with AI
-            </button>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {passages.map(passage => {
-              const isCompleted = progress.completedPassages.includes(passage.id);
-              return (
-                <div key={passage.id} className="bg-white p-5 rounded-xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow group cursor-pointer" onClick={() => handleStartSession(passage.id)}>
-                  <div className="flex justify-between items-start mb-3">
-                    <span className="text-xs font-semibold uppercase tracking-wider text-slate-400 bg-slate-50 px-2 py-1 rounded">{passage.topic}</span>
-                    {isCompleted && <CheckCircle size={20} className="text-emerald-500" />}
-                  </div>
-                  <h3 className="font-bold text-lg text-slate-800 mb-2 group-hover:text-blue-600 transition-colors line-clamp-2">{passage.title}</h3>
-                  <div className="flex items-center gap-4 text-sm text-slate-500">
-                    <div className="flex items-center gap-1">
-                      <Clock size={14} />
-                      <span>{passage.estimatedTime} min</span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <BookOpen size={14} />
-                      <span>{passage.questions.length} Questions</span>
-                    </div>
-                  </div>
+            <div className="flex-1">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="bg-indigo-100 p-3 rounded-xl text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white transition-colors duration-300">
+                  <Map size={32} />
                 </div>
-              );
-            })}
+                <h2 className="text-2xl font-extrabold text-slate-800">Learning Evolution Quest</h2>
+              </div>
+              <p className="text-slate-500 text-lg max-w-lg mb-6 leading-relaxed">
+                Embark on a journey through 10 stages of educational evolution. Challenge yourself and become a Digital Learning Champion!
+              </p>
+              <div className="flex items-center gap-4">
+                <span className="flex items-center gap-1 text-sm font-bold text-slate-400 bg-slate-100 px-3 py-1 rounded-full">
+                  10 Stages
+                </span>
+                <span className="flex items-center gap-1 text-sm font-bold text-slate-400 bg-slate-100 px-3 py-1 rounded-full">
+                  Story Mode
+                </span>
+                <span className="text-indigo-600 font-bold text-sm flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                  Start Now <ChevronRight size={16} />
+                </span>
+              </div>
+            </div>
+          </div>
+          <div className="absolute right-0 bottom-0 opacity-10 group-hover:opacity-20 transition-opacity duration-500 pointer-events-none">
+            <Trophy size={200} className="text-indigo-600 translate-x-10 translate-y-10" />
           </div>
         </div>
       </div>
     );
-
-
   };
 
   const renderGame = () => {
@@ -550,7 +480,7 @@ export default function App() {
             </button>
             <button
               onClick={() => handleStartSession(currentPassage.id)}
-              className="bg-blue-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-blue-700 shadow-lg transition-colors"
+              className="bg-indigo-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-indigo-700 shadow-lg transition-colors"
             >
               Retry Lesson
             </button>
@@ -569,7 +499,7 @@ export default function App() {
         <div className="flex-1 bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden flex flex-col">
           <div className="p-4 bg-slate-50 border-b flex justify-between items-center">
             <h3 className="font-bold text-slate-700 truncate">{currentPassage.title}</h3>
-            <span className="text-xs font-mono bg-blue-100 text-blue-700 px-2 py-1 rounded">Text</span>
+            <span className="text-xs font-mono bg-indigo-100 text-indigo-700 px-2 py-1 rounded">Text</span>
           </div>
           <div className="p-6 overflow-y-auto custom-scrollbar flex-1 prose prose-slate max-w-none">
             {currentPassage.content.split('\n').map((paragraph, idx) => (
@@ -591,8 +521,8 @@ export default function App() {
                 {currentPassage.questions.map((_, idx) => (
                   <div
                     key={idx}
-                    className={`h-2 w-2 rounded-full ${idx === currentQuestionIndex ? 'bg-blue-600' :
-                      idx < currentQuestionIndex ? 'bg-blue-200' : 'bg-slate-200'
+                    className={`h-2 w-2 rounded-full ${idx === currentQuestionIndex ? 'bg-indigo-600' :
+                      idx < currentQuestionIndex ? 'bg-indigo-200' : 'bg-slate-200'
                       }`}
                   />
                 ))}
@@ -613,7 +543,7 @@ export default function App() {
                   else if (isSelected && !isCorrect) btnClass += "bg-red-50 border-red-500 text-red-700 ";
                   else btnClass += "bg-white border-slate-100 text-slate-400 opacity-50 ";
                 } else {
-                  btnClass += "bg-white border-slate-100 hover:border-blue-300 hover:bg-blue-50 text-slate-700 ";
+                  btnClass += "bg-white border-slate-100 hover:border-indigo-300 hover:bg-indigo-50 text-slate-700 ";
                 }
 
                 return (
@@ -634,14 +564,14 @@ export default function App() {
             {showFeedback && (
               <div className="mt-6 animate-in slide-in-from-bottom-2">
                 {showExplanation && (
-                  <div className="bg-blue-50 p-4 rounded-lg text-sm text-blue-800 mb-4 border border-blue-100">
+                  <div className="bg-indigo-50 p-4 rounded-lg text-sm text-indigo-800 mb-4 border border-indigo-100">
                     <p className="font-bold flex items-center gap-2 mb-1"><Brain size={16} /> Explanation:</p>
                     {currentQuestion.explanation}
                   </div>
                 )}
                 <button
                   onClick={nextQuestion}
-                  className="w-full bg-blue-600 text-white py-3 rounded-xl font-bold hover:bg-blue-700 transition-colors shadow-md"
+                  className="w-full bg-indigo-600 text-white py-3 rounded-xl font-bold hover:bg-indigo-700 transition-colors shadow-md"
                 >
                   {currentQuestionIndex === currentPassage.questions.length - 1 ? "Finish Lesson" : "Next Question"}
                 </button>
@@ -722,127 +652,122 @@ export default function App() {
   );
 
   return (
-    <div className="min-h-screen pb-20 md:pb-0">
-      {/* Toast Notification */}
-      {toast && (
-        <div className={`fixed top-20 right-4 z-50 px-6 py-3 rounded-xl shadow-xl text-white font-medium animate-in slide-in-from-right fade-in duration-300 ${toast.type === 'success' ? 'bg-emerald-500' : 'bg-red-500'
-          }`}>
-          {toast.message}
+    <div className="min-h-screen bg-slate-50 font-sans text-slate-900 selection:bg-indigo-100 selection:text-indigo-900">
+
+      {/* LEARNING QUEST OVERLAYS */}
+      {showQuestIntro && (
+        <LearningQuestIntro
+          onStart={handleQuestStart}
+          onClose={() => setShowQuestIntro(false)}
+        />
+      )}
+
+      {questState === 'playing' && (
+        <div className="fixed inset-0 z-50 bg-white">
+          <LearningQuestMap
+            onGameOver={handleQuestGameOver}
+            onWin={handleQuestWin}
+          />
         </div>
       )}
 
-      <LevelUpModal isOpen={levelUpModalOpen} level={progress.level} onClose={() => setLevelUpModalOpen(false)} />
-
-      {/* Ocean Game Overlays */}
-      {showOceanIntro && (
-        <SaveTheOceanIntro
-          onStart={handleOceanStart}
-          onClose={() => setShowOceanIntro(false)}
+      {questState === 'gameover' && (
+        <LearningQuestGameOver
+          onPlayAgain={handleQuestPlayAgain}
+          onBackToMap={() => setQuestState('intro')}
         />
       )}
 
-      {oceanGameState === 'playing' && (
-        <OceanGameMap
-          onGameOver={handleOceanGameOver}
-          onWin={handleOceanWin}
-        />
-      )}
-
-      {oceanGameState === 'gameover' && (
-        <OceanGameOver onPlayAgain={handleOceanPlayAgain} />
-      )}
-
-      {oceanGameState === 'win' && oceanParticipant && (
-        <OceanGameWin
-          name={oceanParticipant.name}
-          completionTime={Math.round((Date.now() - oceanParticipant.startTime) / 1000)}
-          onPlayAgain={handleOceanPlayAgain}
+      {questState === 'win' && questParticipant && (
+        <LearningQuestWin
+          name={questParticipant.name}
+          completionTime={Math.round((Date.now() - questParticipant.startTime) / 1000)}
+          onPlayAgain={handleQuestPlayAgain}
           onLeaderboard={() => {
-            saveOceanToLeaderboard();
-            setOceanGameState('leaderboard');
+            saveQuestToLeaderboard();
+            setQuestState('leaderboard');
           }}
         />
       )}
 
-      {oceanGameState === 'leaderboard' && (
-        <OceanLeaderboard onClose={handleOceanPlayAgain} />
+      {questState === 'leaderboard' && (
+        <LearningQuestLeaderboard onClose={handleQuestPlayAgain} />
       )}
 
-      {/* Settings Modal */}
-      <Modal isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} title="Settings">
-        <div className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">API Key (Gemini)</label>
-            <div className="relative">
-              <Key className="absolute left-3 top-3 text-slate-400" size={16} />
-              <input
-                type="password"
-                value={settings.apiKey}
-                onChange={(e) => saveSettings({ ...settings, apiKey: e.target.value })}
-                placeholder="Enter your Google Gemini API Key"
-                className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm"
-              />
-            </div>
-            <p className="text-xs text-slate-400 mt-1">Get your key from Google AI Studio. Stored locally.</p>
+
+      {/* MAIN APP LAYOUT (Hidden if playing quest, or visible behind overlays) */}
+      <div className={`transition-all ${questState === 'playing' ? 'blur-sm scale-95 opacity-50 pointer-events-none' : ''}`}>
+        <Header
+          points={progress.totalPoints}
+          streak={progress.streakDays}
+          onOpenSettings={() => setIsSettingsOpen(true)}
+        />
+
+        <div className="max-w-5xl mx-auto px-4 py-8">
+          {/* Tab Navigation */}
+          <div className="flex gap-2 mb-8 bg-white p-1 rounded-xl shadow-sm border border-slate-100 w-fit">
+            {['home', 'learn', 'stats'].map((tab) => (
+              <button
+                key={tab}
+                onClick={() => setActiveTab(tab as any)}
+                className={`px-6 py-2 rounded-lg font-bold text-sm transition-all ${activeTab === tab
+                  ? 'bg-indigo-600 text-white shadow-md'
+                  : 'text-slate-500 hover:bg-slate-50'
+                  }`}
+              >
+                {tab.charAt(0).toUpperCase() + tab.slice(1)}
+              </button>
+            ))}
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">AI Model</label>
-            <select
-              value={settings.selectedModel}
-              onChange={(e) => saveSettings({ ...settings, selectedModel: e.target.value })}
-              className="w-full p-2 border rounded-lg text-sm bg-white"
-            >
-              {MODELS.map(m => <option key={m} value={m}>{m}</option>)}
-            </select>
-          </div>
-
-          <div className="flex items-center justify-between pt-2">
-            <span className="text-sm font-medium text-slate-700">Sound Effects</span>
-            <button
-              onClick={() => saveSettings({ ...settings, soundEnabled: !settings.soundEnabled })}
-              className={`w-12 h-6 rounded-full transition-colors relative ${settings.soundEnabled ? 'bg-blue-600' : 'bg-slate-300'}`}
-            >
-              <div className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-transform ${settings.soundEnabled ? 'left-7' : 'left-1'}`} />
-            </button>
-          </div>
-
-          <button
-            onClick={() => {
-              localStorage.clear();
-              window.location.reload();
-            }}
-            className="w-full mt-4 flex items-center justify-center gap-2 text-red-500 text-sm hover:bg-red-50 p-2 rounded transition-colors"
-          >
-            <LogOut size={16} /> Reset App Data
-          </button>
+          {activeTab === 'home' && renderHome()}
+          {activeTab === 'learn' && renderGame()}
+          {activeTab === 'stats' && renderStats()}
         </div>
-      </Modal>
 
-      {/* Chat Drawer */}
+        {/* Stats Footer (Mobile) */}
+        <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 p-4 z-30 flex justify-around shadow-[0_-5px_15px_rgba(0,0,0,0.05)]">
+          <div className="flex flex-col items-center text-slate-400">
+            <span className="text-xs font-bold">Level</span>
+            <span className="text-indigo-600 font-bold">{progress.level}</span>
+          </div>
+          <div className="flex flex-col items-center text-slate-400">
+            <span className="text-xs font-bold">Streak</span>
+            <span className="text-orange-500 font-bold">{progress.streakDays} 🔥</span>
+          </div>
+          <div className="flex flex-col items-center text-slate-400">
+            <span className="text-xs font-bold">PTS</span>
+            <span className="text-emerald-500 font-bold">{progress.totalPoints}</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Chat UI */}
       {chatOpen && (
-        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm" onClick={() => setChatOpen(false)}>
-          <div
-            className="absolute right-0 top-0 bottom-0 w-full md:w-[400px] bg-white shadow-2xl animate-in slide-in-from-right duration-300 flex flex-col"
-            onClick={e => e.stopPropagation()}
-          >
-            <div className="p-4 border-b bg-indigo-600 text-white flex justify-between items-center">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+          <div className="bg-white w-full max-w-lg h-[600px] rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-in zoom-in slide-in-from-bottom-4 duration-300">
+            <div className="bg-indigo-600 p-4 flex justify-between items-center text-white">
               <div className="flex items-center gap-2">
-                <Brain size={20} />
-                <h3 className="font-bold">AI Tutor</h3>
+                <div className="bg-white/20 p-2 rounded-lg"><MessageCircle size={20} /></div>
+                <div>
+                  <h3 className="font-bold">AI Tutor</h3>
+                  <p className="text-xs text-indigo-200">Ask about meanings, grammar, or summary</p>
+                </div>
               </div>
-              <button onClick={() => setChatOpen(false)}><XCircle /></button>
+              <button onClick={() => setChatOpen(false)} className="hover:bg-white/20 p-2 rounded-full transition-colors"><XCircle /></button>
             </div>
             <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-50">
               {chatMessages.length === 0 && (
                 <div className="text-center text-slate-400 mt-10">
-                  <p>👋 Hi! Ask me anything about the reading.</p>
-                  <p className="text-xs mt-2">Example: "Explain 'blended learning' simply."</p>
+                  <p>👋 Hi! Im your AI Tutor.</p>
+                  <p className="text-sm mt-2">Ask me anything about the lesson!</p>
                 </div>
               )}
               {chatMessages.map((msg, i) => (
                 <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                  <div className={`max-w-[85%] p-3 rounded-2xl text-sm ${msg.role === 'user' ? 'bg-blue-600 text-white rounded-tr-none' : 'bg-white text-slate-700 shadow-sm border rounded-tl-none'
+                  <div className={`max-w-[80%] p-4 rounded-2xl ${msg.role === 'user'
+                    ? 'bg-indigo-600 text-white rounded-tr-none'
+                    : 'bg-white border border-slate-200 text-slate-700 shadow-sm rounded-tl-none'
                     }`}>
                     {msg.text}
                   </div>
@@ -850,72 +775,95 @@ export default function App() {
               ))}
               <div ref={bottomChatRef} />
             </div>
-            <div className="p-4 border-t bg-white">
-              <div className="flex gap-2">
-                <input
-                  value={chatInput}
-                  onChange={e => setChatInput(e.target.value)}
-                  onKeyDown={e => e.key === 'Enter' && handleChat()}
-                  placeholder="Ask a question..."
-                  className="flex-1 border rounded-full px-4 py-2 text-sm focus:ring-2 focus:ring-indigo-500 outline-none"
-                />
-                <button
-                  onClick={handleChat}
-                  className="bg-indigo-600 text-white p-2 rounded-full hover:bg-indigo-700"
-                >
-                  <ChevronRight />
-                </button>
-              </div>
+            <div className="p-4 bg-white border-t border-slate-100 flex gap-2">
+              <input
+                value={chatInput}
+                onChange={(e) => setChatInput(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleChat()}
+                placeholder="Type your question..."
+                className="flex-1 border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-slate-50"
+              />
+              <button
+                onClick={handleChat}
+                className="bg-indigo-600 text-white p-3 rounded-xl hover:bg-indigo-700 transition-colors shadow-sm"
+              >
+                <ChevronRight />
+              </button>
             </div>
           </div>
         </div>
       )}
 
-      <Header
-        points={progress.totalPoints}
-        streak={progress.streakDays}
-        onOpenSettings={() => setIsSettingsOpen(true)}
-      />
+      {/* Toast */}
+      {toast && (
+        <div className={`fixed top-24 right-4 z-50 px-6 py-3 rounded-xl shadow-xl text-white font-medium animate-in slide-in-from-right fade-in duration-300 flex items-center gap-2 ${toast.type === 'success' ? 'bg-emerald-500' : 'bg-red-500'
+          }`}>
+          {toast.type === 'success' ? <CheckCircle size={20} /> : <XCircle size={20} />}
+          {toast.message}
+        </div>
+      )}
 
-      <main className="max-w-5xl mx-auto px-4 py-6">
-        {activeTab === 'home' && renderHome()}
-        {activeTab === 'learn' && renderGame()}
-        {activeTab === 'time-attack' && (
-          <TimeAttackGame
-            passages={passages}
-            onComplete={handleTimeAttackComplete}
-            onExit={() => setActiveTab('home')}
-          />
-        )}
-        {activeTab === 'stats' && renderStats()}
-      </main>
+      {/* Settings Modal */}
+      <Modal isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} title="Settings">
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-bold text-slate-700 mb-1">API Key (Gemini)</label>
+            <div className="relative">
+              <Key className="absolute left-3 top-3 text-slate-400" size={16} />
+              <input
+                type="password"
+                value={settings.apiKey}
+                onChange={(e) => saveSettings({ ...settings, apiKey: e.target.value })}
+                placeholder="Enter your Google Gemini API Key"
+                className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-sm font-mono"
+              />
+            </div>
+            <p className="text-xs text-slate-400 mt-1">Required for AI features. Stored locally on your device.</p>
+          </div>
 
-      {/* Mobile Navigation */}
-      <nav className="fixed bottom-0 w-full bg-white border-t border-slate-200 md:hidden flex justify-around items-center h-16 z-40">
-        <button
-          onClick={() => setActiveTab('home')}
-          className={`flex flex-col items-center gap-1 ${activeTab === 'home' ? 'text-blue-600' : 'text-slate-400'}`}
-        >
-          <BookOpen size={20} />
-          <span className="text-xs font-medium">Learn</span>
-        </button>
-        <button
-          onClick={() => {
-            if (activeSession) setActiveTab('learn');
-            else showToast('Select a lesson first', 'error');
-          }}
-          className="bg-blue-600 text-white -mt-8 p-4 rounded-full shadow-lg border-4 border-slate-50"
-        >
-          <ChevronRight size={24} />
-        </button>
-        <button
-          onClick={() => setActiveTab('stats')}
-          className={`flex flex-col items-center gap-1 ${activeTab === 'stats' ? 'text-blue-600' : 'text-slate-400'}`}
-        >
-          <BarChart2 size={20} />
-          <span className="text-xs font-medium">Progress</span>
-        </button>
-      </nav>
+          <div>
+            <label className="block text-sm font-bold text-slate-700 mb-1">Theme</label>
+            <div className="flex gap-2">
+              <button
+                onClick={() => saveSettings({ ...settings, theme: 'light' })}
+                className={`flex-1 py-2 px-4 rounded-lg border text-sm font-medium transition-all ${settings.theme === 'light' ? 'bg-indigo-50 border-indigo-500 text-indigo-700' : 'border-slate-200 text-slate-500 hover:bg-slate-50'}`}
+              >
+                Light
+              </button>
+              <button
+                onClick={() => saveSettings({ ...settings, theme: 'dark' })}
+                className={`flex-1 py-2 px-4 rounded-lg border text-sm font-medium transition-all ${settings.theme === 'dark' ? 'bg-indigo-50 border-indigo-500 text-indigo-700' : 'border-slate-200 text-slate-500 hover:bg-slate-50'}`}
+              >
+                Dark
+              </button>
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-bold text-slate-700 mb-1">Sound Effects</label>
+            <button
+              onClick={() => saveSettings({ ...settings, soundEnabled: !settings.soundEnabled })}
+              className={`w-full py-2 px-4 rounded-lg border text-sm font-medium transition-all flex items-center justify-center gap-2 ${settings.soundEnabled ? 'bg-emerald-50 border-emerald-500 text-emerald-700' : 'bg-slate-50 border-slate-200 text-slate-500'}`}
+            >
+              {settings.soundEnabled ? '🔊 Enabled' : '🔇 Muted'}
+            </button>
+          </div>
+
+          <div className="pt-4 border-t border-slate-100">
+            <button
+              onClick={() => {
+                localStorage.clear();
+                window.location.reload();
+              }}
+              className="w-full py-2 px-4 rounded-lg border border-red-200 text-red-600 text-sm font-medium hover:bg-red-50 flex items-center justify-center gap-2"
+            >
+              <LogOut size={16} /> Reset All Progress
+            </button>
+          </div>
+        </div>
+      </Modal>
+
+      <LevelUpModal isOpen={levelUpModalOpen} level={progress.level} onClose={() => setLevelUpModalOpen(false)} />
     </div>
   );
 }
