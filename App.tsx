@@ -511,8 +511,8 @@ export default function App() {
             className="p-8 overflow-y-auto custom-scrollbar flex-1 prose prose-slate max-w-none prose-lg prose-headings:text-indigo-900 prose-p:text-slate-800 prose-p:leading-loose font-medium"
             style={{
               backgroundImage: `
-                linear-gradient(to bottom, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.95)),
-                url('/reading-bg.jpg.png')
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0.6)),
+                url('/reading-bg.jpg.png?v=${Date.now()}')
               `,
               backgroundSize: 'cover',
               backgroundPosition: 'center',
