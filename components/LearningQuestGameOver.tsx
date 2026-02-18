@@ -12,13 +12,13 @@ export const LearningQuestGameOver: React.FC<LearningQuestGameOverProps> = ({ on
             <motion.div
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="bg-white rounded-3xl shadow-2xl w-full max-w-sm overflow-hidden relative z-10 text-center p-8 border-4 border-slate-200"
+                className="bg-white rounded-2xl md:rounded-3xl shadow-2xl w-full max-w-sm overflow-hidden relative z-10 text-center p-6 md:p-8 border-4 border-slate-200 mx-4 md:mx-0"
             >
-                <div className="text-6xl mb-4">😢</div>
-                <h2 className="text-2xl font-extrabold text-red-500 mb-2 uppercase">
+                <div className="text-5xl md:text-6xl mb-3 md:mb-4">😢</div>
+                <h2 className="text-xl md:text-2xl font-extrabold text-red-500 mb-2 uppercase">
                     INCORRECT
                 </h2>
-                <p className="text-slate-600 mb-8 font-medium">
+                <p className="text-slate-600 mb-6 md:mb-8 font-medium text-sm md:text-base">
                     YOUR LEARNING JOURNEY STOPS HERE!
                 </p>
 

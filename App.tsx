@@ -373,27 +373,28 @@ export default function App() {
     ));
 
     return (
-      <div className="space-y-8 animate-in slide-in-from-bottom-4 duration-500">
-        <div className="bg-gradient-to-r from-indigo-800 to-blue-900 rounded-3xl p-8 text-white shadow-xl relative overflow-hidden">
+    return (
+      <div className="space-y-4 md:space-y-8 animate-in slide-in-from-bottom-4 duration-500 pb-20 md:pb-0">
+        <div className="bg-gradient-to-r from-indigo-800 to-blue-900 rounded-2xl md:rounded-3xl p-5 md:p-8 text-white shadow-xl relative overflow-hidden">
           <div className="relative z-10">
-            <div className="flex justify-between items-start mb-6">
+            <div className="flex justify-between items-start mb-4 md:mb-6">
               <div>
-                <h1 className="text-3xl font-extrabold mb-2 tracking-tight">Welcome back! 👋</h1>
-                <p className="text-indigo-200">Ready to unlock your potential?</p>
+                <h1 className="text-2xl md:text-3xl font-extrabold mb-1 md:mb-2 tracking-tight">Welcome back! 👋</h1>
+                <p className="text-indigo-200 text-sm md:text-base">Ready to unlock your potential?</p>
               </div>
-              <div className="bg-white/10 backdrop-blur-md p-3 rounded-2xl border border-white/20 flex flex-col items-center min-w-[90px]">
-                <Award className="text-yellow-300 mb-1" size={32} />
-                <span className="font-bold text-2xl">{currentLevel}</span>
-                <span className="text-[10px] uppercase tracking-wider font-bold text-indigo-200">Level</span>
+              <div className="bg-white/10 backdrop-blur-md p-2 md:p-3 rounded-xl md:rounded-2xl border border-white/20 flex flex-col items-center min-w-[70px] md:min-w-[90px]">
+                <Award className="text-yellow-300 mb-1 w-6 h-6 md:w-8 md:h-8" />
+                <span className="font-bold text-lg md:text-2xl">{currentLevel}</span>
+                <span className="text-[8px] md:text-[10px] uppercase tracking-wider font-bold text-indigo-200">Level</span>
               </div>
             </div>
 
-            <div className="bg-black/20 p-5 rounded-2xl backdrop-blur-sm border border-white/5 mb-8">
-              <div className="flex justify-between text-sm font-bold mb-3 text-indigo-100">
+            <div className="bg-black/20 p-4 md:p-5 rounded-xl md:rounded-2xl backdrop-blur-sm border border-white/5 mb-6 md:mb-8">
+              <div className="flex justify-between text-xs md:text-sm font-bold mb-2 md:mb-3 text-indigo-100">
                 <span>Level {currentLevel}</span>
                 <span>{Math.round(progressToNext)}% to Level {currentLevel + 1}</span>
               </div>
-              <div className="h-4 bg-indigo-900/50 rounded-full overflow-hidden border border-white/10">
+              <div className="h-3 md:h-4 bg-indigo-900/50 rounded-full overflow-hidden border border-white/10">
                 <motion.div
                   initial={{ width: 0 }}
                   animate={{ width: `${progressToNext}%` }}
@@ -401,23 +402,23 @@ export default function App() {
                   className="h-full bg-gradient-to-r from-cyan-400 to-blue-500 rounded-full shadow-[0_0_15px_rgba(56,189,248,0.5)]"
                 />
               </div>
-              <div className="mt-3 text-xs font-medium text-indigo-300 text-right">
+              <div className="mt-2 md:mt-3 text-[10px] md:text-xs font-medium text-indigo-300 text-right">
                 {Math.round(pointsForNextLevel - progress.totalPoints)} XP needed
               </div>
             </div>
 
-            <div className="flex gap-4">
+            <div className="flex flex-col md:flex-row gap-3 md:gap-4">
               <button
                 onClick={() => setActiveTab('learn')}
-                className="bg-white text-indigo-900 px-8 py-4 rounded-xl font-bold shadow-lg hover:bg-indigo-50 hover:shadow-xl transition-all active:scale-95 flex items-center gap-2"
+                className="bg-white text-indigo-900 px-6 py-3 md:px-8 md:py-4 rounded-xl font-bold shadow-lg hover:bg-indigo-50 hover:shadow-xl transition-all active:scale-95 flex items-center justify-center gap-2 text-sm md:text-base"
               >
-                Start Learning <ChevronRight size={20} />
+                Start Learning <ChevronRight size={18} className="md:w-5 md:h-5" />
               </button>
               <button
                 onClick={() => setShowQuestIntro(true)}
-                className="bg-gradient-to-r from-pink-500 to-rose-600 text-white px-8 py-4 rounded-xl font-bold shadow-lg hover:shadow-xl hover:scale-105 transition-all flex items-center gap-2 border border-white/20"
+                className="bg-gradient-to-r from-pink-500 to-rose-600 text-white px-6 py-3 md:px-8 md:py-4 rounded-xl font-bold shadow-lg hover:shadow-xl hover:scale-105 transition-all flex items-center justify-center gap-2 border border-white/20 text-sm md:text-base"
               >
-                <Trophy size={20} />
+                <Trophy size={18} className="md:w-5 md:h-5" />
                 <span>QUEST</span>
               </button>
             </div>
@@ -430,34 +431,34 @@ export default function App() {
         {/* Learning Quest Card (Big Feature) */}
         <div
           onClick={() => setShowQuestIntro(true)}
-          className="bg-white rounded-3xl p-8 shadow-lg border border-indigo-50 relative overflow-hidden cursor-pointer hover:shadow-xl hover:border-indigo-100 transition-all group"
+          className="bg-white rounded-2xl md:rounded-3xl p-5 md:p-8 shadow-lg border border-indigo-50 relative overflow-hidden cursor-pointer hover:shadow-xl hover:border-indigo-100 transition-all group"
         >
           <div className="relative z-10 flex items-center justify-between">
             <div className="flex-1">
-              <div className="flex items-center gap-3 mb-3">
-                <div className="bg-indigo-100 p-3 rounded-xl text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white transition-colors duration-300">
-                  <Map size={32} />
+              <div className="flex items-center gap-2 md:gap-3 mb-2 md:mb-3">
+                <div className="bg-indigo-100 p-2 md:p-3 rounded-lg md:rounded-xl text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white transition-colors duration-300">
+                  <Map size={24} className="md:w-8 md:h-8" />
                 </div>
-                <h2 className="text-2xl font-extrabold text-slate-800">Learning Evolution Quest</h2>
+                <h2 className="text-xl md:text-2xl font-extrabold text-slate-800">Learning Evolution Quest</h2>
               </div>
-              <p className="text-slate-500 text-lg max-w-lg mb-6 leading-relaxed">
+              <p className="text-slate-500 text-sm md:text-lg max-w-lg mb-4 md:mb-6 leading-relaxed">
                 Embark on a journey through 8 stages of educational evolution. Challenge yourself and become a Digital Learning Champion!
               </p>
-              <div className="flex items-center gap-4">
-                <span className="flex items-center gap-1 text-sm font-bold text-slate-400 bg-slate-100 px-3 py-1 rounded-full">
+              <div className="flex flex-wrap items-center gap-2 md:gap-4">
+                <span className="flex items-center gap-1 text-xs md:text-sm font-bold text-slate-400 bg-slate-100 px-2 py-1 md:px-3 rounded-full">
                   8 Stages
                 </span>
-                <span className="flex items-center gap-1 text-sm font-bold text-slate-400 bg-slate-100 px-3 py-1 rounded-full">
+                <span className="flex items-center gap-1 text-xs md:text-sm font-bold text-slate-400 bg-slate-100 px-2 py-1 md:px-3 rounded-full">
                   Story Mode
                 </span>
-                <span className="text-indigo-600 font-bold text-sm flex items-center gap-1 group-hover:translate-x-1 transition-transform">
-                  Start Now <ChevronRight size={16} />
+                <span className="text-indigo-600 font-bold text-xs md:text-sm flex items-center gap-1 group-hover:translate-x-1 transition-transform ml-auto md:ml-0">
+                  Start Now <ChevronRight size={14} className="md:w-4 md:h-4" />
                 </span>
               </div>
             </div>
           </div>
           <div className="absolute right-0 bottom-0 opacity-10 group-hover:opacity-20 transition-opacity duration-500 pointer-events-none">
-            <Trophy size={200} className="text-indigo-600 translate-x-10 translate-y-10" />
+            <Trophy size={150} className="text-indigo-600 translate-x-10 translate-y-10 md:w-[200px] md:h-[200px]" />
           </div>
         </div>
       </div>

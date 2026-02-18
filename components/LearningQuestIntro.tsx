@@ -28,24 +28,24 @@ export const LearningQuestIntro: React.FC<LearningQuestIntroProps> = ({ onStart,
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.9 }}
-                className="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden relative z-10 border border-white/20"
+                className="bg-white rounded-2xl md:rounded-3xl shadow-2xl w-full max-w-md overflow-hidden relative z-10 border border-white/20 mx-4 md:mx-0"
             >
                 <button
                     onClick={onClose}
-                    className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 z-10"
+                    className="absolute top-3 right-3 md:top-4 md:right-4 text-slate-400 hover:text-slate-600 z-10 p-2"
                 >
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                 </button>
 
-                <div className="p-8 flex flex-col items-center text-center">
-                    <h2 className="text-sm font-bold text-indigo-600 mb-2 uppercase tracking-wide">
+                <div className="p-6 md:p-8 flex flex-col items-center text-center">
+                    <h2 className="text-xs md:text-sm font-bold text-indigo-600 mb-2 uppercase tracking-wide">
                         NEW WAYS TO LEARN
                     </h2>
-                    <h3 className="text-2xl font-extrabold text-slate-800 mb-6 uppercase tracking-wide">
+                    <h3 className="text-xl md:text-2xl font-extrabold text-slate-800 mb-4 md:mb-6 uppercase tracking-wide leading-tight">
                         LEARNING EVOLUTION QUEST
                     </h3>
 
-                    <p className="text-slate-500 mb-8">Enter your details to start the quest!</p>
+                    <p className="text-slate-500 mb-6 md:mb-8 text-sm md:text-base">Enter your details to start the quest!</p>
 
                     <div className="w-full space-y-4 text-left">
                         <div>
@@ -56,7 +56,7 @@ export const LearningQuestIntro: React.FC<LearningQuestIntroProps> = ({ onStart,
                                 value={name}
                                 onChange={(e) => { setName(e.target.value); setError(''); }}
                                 placeholder="Enter your full name"
-                                className="w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none transition-all"
+                                className="w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none transition-all text-sm md:text-base"
                             />
                         </div>
 
@@ -68,7 +68,7 @@ export const LearningQuestIntro: React.FC<LearningQuestIntroProps> = ({ onStart,
                                 value={className}
                                 onChange={(e) => { setClassName(e.target.value); setError(''); }}
                                 placeholder="Enter your class"
-                                className="w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none transition-all"
+                                className="w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none transition-all text-sm md:text-base"
                             />
                         </div>
 
@@ -76,7 +76,7 @@ export const LearningQuestIntro: React.FC<LearningQuestIntroProps> = ({ onStart,
 
                         <button
                             onClick={handleStart}
-                            className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold py-4 rounded-xl shadow-lg hover:shadow-xl hover:scale-[1.02] transform active:scale-95 transition-all mt-4 text-lg tracking-wide uppercase"
+                            className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold py-3 md:py-4 rounded-xl shadow-lg hover:shadow-xl hover:scale-[1.02] transform active:scale-95 transition-all mt-4 text-base md:text-lg tracking-wide uppercase"
                         >
                             START
                         </button>

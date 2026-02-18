@@ -112,36 +112,36 @@ export const LearningQuestMap: React.FC<LearningQuestMapProps> = ({ onGameOver, 
             <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
 
                 {/* Left Panel: Reading Passage */}
-                <div className="w-full md:w-1/2 bg-white border-r border-slate-200 overflow-y-auto p-6 md:p-10 shadow-inner">
-                    <div className="max-w-2xl mx-auto prose prose-indigo prose-lg">
-                        <div className="flex items-center justify-between mb-6">
-                            <div className="flex items-center gap-2 text-indigo-600 font-bold uppercase tracking-widest text-xs">
+                <div className="w-full md:w-1/2 h-[35vh] md:h-auto bg-white border-b md:border-b-0 md:border-r border-slate-200 overflow-y-auto p-4 md:p-10 shadow-inner shrink-0">
+                    <div className="max-w-2xl mx-auto prose prose-indigo prose-sm md:prose-lg">
+                        <div className="flex items-center justify-between mb-4 md:mb-6 sticky top-0 bg-white/90 backdrop-blur-sm p-2 z-10 border-b border-slate-50">
+                            <div className="flex items-center gap-2 text-indigo-600 font-bold uppercase tracking-widest text-[10px] md:text-xs">
                                 <span className="bg-indigo-100 px-2 py-1 rounded">Reading Passage</span>
                             </div>
                             <button
                                 onClick={toggleHighlighter}
-                                className={`p-1.5 rounded-lg transition-all flex items-center gap-2 text-xs font-bold ${isHighlighterActive
+                                className={`p-1.5 rounded-lg transition-all flex items-center gap-2 text-[10px] md:text-xs font-bold ${isHighlighterActive
                                     ? 'bg-yellow-100 text-yellow-700 ring-2 ring-yellow-400 ring-offset-1'
                                     : 'bg-slate-100 text-slate-500 hover:bg-slate-200'
                                     }`}
                                 title="Toggle Highlighter"
                             >
-                                <Highlighter size={14} />
+                                <Highlighter size={12} className="md:w-3.5 md:h-3.5" />
                                 <span>Highlight</span>
                             </button>
                         </div>
                         {LEARNING_QUEST_PASSAGE.split('\n').map((paragraph, idx) => {
                             if (paragraph.startsWith('# ')) {
-                                return <h1 key={idx} className="text-3xl font-extrabold text-slate-900 mb-6">{paragraph.replace('# ', '')}</h1>
+                                return <h1 key={idx} className="text-xl md:text-3xl font-extrabold text-slate-900 mb-4 md:mb-6 leading-tight">{paragraph.replace('# ', '')}</h1>
                             }
                             if (paragraph.startsWith('**')) {
                                 // Simple bold handling for Headers
-                                return <h3 key={idx} className="text-xl font-bold text-indigo-700 mt-6 mb-3">{paragraph.replaceAll('**', '')}</h3>
+                                return <h3 key={idx} className="text-base md:text-xl font-bold text-indigo-700 mt-4 md:mt-6 mb-2 md:mb-3">{paragraph.replaceAll('**', '')}</h3>
                             }
                             return (
                                 <p
                                     key={idx}
-                                    className={`mb-4 text-slate-600 leading-relaxed text-lg ${isHighlighterActive ? 'cursor-text selection:bg-yellow-200' : ''}`}
+                                    className={`mb-3 md:mb-4 text-slate-600 leading-relaxed text-sm md:text-lg ${isHighlighterActive ? 'cursor-text selection:bg-yellow-200' : ''}`}
                                     onMouseUp={() => addHighlight(QUEST_PASSAGE_ID, idx, paragraph)}
                                 >
                                     {renderHighlightedText(paragraph, QUEST_PASSAGE_ID, idx)}
@@ -152,28 +152,28 @@ export const LearningQuestMap: React.FC<LearningQuestMapProps> = ({ onGameOver, 
                 </div>
 
                 {/* Right Panel: Map & Question */}
-                <div className="w-full md:w-1/2 flex flex-col bg-slate-50 relative">
+                <div className="w-full md:w-1/2 flex flex-col bg-slate-50 relative flex-1 min-h-0">
 
-                    {/* Map Area (Top) */}
-                    <div className="flex-1 overflow-y-auto p-6 bg-gradient-to-b from-slate-50 to-indigo-50/50">
-                        <div className="flex flex-wrap justify-center gap-4 max-w-lg mx-auto pb-64">
+                    {/* Map Area (Top of Right Panel) */}
+                    <div className="flex-1 overflow-y-auto p-4 md:p-6 bg-gradient-to-b from-slate-50 to-indigo-50/50">
+                        <div className="flex flex-wrap justify-center gap-2 md:gap-4 max-w-lg mx-auto pb-64">
                             {STAGES.map((stage, index) => {
                                 const isActive = index === currentStageIndex;
                                 const isPast = index < currentStageIndex;
 
                                 return (
-                                    <div key={stage.id} className={`relative flex flex-col items-center p-3 w-28 md:w-32 transition-all duration-300 ${isActive ? 'scale-110 z-10' : 'opacity-60 grayscale scale-95'}`}>
-                                        <div className={`w-16 h-16 rounded-2xl flex items-center justify-center text-3xl shadow-xl mb-3 border-4 transition-all duration-500
-                                           ${isActive ? 'bg-gradient-to-br from-indigo-500 to-purple-600 border-white ring-4 ring-indigo-200 text-white transform -translate-y-1' :
+                                    <div key={stage.id} className={`relative flex flex-col items-center p-2 md:p-3 w-20 md:w-32 transition-all duration-300 ${isActive ? 'scale-110 z-10' : 'opacity-60 grayscale scale-95'}`}>
+                                        <div className={`w-12 h-12 md:w-16 md:h-16 rounded-xl md:rounded-2xl flex items-center justify-center text-xl md:text-3xl shadow-xl mb-2 md:mb-3 border-4 transition-all duration-500
+                                           ${isActive ? 'bg-gradient-to-br from-indigo-500 to-purple-600 border-white ring-2 md:ring-4 ring-indigo-200 text-white transform -translate-y-1' :
                                                 isPast ? 'bg-emerald-500 border-emerald-300 text-white' : 'bg-white border-slate-200 text-slate-300'}
                                        `}>
                                             {stage.icon}
                                         </div>
-                                        <div className={`text-center font-bold text-xs uppercase tracking-wide ${isActive ? 'text-indigo-700' : 'text-slate-400'}`}>
+                                        <div className={`text-center font-bold text-[10px] md:text-xs uppercase tracking-wide ${isActive ? 'text-indigo-700' : 'text-slate-400'}`}>
                                             {stage.name}
                                         </div>
                                         {isActive && (
-                                            <div className="absolute -top-3 -right-3 bg-amber-400 text-amber-900 text-[10px] font-black px-2 py-1 rounded-full shadow-md animate-bounce border border-white">
+                                            <div className="absolute -top-2 -right-2 md:-top-3 md:-right-3 bg-amber-400 text-amber-900 text-[8px] md:text-[10px] font-black px-1.5 py-0.5 md:px-2 md:py-1 rounded-full shadow-md animate-bounce border border-white">
                                                 YOU
                                             </div>
                                         )}
@@ -184,25 +184,25 @@ export const LearningQuestMap: React.FC<LearningQuestMapProps> = ({ onGameOver, 
                     </div>
 
                     {/* Question Area (Bottom Fixed) */}
-                    <div className="absolute bottom-0 left-0 right-0 bg-white border-t border-indigo-100 shadow-[0_-10px_40px_rgba(79,70,229,0.1)] p-6 z-20 rounded-t-3xl">
+                    <div className="absolute bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-indigo-100 shadow-[0_-10px_40px_rgba(79,70,229,0.1)] p-4 md:p-6 z-20 rounded-t-2xl md:rounded-t-3xl">
                         <div className="max-w-2xl mx-auto">
                             {feedback ? (
                                 <motion.div
                                     initial={{ opacity: 0, scale: 0.9 }}
                                     animate={{ opacity: 1, scale: 1 }}
-                                    className="text-center py-4"
+                                    className="text-center py-2 md:py-4"
                                 >
-                                    <div className={`inline-block p-4 rounded-full mb-4 ${feedback === 'correct' ? 'bg-emerald-100 text-emerald-600' : 'bg-red-100 text-red-600'}`}>
+                                    <div className={`inline-block p-3 md:p-4 rounded-full mb-3 md:mb-4 ${feedback === 'correct' ? 'bg-emerald-100 text-emerald-600' : 'bg-red-100 text-red-600'}`}>
                                         {feedback === 'correct' ? (
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                            <svg xmlns="http://www.w3.org/2000/svg" className="w-8 h-8 md:w-10 md:h-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
                                         ) : (
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                                            <svg xmlns="http://www.w3.org/2000/svg" className="w-8 h-8 md:w-10 md:h-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                                         )}
                                     </div>
-                                    <h2 className={`text-3xl font-black mb-2 ${feedback === 'correct' ? 'text-emerald-800' : 'text-red-800'}`}>
+                                    <h2 className={`text-2xl md:text-3xl font-black mb-1 md:mb-2 ${feedback === 'correct' ? 'text-emerald-800' : 'text-red-800'}`}>
                                         {feedback === 'correct' ? 'Excellent!' : 'Not quite!'}
                                     </h2>
-                                    <p className="text-slate-500 mb-6 font-medium">
+                                    <p className="text-slate-500 mb-4 md:mb-6 font-medium text-sm md:text-base">
                                         {feedback === 'correct'
                                             ? "You're mastering this topic."
                                             : `The correct answer was: ${currentQuestion.options.find(o => o.id === currentQuestion.correctAnswerId)?.text}`
@@ -210,7 +210,7 @@ export const LearningQuestMap: React.FC<LearningQuestMapProps> = ({ onGameOver, 
                                     </p>
                                     <button
                                         onClick={handleContinue}
-                                        className={`font-bold py-4 px-12 rounded-2xl shadow-xl transition-all transform hover:scale-105 active:scale-95 text-lg w-full md:w-auto text-white
+                                        className={`font-bold py-3 md:py-4 px-8 md:px-12 rounded-xl md:rounded-2xl shadow-xl transition-all transform hover:scale-105 active:scale-95 text-base md:text-lg w-full md:w-auto text-white
                                             ${feedback === 'correct'
                                                 ? 'bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 shadow-emerald-200'
                                                 : 'bg-gradient-to-r from-slate-500 to-slate-600 hover:from-slate-600 hover:to-slate-700 shadow-slate-200'
@@ -223,32 +223,33 @@ export const LearningQuestMap: React.FC<LearningQuestMapProps> = ({ onGameOver, 
                                 <motion.div
                                     initial={{ opacity: 0, y: 10 }}
                                     animate={{ opacity: 1, y: 0 }}
+                                    className="max-h-[40vh] md:max-h-none overflow-y-auto"
                                 >
-                                    <div className="mb-6">
-                                        <span className="text-indigo-400 font-bold text-xs uppercase tracking-widest mb-2 block">Question {currentStageIndex + 1}</span>
-                                        <h3 className="text-xl md:text-2xl font-bold text-slate-800 leading-snug">
+                                    <div className="mb-3 md:mb-6">
+                                        <span className="text-indigo-400 font-bold text-[10px] md:text-xs uppercase tracking-widest mb-1 md:mb-2 block">Question {currentStageIndex + 1}</span>
+                                        <h3 className="text-base md:text-2xl font-bold text-slate-800 leading-snug">
                                             {currentQuestion.question}
                                         </h3>
                                     </div>
 
                                     {/* Grid adjusts based on whether it's T/F/DS (3 cols) or Multiple Choice (1 or 2 cols) */}
-                                    <div className={`grid gap-3 ${isThreeOption ? 'grid-cols-3' : 'grid-cols-1 md:grid-cols-2'}`}>
+                                    <div className={`grid gap-2 md:gap-3 ${isThreeOption ? 'grid-cols-3' : 'grid-cols-1 md:grid-cols-2'}`}>
                                         {currentQuestion.options.map((opt) => (
                                             <button
                                                 key={opt.id}
                                                 disabled={selectedOption !== null}
                                                 onClick={() => handleAnswer(opt.id)}
-                                                className={`p-4 rounded-xl border-2 text-left font-medium transition-all duration-200 flex flex-col md:flex-row items-center justify-center md:justify-start gap-2 group h-full
+                                                className={`p-3 md:p-4 rounded-xl border-2 text-left font-medium transition-all duration-200 flex flex-col md:flex-row items-center justify-center md:justify-start gap-2 group h-full
                                                     ${selectedOption === opt.id
                                                         ? 'bg-red-50 border-red-500 text-red-700'
                                                         : 'bg-white border-slate-100 text-slate-600 hover:border-indigo-400 hover:bg-indigo-50 hover:text-indigo-700 shadow-sm'
                                                     }
                                                 `}
                                             >
-                                                <span className={`w-8 h-8 rounded-lg flex items-center justify-center font-bold text-sm shrink-0 transition-colors ${selectedOption === opt.id ? 'bg-red-200 text-red-700' : 'bg-slate-100 text-slate-500 group-hover:bg-indigo-200 group-hover:text-indigo-700'}`}>
+                                                <span className={`w-6 h-6 md:w-8 md:h-8 rounded-lg flex items-center justify-center font-bold text-xs md:text-sm shrink-0 transition-colors ${selectedOption === opt.id ? 'bg-red-200 text-red-700' : 'bg-slate-100 text-slate-500 group-hover:bg-indigo-200 group-hover:text-indigo-700'}`}>
                                                     {opt.id}
                                                 </span>
-                                                <span className={`text-lg text-center md:text-left ${isThreeOption ? 'font-bold' : ''}`}>{opt.text}</span>
+                                                <span className={`text-base md:text-lg text-center md:text-left ${isThreeOption ? 'font-bold' : ''}`}>{opt.text}</span>
                                             </button>
                                         ))}
                                     </div>

@@ -62,28 +62,28 @@ export const LearningQuestLeaderboard: React.FC<LearningQuestLeaderboardProps> =
             <motion.div
                 initial={{ opacity: 0, y: 50 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="bg-white rounded-3xl shadow-2xl w-full max-w-5xl overflow-hidden relative z-10 flex flex-col md:flex-row max-h-[90vh]"
+                className="bg-white rounded-2xl md:rounded-3xl shadow-2xl w-full max-w-5xl overflow-hidden relative z-10 flex flex-col md:flex-row max-h-[90vh] md:max-h-[90vh] h-[90vh] md:h-auto"
             >
                 {/* Header Section (Mobile only, or kept as consistent top bar?) -> Actually let's do a side-by-side layout for Desktop */}
 
                 {/* Left Side: Charts & Stats */}
-                <div className="w-full md:w-2/3 bg-slate-50 p-6 md:p-8 flex flex-col gap-6 overflow-y-auto">
+                <div className="w-full md:w-2/3 bg-slate-50 p-4 md:p-8 flex flex-col gap-4 md:gap-6 overflow-y-auto shrink-0 md:shrink">
                     <div>
-                        <h2 className="text-2xl font-black text-indigo-900 mb-1">Class Performance</h2>
-                        <p className="text-slate-500 text-sm">Real-time statistics from all players</p>
+                        <h2 className="text-xl md:text-2xl font-black text-indigo-900 mb-1">Class Performance</h2>
+                        <p className="text-slate-500 text-xs md:text-sm">Real-time statistics from all players</p>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                         {/* Bar Chart - Correct Answer Rate */}
-                        <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
-                            <div className="flex items-center gap-2 mb-4">
-                                <div className="w-1 h-6 bg-indigo-500 rounded-full"></div>
-                                <h3 className="font-bold text-slate-700">Correct Answer Rate</h3>
+                        <div className="bg-white p-4 md:p-5 rounded-2xl shadow-sm border border-slate-100">
+                            <div className="flex items-center gap-2 mb-3 md:mb-4">
+                                <div className="w-1 h-5 md:h-6 bg-indigo-500 rounded-full"></div>
+                                <h3 className="font-bold text-slate-700 text-sm md:text-base">Correct Answer Rate</h3>
                             </div>
-                            <div className="h-48">
+                            <div className="h-40 md:h-48">
                                 <ResponsiveContainer width="100%" height="100%">
                                     <BarChart data={statsData}>
-                                        <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#94a3b8' }} />
+                                        <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#94a3b8' }} />
                                         <YAxis hide domain={[0, 100]} />
                                         <Tooltip cursor={{ fill: '#f1f5f9' }} contentStyle={{ borderRadius: '10px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} formatter={(value: number) => [`${value}%`, 'Accuracy']} />
                                         <Bar dataKey="accuracy" fill="#6366f1" radius={[4, 4, 0, 0]} />
@@ -93,18 +93,18 @@ export const LearningQuestLeaderboard: React.FC<LearningQuestLeaderboardProps> =
                         </div>
 
                         {/* Donut Chart */}
-                        <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
-                            <div className="flex items-center gap-2 mb-4">
-                                <div className="w-1 h-6 bg-purple-500 rounded-full"></div>
-                                <h3 className="font-bold text-slate-700">Skills Breakdown</h3>
+                        <div className="bg-white p-4 md:p-5 rounded-2xl shadow-sm border border-slate-100">
+                            <div className="flex items-center gap-2 mb-3 md:mb-4">
+                                <div className="w-1 h-5 md:h-6 bg-purple-500 rounded-full"></div>
+                                <h3 className="font-bold text-slate-700 text-sm md:text-base">Skills Breakdown</h3>
                             </div>
-                            <div className="h-48 flex items-center justify-center">
+                            <div className="h-40 md:h-48 flex items-center justify-center">
                                 <ResponsiveContainer width="100%" height="100%">
                                     <PieChart>
                                         <Pie
                                             data={skillsData}
-                                            innerRadius={60}
-                                            outerRadius={80}
+                                            innerRadius={50}
+                                            outerRadius={70}
                                             paddingAngle={5}
                                             dataKey="value"
                                             stroke="none"
@@ -114,7 +114,7 @@ export const LearningQuestLeaderboard: React.FC<LearningQuestLeaderboardProps> =
                                             ))}
                                         </Pie>
                                         <Tooltip />
-                                        <Legend iconType="circle" layout="vertical" verticalAlign="middle" align="right" wrapperStyle={{ fontSize: '11px', fontWeight: 'bold' }} />
+                                        <Legend iconType="circle" layout="vertical" verticalAlign="middle" align="right" wrapperStyle={{ fontSize: '10px', fontWeight: 'bold' }} />
                                     </PieChart>
                                 </ResponsiveContainer>
                             </div>
@@ -122,24 +122,24 @@ export const LearningQuestLeaderboard: React.FC<LearningQuestLeaderboardProps> =
                     </div>
 
                     {/* Additional Stats Cards */}
-                    <div className="grid grid-cols-3 gap-4">
-                        <div className="bg-indigo-50 p-4 rounded-2xl border border-indigo-100">
-                            <div className="text-indigo-400 text-xs font-bold uppercase tracking-wider mb-1">Total Players</div>
-                            <div className="text-3xl font-black text-indigo-700">{entries.length}</div>
+                    <div className="grid grid-cols-3 gap-2 md:gap-4">
+                        <div className="bg-indigo-50 p-2 md:p-4 rounded-xl md:rounded-2xl border border-indigo-100 text-center md:text-left">
+                            <div className="text-indigo-400 text-[8px] md:text-xs font-bold uppercase tracking-wider mb-1">Total Players</div>
+                            <div className="text-xl md:text-3xl font-black text-indigo-700">{entries.length}</div>
                         </div>
-                        <div className="bg-emerald-50 p-4 rounded-2xl border border-emerald-100">
-                            <div className="text-emerald-400 text-xs font-bold uppercase tracking-wider mb-1">Fastest Time</div>
-                            <div className="text-3xl font-black text-emerald-700">{entries.length > 0 ? entries[0].time + 's' : '-'}</div>
+                        <div className="bg-emerald-50 p-2 md:p-4 rounded-xl md:rounded-2xl border border-emerald-100 text-center md:text-left">
+                            <div className="text-emerald-400 text-[8px] md:text-xs font-bold uppercase tracking-wider mb-1">Fastest Time</div>
+                            <div className="text-xl md:text-3xl font-black text-emerald-700">{entries.length > 0 ? entries[0].time + 's' : '-'}</div>
                         </div>
-                        <div className="bg-orange-50 p-4 rounded-2xl border border-orange-100">
-                            <div className="text-orange-400 text-xs font-bold uppercase tracking-wider mb-1">Completion Rate</div>
-                            <div className="text-3xl font-black text-orange-700">100%</div>
+                        <div className="bg-orange-50 p-2 md:p-4 rounded-xl md:rounded-2xl border border-orange-100 text-center md:text-left">
+                            <div className="text-orange-400 text-[8px] md:text-xs font-bold uppercase tracking-wider mb-1">Completion Rate</div>
+                            <div className="text-xl md:text-3xl font-black text-orange-700">100%</div>
                         </div>
                     </div>
                 </div>
 
                 {/* Right Side: Leaderboard List */}
-                <div className="w-full md:w-1/3 bg-white flex flex-col border-l border-slate-100 shadow-xl z-20">
+                <div className="w-full md:w-1/3 bg-white flex flex-col border-t md:border-t-0 md:border-l border-slate-100 shadow-xl z-20 flex-1 min-h-0">
                     <div className="p-6 bg-gradient-to-br from-indigo-600 to-purple-700 text-white shrink-0 relative">
                         <button
                             onClick={onClose}
