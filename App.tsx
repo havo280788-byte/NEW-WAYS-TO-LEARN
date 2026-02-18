@@ -8,7 +8,7 @@ import useSound from 'use-sound';
 import { useHighlighter } from './hooks/useHighlighter';
 import { AnswerFeedback, LevelUpModal } from './components/GameFeedback';
 import { DEFAULT_PASSAGES, INITIAL_PROGRESS, SOUNDS } from './constants';
-import { AppSettings, Passage, UserProgress, GameSession, MODELS, OceanLeaderboardEntry } from './types';
+import { AppSettings, Passage, UserProgress, GameSession, MODELS, QuestLeaderboardEntry, QuestParticipant } from './types';
 import { GeminiService } from './services/geminiService';
 import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip } from 'recharts';
 
@@ -114,7 +114,7 @@ export default function App() {
 
   // Learning Quest State
   const [showQuestIntro, setShowQuestIntro] = useState(false);
-  const [questParticipant, setQuestParticipant] = useState<{ name: string, className: string, startTime: number } | null>(null);
+  const [questParticipant, setQuestParticipant] = useState<QuestParticipant | null>(null);
   const [questState, setQuestState] = useState<'intro' | 'playing' | 'gameover' | 'win' | 'leaderboard'>('intro');
   const [questScore, setQuestScore] = useState(0);
 
@@ -345,7 +345,7 @@ export default function App() {
     const elapsedSeconds = Math.round((Date.now() - questParticipant.startTime) / 1000);
     const dateStr = new Date().toISOString().slice(0, 16).replace('T', ' ');
 
-    const entry: OceanLeaderboardEntry = {
+    const entry: QuestLeaderboardEntry = {
       name: questParticipant.name,
       className: questParticipant.className,
       time: elapsedSeconds,
@@ -354,7 +354,7 @@ export default function App() {
     };
 
     const saved = localStorage.getItem('leaderboardNEW_WAYS_TO_LEARN');
-    let existing: OceanLeaderboardEntry[] = saved ? JSON.parse(saved) : [];
+    let existing: QuestLeaderboardEntry[] = saved ? JSON.parse(saved) : [];
 
     if (existing.length < 999) {
       existing.push(entry);

@@ -66,13 +66,13 @@ export const MODELS = [
   'gemini-2.5-flash'
 ];
 
-export interface OceanGameParticipant {
+export interface QuestParticipant {
   name: string;
   className: string; // 'class' is reserved
   startTime: number;
 }
 
-export interface OceanLeaderboardEntry {
+export interface QuestLeaderboardEntry {
   name: string;
   className: string;
   time: number; // seconds

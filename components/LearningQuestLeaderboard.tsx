@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { OceanLeaderboardEntry } from '../types';
+import { QuestLeaderboardEntry } from '../types';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, PieChart, Pie, Legend } from 'recharts';
 
 interface LearningQuestLeaderboardProps {
@@ -8,22 +8,26 @@ interface LearningQuestLeaderboardProps {
 }
 
 export const LearningQuestLeaderboard: React.FC<LearningQuestLeaderboardProps> = ({ onClose }) => {
-    const [entries, setEntries] = useState<OceanLeaderboardEntry[]>([]);
+    const [entries, setEntries] = useState<QuestLeaderboardEntry[]>([]);
     const [isFull, setIsFull] = useState(false);
     const [statsData, setStatsData] = useState<any[]>([]);
+
+    const handleReset = () => {
+        if (confirm('Are you sure you want to clear the leaderboard? This cannot be undone.')) {
+            localStorage.removeItem('leaderboardNEW_WAYS_TO_LEARN');
+            setEntries([]);
+            setIsFull(false);
+        }
+    };
 
     useEffect(() => {
         const saved = localStorage.getItem('leaderboardNEW_WAYS_TO_LEARN');
         if (saved) {
-            const parsed: OceanLeaderboardEntry[] = JSON.parse(saved);
+            const parsed: QuestLeaderboardEntry[] = JSON.parse(saved);
 
             // Sort by time (ascending) for leaderboard list
             // Sort by score (desc) then time (asc)
             const sorted = parsed.sort((a, b) => {
-                const scoreA = a.score || 0;
-                const scoreB = a.score || 0; // Typo in original thought, fix here: this should be b.score
-                // Wait, I can't fix logic in replacement content comment.
-                // Just write correct code.
                 const valA = a.score || 0;
                 const valB = b.score || 0;
                 if (valA !== valB) return valB - valA;
@@ -144,7 +148,13 @@ export const LearningQuestLeaderboard: React.FC<LearningQuestLeaderboardProps> =
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                         </button>
                         <h2 className="text-xl font-black uppercase tracking-wider mb-1">Leaderboard</h2>
-                        <p className="text-indigo-100 text-xs font-bold opacity-80">TOP 5 PLAYERS</p>
+                        <p className="text-indigo-100 text-xs font-bold opacity-80 mb-2">TOP 5 PLAYERS</p>
+                        <button
+                            onClick={handleReset}
+                            className="text-[10px] bg-red-500/20 hover:bg-red-500/40 text-red-200 px-2 py-1 rounded border border-red-500/30 transition-colors"
+                        >
+                            Reset Data
+                        </button>
                     </div>
 
                     <div className="flex-1 overflow-y-auto p-0">
