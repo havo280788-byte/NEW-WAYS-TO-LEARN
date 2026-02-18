@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { LEARNING_QUEST_POOL, LEARNING_QUEST_PASSAGE } from '../constants';
+import { useHighlighter } from '../hooks/useHighlighter';
+import { Highlighter } from './GameIcons';
 import useSound from 'use-sound';
 
 // Using constants directly to avoid import issues or ensuring they match exactly
@@ -32,6 +34,16 @@ export const LearningQuestMap: React.FC<LearningQuestMapProps> = ({ onGameOver, 
     const [shuffledQuestions, setShuffledQuestions] = useState<typeof LEARNING_QUEST_POOL>([]);
     const [feedback, setFeedback] = useState<'correct' | null>(null);
     const [selectedOption, setSelectedOption] = useState<string | null>(null);
+
+    const {
+        isHighlighterActive,
+        toggleHighlighter,
+        addHighlight,
+        renderHighlightedText
+    } = useHighlighter();
+
+    // Constant ID for this specific passage
+    const QUEST_PASSAGE_ID = 'learning-quest-main';
 
     const [playCorrect] = useSound(SOUNDS.correct);
     const [playIncorrect] = useSound(SOUNDS.incorrect);
@@ -102,8 +114,21 @@ export const LearningQuestMap: React.FC<LearningQuestMapProps> = ({ onGameOver, 
                 {/* Left Panel: Reading Passage */}
                 <div className="w-full md:w-1/2 bg-white border-r border-slate-200 overflow-y-auto p-6 md:p-10 shadow-inner">
                     <div className="max-w-2xl mx-auto prose prose-indigo prose-lg">
-                        <div className="flex items-center gap-2 mb-6 text-indigo-600 font-bold uppercase tracking-widest text-xs">
-                            <span className="bg-indigo-100 px-2 py-1 rounded">Reading Passage</span>
+                        <div className="flex items-center justify-between mb-6">
+                            <div className="flex items-center gap-2 text-indigo-600 font-bold uppercase tracking-widest text-xs">
+                                <span className="bg-indigo-100 px-2 py-1 rounded">Reading Passage</span>
+                            </div>
+                            <button
+                                onClick={toggleHighlighter}
+                                className={`p-1.5 rounded-lg transition-all flex items-center gap-2 text-xs font-bold ${isHighlighterActive
+                                    ? 'bg-yellow-100 text-yellow-700 ring-2 ring-yellow-400 ring-offset-1'
+                                    : 'bg-slate-100 text-slate-500 hover:bg-slate-200'
+                                    }`}
+                                title="Toggle Highlighter"
+                            >
+                                <Highlighter size={14} />
+                                <span>Highlight</span>
+                            </button>
                         </div>
                         {LEARNING_QUEST_PASSAGE.split('\n').map((paragraph, idx) => {
                             if (paragraph.startsWith('# ')) {
@@ -113,7 +138,15 @@ export const LearningQuestMap: React.FC<LearningQuestMapProps> = ({ onGameOver, 
                                 // Simple bold handling for Headers
                                 return <h3 key={idx} className="text-xl font-bold text-indigo-700 mt-6 mb-3">{paragraph.replaceAll('**', '')}</h3>
                             }
-                            return <p key={idx} className="mb-4 text-slate-600 leading-relaxed text-lg">{paragraph}</p>
+                            return (
+                                <p
+                                    key={idx}
+                                    className={`mb-4 text-slate-600 leading-relaxed text-lg ${isHighlighterActive ? 'cursor-text selection:bg-yellow-200' : ''}`}
+                                    onMouseUp={() => addHighlight(QUEST_PASSAGE_ID, idx, paragraph)}
+                                >
+                                    {renderHighlightedText(paragraph, QUEST_PASSAGE_ID, idx)}
+                                </p>
+                            )
                         })}
                     </div>
                 </div>
