@@ -4,12 +4,13 @@ import confetti from 'canvas-confetti';
 
 interface LearningQuestWinProps {
     name: string;
+    score: number;
     completionTime: number;
     onPlayAgain: () => void;
     onLeaderboard: () => void;
 }
 
-export const LearningQuestWin: React.FC<LearningQuestWinProps> = ({ name, completionTime, onPlayAgain, onLeaderboard }) => {
+export const LearningQuestWin: React.FC<LearningQuestWinProps> = ({ name, score, completionTime, onPlayAgain, onLeaderboard }) => {
 
     useEffect(() => {
         const duration = 3 * 1000;
@@ -53,9 +54,15 @@ export const LearningQuestWin: React.FC<LearningQuestWinProps> = ({ name, comple
                     <span className="font-bold text-indigo-600">{name}</span> – YOU HAVE MASTERED NEW WAYS TO LEARN!
                 </p>
 
-                <div className="bg-indigo-50 rounded-xl p-4 mb-6 border border-indigo-100">
-                    <p className="text-sm text-indigo-500 font-bold uppercase mb-1">COMPLETION TIME</p>
-                    <p className="text-4xl font-black text-indigo-700">{completionTime} <span className="text-lg font-medium">seconds</span></p>
+                <div className="bg-indigo-50 rounded-xl p-4 mb-6 border border-indigo-100 grid grid-cols-2 gap-4">
+                    <div>
+                        <p className="text-sm text-indigo-500 font-bold uppercase mb-1">SCORE</p>
+                        <p className="text-4xl font-black text-indigo-700">{score} <span className="text-lg font-medium text-indigo-400">/ 80</span></p>
+                    </div>
+                    <div>
+                        <p className="text-sm text-indigo-500 font-bold uppercase mb-1">TIME</p>
+                        <p className="text-4xl font-black text-indigo-700">{completionTime} <span className="text-lg font-medium">s</span></p>
+                    </div>
                 </div>
 
                 <div className="mb-8">

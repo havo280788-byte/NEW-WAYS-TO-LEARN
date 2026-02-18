@@ -15,7 +15,7 @@ const SOUNDS = {
 
 interface LearningQuestMapProps {
     onGameOver: () => void;
-    onWin: () => void;
+    onWin: (score: number) => void;
 }
 
 const STAGES = [
@@ -32,8 +32,9 @@ const STAGES = [
 export const LearningQuestMap: React.FC<LearningQuestMapProps> = ({ onGameOver, onWin }) => {
     const [currentStageIndex, setCurrentStageIndex] = useState(0);
     const [shuffledQuestions, setShuffledQuestions] = useState<typeof LEARNING_QUEST_POOL>([]);
-    const [feedback, setFeedback] = useState<'correct' | null>(null);
+    const [feedback, setFeedback] = useState<'correct' | 'incorrect' | null>(null);
     const [selectedOption, setSelectedOption] = useState<string | null>(null);
+    const [score, setScore] = useState(0);
 
     const {
         isHighlighterActive,
@@ -65,12 +66,11 @@ export const LearningQuestMap: React.FC<LearningQuestMapProps> = ({ onGameOver, 
 
         if (optionId === currentQ.correctAnswerId) {
             playCorrect();
+            setScore(prev => prev + 10);
             setFeedback('correct');
         } else {
             playIncorrect();
-            setTimeout(() => {
-                onGameOver();
-            }, 1000);
+            setFeedback('incorrect');
         }
     };
 
@@ -81,7 +81,7 @@ export const LearningQuestMap: React.FC<LearningQuestMapProps> = ({ onGameOver, 
             playLevelUp();
             setCurrentStageIndex(prev => prev + 1);
         } else {
-            onWin();
+            onWin(score);
         }
     };
 
@@ -186,20 +186,35 @@ export const LearningQuestMap: React.FC<LearningQuestMapProps> = ({ onGameOver, 
                     {/* Question Area (Bottom Fixed) */}
                     <div className="absolute bottom-0 left-0 right-0 bg-white border-t border-indigo-100 shadow-[0_-10px_40px_rgba(79,70,229,0.1)] p-6 z-20 rounded-t-3xl">
                         <div className="max-w-2xl mx-auto">
-                            {feedback === 'correct' ? (
+                            {feedback ? (
                                 <motion.div
                                     initial={{ opacity: 0, scale: 0.9 }}
                                     animate={{ opacity: 1, scale: 1 }}
                                     className="text-center py-4"
                                 >
-                                    <div className="inline-block bg-emerald-100 text-emerald-600 p-4 rounded-full mb-4">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                    <div className={`inline-block p-4 rounded-full mb-4 ${feedback === 'correct' ? 'bg-emerald-100 text-emerald-600' : 'bg-red-100 text-red-600'}`}>
+                                        {feedback === 'correct' ? (
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                        ) : (
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                                        )}
                                     </div>
-                                    <h2 className="text-3xl font-black text-slate-800 mb-2">Excellent!</h2>
-                                    <p className="text-slate-500 mb-6 font-medium">You're mastering this topic.</p>
+                                    <h2 className={`text-3xl font-black mb-2 ${feedback === 'correct' ? 'text-emerald-800' : 'text-red-800'}`}>
+                                        {feedback === 'correct' ? 'Excellent!' : 'Not quite!'}
+                                    </h2>
+                                    <p className="text-slate-500 mb-6 font-medium">
+                                        {feedback === 'correct'
+                                            ? "You're mastering this topic."
+                                            : `The correct answer was: ${currentQuestion.options.find(o => o.id === currentQuestion.correctAnswerId)?.text}`
+                                        }
+                                    </p>
                                     <button
                                         onClick={handleContinue}
-                                        className="bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white font-bold py-4 px-12 rounded-2xl shadow-xl shadow-emerald-200 transition-all transform hover:scale-105 active:scale-95 text-lg w-full md:w-auto"
+                                        className={`font-bold py-4 px-12 rounded-2xl shadow-xl transition-all transform hover:scale-105 active:scale-95 text-lg w-full md:w-auto text-white
+                                            ${feedback === 'correct'
+                                                ? 'bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 shadow-emerald-200'
+                                                : 'bg-gradient-to-r from-slate-500 to-slate-600 hover:from-slate-600 hover:to-slate-700 shadow-slate-200'
+                                            }`}
                                     >
                                         CONTINUE JOURNEY
                                     </button>

@@ -76,5 +76,6 @@ export interface OceanLeaderboardEntry {
   name: string;
   className: string;
   time: number; // seconds
+  score: number; // Max 80
   date: string; // YYYY-MM-DD HH:MM
 }

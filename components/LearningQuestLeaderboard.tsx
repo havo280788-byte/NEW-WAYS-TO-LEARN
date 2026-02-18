@@ -18,8 +18,18 @@ export const LearningQuestLeaderboard: React.FC<LearningQuestLeaderboardProps> =
             const parsed: OceanLeaderboardEntry[] = JSON.parse(saved);
 
             // Sort by time (ascending) for leaderboard list
-            const sorted = parsed.sort((a, b) => a.time - b.time);
-            setEntries(sorted.slice(0, 50));
+            // Sort by score (desc) then time (asc)
+            const sorted = parsed.sort((a, b) => {
+                const scoreA = a.score || 0;
+                const scoreB = a.score || 0; // Typo in original thought, fix here: this should be b.score
+                // Wait, I can't fix logic in replacement content comment.
+                // Just write correct code.
+                const valA = a.score || 0;
+                const valB = b.score || 0;
+                if (valA !== valB) return valB - valA;
+                return a.time - b.time;
+            });
+            setEntries(sorted.slice(0, 5));
             if (parsed.length >= 999) setIsFull(true);
 
             // Process data for charts
@@ -134,7 +144,7 @@ export const LearningQuestLeaderboard: React.FC<LearningQuestLeaderboardProps> =
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                         </button>
                         <h2 className="text-xl font-black uppercase tracking-wider mb-1">Leaderboard</h2>
-                        <p className="text-indigo-100 text-xs font-bold opacity-80">TOP 50 FASTEST TIMES</p>
+                        <p className="text-indigo-100 text-xs font-bold opacity-80">TOP 5 PLAYERS</p>
                     </div>
 
                     <div className="flex-1 overflow-y-auto p-0">
@@ -157,7 +167,9 @@ export const LearningQuestLeaderboard: React.FC<LearningQuestLeaderboardProps> =
                                         </div>
                                         <div className="flex-1 min-w-0">
                                             <div className="font-bold text-slate-700 truncate text-sm">{entry.name}</div>
-                                            <div className="text-[10px] text-slate-400 font-bold uppercase tracking-wide">{entry.className}</div>
+                                        </div>
+                                        <div className="font-bold text-emerald-600 text-sm shrink-0">
+                                            {entry.score || 0} pts
                                         </div>
                                         <div className="font-black text-indigo-600 text-sm shrink-0 bg-indigo-50 px-2 py-1 rounded">
                                             {entry.time}s

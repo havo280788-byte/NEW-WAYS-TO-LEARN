@@ -116,6 +116,7 @@ export default function App() {
   const [showQuestIntro, setShowQuestIntro] = useState(false);
   const [questParticipant, setQuestParticipant] = useState<{ name: string, className: string, startTime: number } | null>(null);
   const [questState, setQuestState] = useState<'intro' | 'playing' | 'gameover' | 'win' | 'leaderboard'>('intro');
+  const [questScore, setQuestScore] = useState(0);
 
   // Highlighter State
   const {
@@ -319,6 +320,7 @@ export default function App() {
 
   const handleQuestStart = (name: string, className: string) => {
     setQuestParticipant({ name, className, startTime: Date.now() });
+    setQuestScore(0);
     setShowQuestIntro(false);
     setQuestState('playing');
   };
@@ -327,7 +329,8 @@ export default function App() {
     setQuestState('gameover');
   };
 
-  const handleQuestWin = () => {
+  const handleQuestWin = (score: number) => {
+    setQuestScore(score);
     setQuestState('win');
   };
 
@@ -346,6 +349,7 @@ export default function App() {
       name: questParticipant.name,
       className: questParticipant.className,
       time: elapsedSeconds,
+      score: questScore,
       date: dateStr
     };
 
@@ -737,6 +741,7 @@ export default function App() {
       {questState === 'win' && questParticipant && (
         <LearningQuestWin
           name={questParticipant.name}
+          score={questScore}
           completionTime={Math.round((Date.now() - questParticipant.startTime) / 1000)}
           onPlayAgain={handleQuestPlayAgain}
           onLeaderboard={() => {
