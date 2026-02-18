@@ -496,14 +496,30 @@ export default function App() {
       <div className="h-[calc(100vh-100px)] flex flex-col md:flex-row gap-6 relative">
         <AnswerFeedback type={lastFeedbackType} />
         {/* Reading Pane */}
-        <div className="flex-1 bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden flex flex-col">
-          <div className="p-4 bg-slate-50 border-b flex justify-between items-center">
-            <h3 className="font-bold text-slate-700 truncate">{currentPassage.title}</h3>
-            <span className="text-xs font-mono bg-indigo-100 text-indigo-700 px-2 py-1 rounded">Text</span>
+        <div className="flex-1 bg-white rounded-2xl shadow-lg border border-slate-200 overflow-hidden flex flex-col relative group">
+          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 z-10" />
+          <div className="p-4 bg-white/80 backdrop-blur-md border-b border-slate-100 flex justify-between items-center sticky top-0 z-10">
+            <h3 className="font-bold text-slate-800 truncate flex items-center gap-2">
+              <BookOpen size={18} className="text-indigo-600" />
+              {currentPassage.title}
+            </h3>
+            <span className="text-xs font-bold font-mono bg-indigo-50 text-indigo-600 px-3 py-1.5 rounded-full border border-indigo-100 uppercase tracking-wide">
+              Reading Passage
+            </span>
           </div>
-          <div className="p-6 overflow-y-auto custom-scrollbar flex-1 prose prose-slate max-w-none">
+          <div
+            className="p-8 overflow-y-auto custom-scrollbar flex-1 prose prose-slate max-w-none prose-lg prose-headings:text-indigo-900 prose-p:text-slate-800 prose-p:leading-loose font-medium"
+            style={{
+              backgroundImage: `
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.95)),
+                url('/reading-bg.jpg.png')
+              `,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+            }}
+          >
             {currentPassage.content.split('\n').map((paragraph, idx) => (
-              <p key={idx} className="mb-4 text-slate-600 leading-relaxed text-lg">
+              <p key={idx} className="mb-6 text-slate-800 leading-loose text-lg drop-shadow-sm">
                 {paragraph.replace(/^# /, '').trim()}
               </p>
             ))}
