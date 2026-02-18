@@ -15,7 +15,8 @@ import {
     Key,
     Zap,
     Trophy,
-    Map
+    Map,
+    Highlighter
 } from 'lucide-react';
 
 export {
@@ -34,5 +35,6 @@ export {
     Key,
     Zap,
     Trophy,
-    Map
+    Map,
+    Highlighter
 };

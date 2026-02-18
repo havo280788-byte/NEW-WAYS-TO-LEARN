@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   BookOpen, Award, BarChart2, Settings, Brain, ChevronRight,
-  CheckCircle, XCircle, RefreshCw, MessageCircle, Clock, Key, LogOut, Zap, Trophy, Map
+  CheckCircle, XCircle, RefreshCw, MessageCircle, Clock, Key, LogOut, Zap, Trophy, Map, Highlighter
 } from './components/GameIcons';
 import useSound from 'use-sound';
 import { AnswerFeedback, LevelUpModal } from './components/GameFeedback';
@@ -115,6 +115,10 @@ export default function App() {
   const [showQuestIntro, setShowQuestIntro] = useState(false);
   const [questParticipant, setQuestParticipant] = useState<{ name: string, className: string, startTime: number } | null>(null);
   const [questState, setQuestState] = useState<'intro' | 'playing' | 'gameover' | 'win' | 'leaderboard'>('intro');
+
+  // Highlighter State
+  const [highlights, setHighlights] = useState<Record<string, Record<number, { start: number; end: number }[]>>>({});
+  const [isHighlighterActive, setIsHighlighterActive] = useState(false);
 
   // Sounds
   const [playCorrect] = useSound(SOUNDS.correct);
@@ -294,7 +298,70 @@ export default function App() {
     }
   };
 
-  // --- Learning Quest Handlers ---
+
+
+  const handleHighlight = (paragraphIndices: number) => {
+    if (!isHighlighterActive || !activeSession) return;
+
+    const selection = window.getSelection();
+    if (!selection || selection.rangeCount === 0 || selection.toString().length === 0) return;
+
+    const range = selection.getRangeAt(0);
+    const start = range.startOffset;
+    const end = range.endOffset;
+
+    // Ensure we are selecting inside the correct paragraph
+    // (This is a simplified check; reliable cross-browser selection handling can be complex)
+    // We assume the selection is contained within the paragraph text node.
+
+    const passageId = activeSession.passageId;
+    const currentHighlights = highlights[passageId] || {};
+    const paragraphHighlights = currentHighlights[paragraphIndices] || [];
+
+    // Add new highlight
+    const newHighlights = {
+      ...highlights,
+      [passageId]: {
+        ...currentHighlights,
+        [paragraphIndices]: [...paragraphHighlights, { start, end }]
+      }
+    };
+
+    setHighlights(newHighlights);
+
+    // Clear selection
+    selection.removeAllRanges();
+  };
+
+  const renderHighlightedText = (text: string, paragraphIndex: number) => {
+    if (!activeSession || !highlights[activeSession.passageId] || !highlights[activeSession.passageId][paragraphIndex]) {
+      return text;
+    }
+
+    const ranges = highlights[activeSession.passageId][paragraphIndex].sort((a, b) => a.start - b.start);
+    const parts = [];
+    let lastIndex = 0;
+
+    ranges.forEach((range, idx) => {
+      // Non-highlighted part
+      if (range.start > lastIndex) {
+        parts.push(<span key={`text-${idx}`}>{text.substring(lastIndex, range.start)}</span>);
+      }
+      // Highlighted part
+      parts.push(
+        <span key={`highlight-${idx}`} className="bg-red-200 text-red-900 rounded px-1 box-decoration-clone">
+          {text.substring(range.start, range.end)}
+        </span>
+      );
+      lastIndex = range.end;
+    });
+
+    if (lastIndex < text.length) {
+      parts.push(<span key={`text-end`}>{text.substring(lastIndex)}</span>);
+    }
+
+    return parts;
+  };
 
   const handleQuestStart = (name: string, className: string) => {
     setQuestParticipant({ name, className, startTime: Date.now() });
@@ -499,13 +566,28 @@ export default function App() {
         <div className="flex-1 bg-white rounded-2xl shadow-lg border border-slate-200 overflow-hidden flex flex-col relative group">
           <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 z-10" />
           <div className="p-4 bg-white/80 backdrop-blur-md border-b border-slate-100 flex justify-between items-center sticky top-0 z-10">
-            <h3 className="font-bold text-slate-800 truncate flex items-center gap-2">
-              <BookOpen size={18} className="text-indigo-600" />
-              {currentPassage.title}
-            </h3>
-            <span className="text-xs font-bold font-mono bg-indigo-50 text-indigo-600 px-3 py-1.5 rounded-full border border-indigo-100 uppercase tracking-wide">
-              Reading Passage
-            </span>
+            <div className="flex items-center gap-2">
+              <h3 className="font-bold text-slate-800 truncate flex items-center gap-2">
+                <BookOpen size={18} className="text-indigo-600" />
+                {currentPassage.title}
+              </h3>
+            </div>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setIsHighlighterActive(!isHighlighterActive)}
+                className={`p-2 rounded-lg transition-all flex items-center gap-2 text-sm font-bold ${isHighlighterActive
+                  ? 'bg-red-100 text-red-600 ring-2 ring-red-400 ring-offset-1'
+                  : 'bg-slate-100 text-slate-500 hover:bg-slate-200'
+                  }`}
+                title="Toggle Highlighter"
+              >
+                <Highlighter size={16} />
+                <span className="hidden sm:inline">Highlight</span>
+              </button>
+              <span className="text-xs font-bold font-mono bg-indigo-50 text-indigo-600 px-3 py-1.5 rounded-full border border-indigo-100 uppercase tracking-wide">
+                Reading Passage
+              </span>
+            </div>
           </div>
           <div
             className="p-8 overflow-y-auto custom-scrollbar flex-1 prose prose-slate max-w-none prose-lg prose-headings:text-indigo-900 prose-p:text-slate-800 prose-p:leading-loose font-medium"
@@ -519,8 +601,12 @@ export default function App() {
             }}
           >
             {currentPassage.content.split('\n').map((paragraph, idx) => (
-              <p key={idx} className="mb-6 text-slate-800 leading-loose text-lg drop-shadow-sm">
-                {paragraph.replace(/^# /, '').trim()}
+              <p
+                key={idx}
+                className={`mb-6 text-slate-800 leading-loose text-lg drop-shadow-sm ${isHighlighterActive ? 'cursor-text selection:bg-red-200 selection:text-red-900' : ''}`}
+                onMouseUp={() => handleHighlight(idx)}
+              >
+                {renderHighlightedText(paragraph.replace(/^# /, '').trim(), idx)}
               </p>
             ))}
           </div>
