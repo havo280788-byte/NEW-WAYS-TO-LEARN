@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { QuestLeaderboardEntry } from '../types';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, PieChart, Pie, Legend } from 'recharts';
+import { db } from '../firebase';
+import { collection, query, orderBy, limit, onSnapshot, deleteDoc, doc } from 'firebase/firestore';
 
 interface LearningQuestLeaderboardProps {
     onClose: () => void;
@@ -12,29 +14,47 @@ export const LearningQuestLeaderboard: React.FC<LearningQuestLeaderboardProps> =
     const [isFull, setIsFull] = useState(false);
     const [statsData, setStatsData] = useState<any[]>([]);
 
-    const handleReset = () => {
-        if (confirm('Are you sure you want to clear the leaderboard? This cannot be undone.')) {
-            localStorage.removeItem('leaderboardNEW_WAYS_TO_LEARN');
+    const handleReset = async () => {
+        if (confirm('Are you sure you want to PERMANENTLY delete all leaderboard data for EVERYONE? This cannot be undone.')) {
+            // Local Clear
+            localStorage.removeItem('leaderboardLEARNINGQUEST');
+
+            // Firestore Clear (Iterate and delete)
+            // Note: For large collections, cloud functions are better, but for <1000 this is fine for an admin tool.
+            try {
+                const deletePromises = entries.map(entry => {
+                    if (entry.id) {
+                        return deleteDoc(doc(db, 'leaderboard', entry.id));
+                    }
+                    return Promise.resolve();
+                });
+                await Promise.all(deletePromises);
+                alert('Leaderboard has been reset for all users.');
+            } catch (error) {
+                console.error("Error clearing leaderboard:", error);
+                alert('Failed to clear some online records. Check console.');
+            }
+
             setEntries([]);
             setIsFull(false);
         }
     };
 
     useEffect(() => {
-        const saved = localStorage.getItem('leaderboardNEW_WAYS_TO_LEARN');
-        if (saved) {
-            const parsed: QuestLeaderboardEntry[] = JSON.parse(saved);
+        // Real-time Firestore Listener
+        const q = query(collection(db, 'leaderboard'), orderBy('score', 'desc'), orderBy('time', 'asc'), limit(1000));
 
-            // Sort by time (ascending) for leaderboard list
-            // Sort by score (desc) then time (asc)
-            const sorted = parsed.sort((a, b) => {
-                const valA = a.score || 0;
-                const valB = b.score || 0;
-                if (valA !== valB) return valB - valA;
-                return a.time - b.time;
+        const unsubscribe = onSnapshot(q, (querySnapshot) => {
+            const fetchedEntries: QuestLeaderboardEntry[] = [];
+            querySnapshot.forEach((doc) => {
+                fetchedEntries.push({ id: doc.id, ...doc.data() } as QuestLeaderboardEntry);
             });
-            setEntries(sorted.slice(0, 5));
-            if (parsed.length >= 999) setIsFull(true);
+
+
+            // If connected to Firestore, we trust its state (even if empty)
+            setEntries(fetchedEntries.slice(0, 10)); // Top 10
+            if (fetchedEntries.length >= 999) setIsFull(true);
+
 
             // Process data for charts
             // 1. Correct Answer Rate (Mocked per Question since failure logs aren't stored yet)
@@ -43,7 +63,25 @@ export const LearningQuestLeaderboard: React.FC<LearningQuestLeaderboardProps> =
                 accuracy: Math.floor(Math.random() * (100 - 75 + 1)) + 75 // Random 75-100%
             }));
             setStatsData(questionStats);
-        }
+
+        }, (error) => {
+            console.error("Error getting leaderboard: ", error);
+            // Fallback to local storage on error
+            const saved = localStorage.getItem('leaderboardLEARNINGQUEST');
+            if (saved) {
+                const parsed: QuestLeaderboardEntry[] = JSON.parse(saved);
+                const sorted = parsed.sort((a, b) => {
+                    const valA = a.score || 0;
+                    const valB = b.score || 0;
+                    if (valA !== valB) return valB - valA;
+                    return a.time - b.time;
+                });
+                setEntries(sorted.slice(0, 10));
+                if (parsed.length >= 999) setIsFull(true);
+            }
+        });
+
+        return () => unsubscribe();
     }, []);
 
     // Static data for Skills Breakdown based on the 8 questions
@@ -64,8 +102,6 @@ export const LearningQuestLeaderboard: React.FC<LearningQuestLeaderboardProps> =
                 animate={{ opacity: 1, y: 0 }}
                 className="bg-white rounded-2xl md:rounded-3xl shadow-2xl w-full max-w-5xl overflow-hidden relative z-10 flex flex-col md:flex-row max-h-[90vh] md:max-h-[90vh] h-[90vh] md:h-auto"
             >
-                {/* Header Section (Mobile only, or kept as consistent top bar?) -> Actually let's do a side-by-side layout for Desktop */}
-
                 {/* Left Side: Charts & Stats */}
                 <div className="w-full md:w-2/3 bg-slate-50 p-4 md:p-8 flex flex-col gap-4 md:gap-6 overflow-y-auto shrink-0 md:shrink">
                     <div>
@@ -148,7 +184,7 @@ export const LearningQuestLeaderboard: React.FC<LearningQuestLeaderboardProps> =
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                         </button>
                         <h2 className="text-xl font-black uppercase tracking-wider mb-1">Leaderboard</h2>
-                        <p className="text-indigo-100 text-xs font-bold opacity-80 mb-2">TOP 5 PLAYERS</p>
+                        <p className="text-indigo-100 text-xs font-bold opacity-80 mb-2">TOP 10 PLAYERS</p>
                         <button
                             onClick={handleReset}
                             className="text-[10px] bg-red-500/20 hover:bg-red-500/40 text-red-200 px-2 py-1 rounded border border-red-500/30 transition-colors"
@@ -158,6 +194,7 @@ export const LearningQuestLeaderboard: React.FC<LearningQuestLeaderboardProps> =
                     </div>
 
                     <div className="flex-1 overflow-y-auto p-0">
+                        {isFull && <div className="bg-red-100 text-red-800 text-xs font-bold p-2 text-center">FULL LEADERBOARD (999 people).</div>}
                         {entries.length === 0 ? (
                             <div className="flex flex-col items-center justify-center h-full text-slate-400 p-8 text-center">
                                 <div className="text-4xl mb-2">🏆</div>

@@ -73,6 +73,7 @@ export interface QuestParticipant {
 }
 
 export interface QuestLeaderboardEntry {
+  id?: string; // Firestore Doc ID
   name: string;
   className: string;
   time: number; // seconds

@@ -14,6 +14,8 @@ import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, 
 
 // Learning Quest Components
 import { LearningQuestIntro } from './components/LearningQuestIntro';
+import { db } from './firebase';
+import { collection, addDoc } from 'firebase/firestore';
 import { LearningQuestMap } from './components/LearningQuestMap';
 import { LearningQuestGameOver } from './components/LearningQuestGameOver';
 import { LearningQuestWin } from './components/LearningQuestWin';
@@ -353,12 +355,25 @@ export default function App() {
       date: dateStr
     };
 
-    const saved = localStorage.getItem('leaderboardNEW_WAYS_TO_LEARN');
+    const saved = localStorage.getItem('leaderboardLEARNINGQUEST');
     let existing: QuestLeaderboardEntry[] = saved ? JSON.parse(saved) : [];
 
+    // Local Storage Fallback (Keep for offline/backup)
     if (existing.length < 999) {
       existing.push(entry);
-      localStorage.setItem('leaderboardNEW_WAYS_TO_LEARN', JSON.stringify(existing));
+      localStorage.setItem('leaderboardLEARNINGQUEST', JSON.stringify(existing));
+    }
+
+    // FIREBASE SYNC
+    try {
+      // Check current count (approximation/optimization: check local or valid read)
+      // For now, we will try to add to collection 'leaderboard'
+      const leaderboardRef = collection(db, 'leaderboard');
+      // Ideally we check size first, but for now strict 999 might be expensive to read-count every time.
+      // We will just add it. The Leaderboard View enforces the display limit.
+      addDoc(leaderboardRef, entry);
+    } catch (e) {
+      console.error("Error adding to Firestore: ", e);
     }
   };
 
