@@ -28,7 +28,7 @@ export const LearningQuestIntro: React.FC<LearningQuestIntroProps> = ({ onStart,
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.9 }}
-                className="bg-white rounded-2xl md:rounded-3xl shadow-2xl w-full max-w-md overflow-hidden relative z-10 border border-white/20 mx-4 md:mx-0"
+                className="bg-white rounded-2xl md:rounded-3xl shadow-2xl w-full max-w-md overflow-hidden relative z-10 border border-white/20 mx-4 md:mx-0 max-h-[90vh] flex flex-col"
             >
                 <button
                     onClick={onClose}
@@ -37,7 +37,7 @@ export const LearningQuestIntro: React.FC<LearningQuestIntroProps> = ({ onStart,
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                 </button>
 
-                <div className="p-6 md:p-8 flex flex-col items-center text-center">
+                <div className="p-6 md:p-8 flex flex-col items-center text-center overflow-y-auto">
                     <h2 className="text-xs md:text-sm font-bold text-indigo-600 mb-2 uppercase tracking-wide">
                         NEW WAYS TO LEARN
                     </h2>
