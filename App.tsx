@@ -518,14 +518,14 @@ export default function App() {
     const isAnswered = !!activeSession.answers[currentQuestion.id];
 
     return (
-      <div className="h-[calc(100vh-100px)] flex flex-col md:flex-row gap-6 relative">
+      <div className="h-[calc(100vh-100px)] flex flex-row gap-2 md:gap-6 relative">
         <AnswerFeedback type={lastFeedbackType} />
         {/* Reading Pane */}
         <div className="flex-1 bg-white rounded-2xl shadow-lg border border-slate-200 overflow-hidden flex flex-col relative group">
           <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 z-10" />
-          <div className="p-4 bg-white/80 backdrop-blur-md border-b border-slate-100 flex justify-between items-center sticky top-0 z-10">
+          <div className="p-2 md:p-4 bg-white/80 backdrop-blur-md border-b border-slate-100 flex justify-between items-center sticky top-0 z-10">
             <div className="flex items-center gap-2">
-              <h3 className="font-bold text-slate-800 truncate flex items-center gap-2">
+              <h3 className="font-bold text-slate-800 truncate flex items-center gap-2 text-sm md:text-base">
                 <BookOpen size={18} className="text-indigo-600" />
                 {currentPassage.title}
               </h3>
@@ -533,22 +533,22 @@ export default function App() {
             <div className="flex items-center gap-2">
               <button
                 onClick={toggleHighlighter}
-                className={`p-2 rounded-lg transition-all flex items-center gap-2 text-sm font-bold ${isHighlighterActive
+                className={`p-1.5 md:p-2 rounded-lg transition-all flex items-center gap-2 text-xs md:text-sm font-bold ${isHighlighterActive
                   ? 'bg-yellow-100 text-yellow-700 ring-2 ring-yellow-400 ring-offset-1'
                   : 'bg-slate-100 text-slate-500 hover:bg-slate-200'
                   }`}
                 title="Toggle Highlighter"
               >
-                <Highlighter size={16} />
+                <Highlighter size={14} />
                 <span className="hidden sm:inline">Highlight</span>
               </button>
-              <span className="text-xs font-bold font-mono bg-indigo-50 text-indigo-600 px-3 py-1.5 rounded-full border border-indigo-100 uppercase tracking-wide">
+              <span className="text-[10px] md:text-xs font-bold font-mono bg-indigo-50 text-indigo-600 px-2 py-1 md:px-3 md:py-1.5 rounded-full border border-indigo-100 uppercase tracking-wide hidden sm:inline-block">
                 Reading Passage
               </span>
             </div>
           </div>
           <div
-            className="p-8 overflow-y-auto custom-scrollbar flex-1 prose prose-slate max-w-none prose-lg prose-headings:text-indigo-900 prose-p:text-slate-800 prose-p:leading-loose font-medium"
+            className="p-3 md:p-8 overflow-y-auto custom-scrollbar flex-1 prose prose-slate max-w-none prose-sm md:prose-lg prose-headings:text-indigo-900 prose-p:text-slate-800 prose-p:leading-loose font-medium"
             style={{
               backgroundImage: `
                 linear-gradient(to bottom, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0.6)),
@@ -561,7 +561,7 @@ export default function App() {
             {currentPassage.content.split('\n').map((paragraph, idx) => (
               <p
                 key={idx}
-                className={`mb-6 text-slate-800 leading-loose text-lg drop-shadow-sm ${isHighlighterActive ? 'cursor-text selection:bg-red-200 selection:text-red-900' : ''}`}
+                className={`mb-4 md:mb-6 text-slate-800 leading-relaxed md:leading-loose text-sm md:text-lg drop-shadow-sm ${isHighlighterActive ? 'cursor-text selection:bg-red-200 selection:text-red-900' : ''}`}
                 onMouseUp={() => handleTextSelection(idx)}
               >
                 {renderHighlightedText(paragraph.replace(/^# /, '').trim(), activeSession.passageId, idx)}
@@ -571,17 +571,17 @@ export default function App() {
         </div>
 
         {/* Question Pane */}
-        <div className="flex-1 flex flex-col gap-4">
-          <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 flex-1 flex flex-col">
-            <div className="flex justify-between items-center mb-6">
-              <span className="text-sm font-semibold text-slate-400">
+        <div className="flex-1 flex flex-col gap-2 md:gap-4 min-w-0">
+          <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-3 md:p-6 flex-1 flex flex-col overflow-y-auto">
+            <div className="flex justify-between items-center mb-3 md:mb-6">
+              <span className="text-xs md:text-sm font-semibold text-slate-400">
                 Question {currentQuestionIndex + 1} of {currentPassage.questions.length}
               </span>
               <div className="flex gap-1">
                 {currentPassage.questions.map((_, idx) => (
                   <div
                     key={idx}
-                    className={`h-2 w-2 rounded-full ${idx === currentQuestionIndex ? 'bg-indigo-600' :
+                    className={`h-1.5 w-1.5 md:h-2 md:w-2 rounded-full ${idx === currentQuestionIndex ? 'bg-indigo-600' :
                       idx < currentQuestionIndex ? 'bg-indigo-200' : 'bg-slate-200'
                       }`}
                   />
@@ -589,14 +589,14 @@ export default function App() {
               </div>
             </div>
 
-            <h3 className="text-xl font-bold text-slate-800 mb-6">{currentQuestion.text}</h3>
+            <h3 className="text-base md:text-xl font-bold text-slate-800 mb-3 md:mb-6">{currentQuestion.text}</h3>
 
-            <div className="space-y-3 flex-1">
+            <div className="space-y-2 md:space-y-3 flex-1 overflow-y-auto custom-scrollbar pr-1">
               {currentQuestion.options.map(option => {
                 const isSelected = activeSession.answers[currentQuestion.id] === option.id;
                 const isCorrect = option.id === currentQuestion.correctAnswerId;
 
-                let btnClass = "w-full p-4 rounded-xl border-2 text-left transition-all duration-200 flex justify-between items-center ";
+                let btnClass = "w-full p-3 md:p-4 rounded-xl border-2 text-left transition-all duration-200 flex justify-between items-center text-sm md:text-base ";
 
                 if (showFeedback) {
                   if (isCorrect) btnClass += "bg-emerald-50 border-emerald-500 text-emerald-700 ";
@@ -613,25 +613,25 @@ export default function App() {
                     disabled={isAnswered}
                     className={btnClass}
                   >
-                    <span className="font-medium">{option.text}</span>
-                    {showFeedback && isCorrect && <CheckCircle size={20} className="text-emerald-500" />}
-                    {showFeedback && isSelected && !isCorrect && <XCircle size={20} className="text-red-500" />}
+                    <span className="font-medium pr-2">{option.text}</span>
+                    {showFeedback && isCorrect && <CheckCircle size={16} className="text-emerald-500 shrink-0" />}
+                    {showFeedback && isSelected && !isCorrect && <XCircle size={16} className="text-red-500 shrink-0" />}
                   </button>
                 );
               })}
             </div>
 
             {showFeedback && (
-              <div className="mt-6 animate-in slide-in-from-bottom-2">
+              <div className="mt-4 md:mt-6 animate-in slide-in-from-bottom-2">
                 {showExplanation && (
-                  <div className="bg-indigo-50 p-4 rounded-lg text-sm text-indigo-800 mb-4 border border-indigo-100">
-                    <p className="font-bold flex items-center gap-2 mb-1"><Brain size={16} /> Explanation:</p>
+                  <div className="bg-indigo-50 p-3 md:p-4 rounded-lg text-xs md:text-sm text-indigo-800 mb-3 md:mb-4 border border-indigo-100 max-h-32 overflow-y-auto custom-scrollbar">
+                    <p className="font-bold flex items-center gap-2 mb-1"><Brain size={14} /> Explanation:</p>
                     {currentQuestion.explanation}
                   </div>
                 )}
                 <button
                   onClick={nextQuestion}
-                  className="w-full bg-indigo-600 text-white py-3 rounded-xl font-bold hover:bg-indigo-700 transition-colors shadow-md"
+                  className="w-full bg-indigo-600 text-white py-2 md:py-3 rounded-xl font-bold hover:bg-indigo-700 transition-colors shadow-md text-sm md:text-base"
                 >
                   {currentQuestionIndex === currentPassage.questions.length - 1 ? "Finish Lesson" : "Next Question"}
                 </button>
@@ -640,18 +640,19 @@ export default function App() {
           </div>
 
           {/* AI Tutor Toggle */}
+          {/* AI Tutor Toggle */}
           <button
             onClick={() => setChatOpen(true)}
-            className="bg-indigo-600 text-white p-4 rounded-xl shadow-lg flex items-center justify-between hover:bg-indigo-700 transition-colors"
+            className="bg-indigo-600 text-white p-3 md:p-4 rounded-xl shadow-lg flex items-center justify-between hover:bg-indigo-700 transition-colors"
           >
-            <div className="flex items-center gap-3">
-              <div className="bg-white/20 p-2 rounded-lg"><MessageCircle size={20} /></div>
+            <div className="flex items-center gap-2 md:gap-3">
+              <div className="bg-white/20 p-1.5 md:p-2 rounded-lg"><MessageCircle size={16} className="md:w-5 md:h-5" /></div>
               <div className="text-left">
-                <div className="font-bold text-sm">Need help?</div>
-                <div className="text-xs text-indigo-200">Ask the AI Tutor about this text</div>
+                <div className="font-bold text-xs md:text-sm">Need help?</div>
+                <div className="text-[10px] md:text-xs text-indigo-200 hidden sm:block">Ask the AI Tutor about this text</div>
               </div>
             </div>
-            <ChevronRight size={20} />
+            <ChevronRight size={16} className="md:w-5 md:h-5" />
           </button>
         </div>
       </div>
