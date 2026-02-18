@@ -168,6 +168,7 @@ export const LearningQuestMap: React.FC<LearningQuestMapProps> = ({ onGameOver, 
                                     key={idx}
                                     className={`mb-3 md:mb-4 text-slate-600 leading-relaxed text-sm md:text-lg ${isHighlighterActive ? 'cursor-text selection:bg-yellow-200' : ''}`}
                                     onMouseUp={() => addHighlight(QUEST_PASSAGE_ID, idx, paragraph)}
+                                    onTouchEnd={() => addHighlight(QUEST_PASSAGE_ID, idx, paragraph)}
                                 >
                                     {renderHighlightedText(paragraph, QUEST_PASSAGE_ID, idx)}
                                 </p>

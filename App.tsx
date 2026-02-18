@@ -563,6 +563,7 @@ export default function App() {
                 key={idx}
                 className={`mb-4 md:mb-6 text-slate-800 leading-relaxed md:leading-loose text-sm md:text-lg drop-shadow-sm ${isHighlighterActive ? 'cursor-text selection:bg-red-200 selection:text-red-900' : ''}`}
                 onMouseUp={() => handleTextSelection(idx)}
+                onTouchEnd={() => handleTextSelection(idx)}
               >
                 {renderHighlightedText(paragraph.replace(/^# /, '').trim(), activeSession.passageId, idx)}
               </p>
