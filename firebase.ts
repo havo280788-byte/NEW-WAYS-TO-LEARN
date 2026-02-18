@@ -2,12 +2,12 @@ import { initializeApp } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore';
 
 const firebaseConfig = {
-    apiKey: "AIzaSyBRvcMvef9xx78Z0flL4wW1mvwodO1JrwA",
-    authDomain: "learningquest-50743.firebaseapp.com",
-    projectId: "learningquest-50743",
-    storageBucket: "learningquest-50743.firebasestorage.app",
-    messagingSenderId: "256079977788",
-    appId: "1:256079977788:web:5e146bc4804d179d895239"
+    apiKey: "AIzaSyAUmcuxm_Z6pk3TZ3QIWW1J-wGWJDv2T7Y",
+    authDomain: "game10-22e63.firebaseapp.com",
+    projectId: "game10-22e63",
+    storageBucket: "game10-22e63.firebasestorage.app",
+    messagingSenderId: "546602582151",
+    appId: "1:546602582151:web:08c031d16303fea86bf822"
 };
 
 const app = initializeApp(firebaseConfig);
