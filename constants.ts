@@ -235,3 +235,7 @@ export const LEARNING_QUEST_POOL = [
     correctAnswerId: "C"
   }
 ];
+
+// Compatibility for remote files that might not have been deleted
+export const OCEAN_PASSAGE = '';
+export const OCEAN_QUESTION_POOL: any[] = [];

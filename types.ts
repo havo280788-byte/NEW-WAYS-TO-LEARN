@@ -80,3 +80,6 @@ export interface QuestLeaderboardEntry {
   score: number; // Max 80
   date: string; // YYYY-MM-DD HH:MM
 }
+
+// Compatibility for remote files that might not have been deleted
+export type OceanLeaderboardEntry = QuestLeaderboardEntry;
