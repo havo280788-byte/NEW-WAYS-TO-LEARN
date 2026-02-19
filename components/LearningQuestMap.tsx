@@ -40,6 +40,17 @@ const STAGES = [
     { id: 8, name: "Innovation Lab", icon: <Globe size={20} /> },
 ];
 
+const STAGE_MESSAGES = [
+    "🌟 Great start!",
+    "👍 Keep going!",
+    "💡 Smart move!",
+    "🚀 You’re halfway there!",
+    "🧠 Brilliant thinking!",
+    "🌐 Strong understanding!",
+    "🎯 Almost there!",
+    "🏆 Outstanding performance!"
+];
+
 export const LearningQuestMap: React.FC<LearningQuestMapProps> = ({ onGameOver, onWin }) => {
     const [currentStageIndex, setCurrentStageIndex] = useState(0);
     const [shuffledQuestions, setShuffledQuestions] = useState<typeof LEARNING_QUEST_POOL>([]);
@@ -90,13 +101,17 @@ export const LearningQuestMap: React.FC<LearningQuestMapProps> = ({ onGameOver, 
         return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
     };
 
-    const handleAnswer = (optionId: string) => {
-        if (selectedOption || feedback) return; // Prevent double clicks
+    const handleOptionSelect = (optionId: string) => {
+        if (feedback) return; // Prevent changing answer after feedback is shown
+        setSelectedOption(optionId);
+    };
+
+    const handleCheckAnswer = () => {
+        if (!selectedOption || feedback) return;
 
         const currentQ = shuffledQuestions[currentStageIndex];
-        setSelectedOption(optionId);
 
-        if (optionId === currentQ.correctAnswerId) {
+        if (selectedOption === currentQ.correctAnswerId) {
             playCorrect();
             setScore(prev => prev + 10);
             setFeedback('correct');
@@ -263,8 +278,8 @@ export const LearningQuestMap: React.FC<LearningQuestMapProps> = ({ onGameOver, 
                                     </h2>
                                     <p className="text-indigo-100 mb-6 text-sm md:text-lg font-medium">
                                         {feedback === 'correct'
-                                            ? "Great job! Ready for the next stage?"
-                                            : `Answer: ${currentQuestion.options.find(o => o.id === currentQuestion.correctAnswerId)?.text}`
+                                            ? STAGE_MESSAGES[currentStageIndex] || "Great job!"
+                                            : "✔ Incorrect. Please review the passage."
                                         }
                                     </p>
                                     <button
@@ -312,8 +327,8 @@ export const LearningQuestMap: React.FC<LearningQuestMapProps> = ({ onGameOver, 
                                             return (
                                                 <button
                                                     key={opt.id}
-                                                    disabled={selectedOption !== null}
-                                                    onClick={() => handleAnswer(opt.id)}
+                                                    disabled={feedback !== null}
+                                                    onClick={() => handleOptionSelect(opt.id)}
                                                     className={`p-3 md:p-5 rounded-xl border-2 text-left font-medium transition-all duration-200 flex sm:flex-col md:flex-row items-center justify-start gap-3 group shadow-lg hover:scale-[1.02]
                                                         ${isSelected
                                                             ? activeClass
@@ -333,6 +348,18 @@ export const LearningQuestMap: React.FC<LearningQuestMapProps> = ({ onGameOver, 
                                             )
                                         })}
                                     </div>
+                                    
+                                    {/* CHECK ANSWER BUTTON */}
+                                    {selectedOption && !feedback && (
+                                        <div className="mt-6 flex justify-center">
+                                            <button
+                                                onClick={handleCheckAnswer}
+                                                className="font-bold py-3 px-8 rounded-xl shadow-xl transition-all transform hover:scale-105 active:scale-95 text-base md:text-lg bg-[#F59E0B] text-white hover:bg-[#D97706] border-2 border-[#FBBF24]"
+                                            >
+                                                Check Answer
+                                            </button>
+                                        </div>
+                                    )}
                                 </div>
                             )}
                         </div>
@@ -342,3 +369,4 @@ export const LearningQuestMap: React.FC<LearningQuestMapProps> = ({ onGameOver, 
         </div>
     );
 };
+
