@@ -112,11 +112,11 @@ export const LearningQuestMap: React.FC<LearningQuestMapProps> = ({ onGameOver, 
         const currentQ = shuffledQuestions[currentStageIndex];
 
         if (selectedOption === currentQ.correctAnswerId) {
-            playCorrect();
+            // playCorrect();
             setScore(prev => prev + 10);
             setFeedback('correct');
         } else {
-            playIncorrect();
+            // playIncorrect();
             setFeedback('incorrect');
         }
     };
@@ -348,7 +348,7 @@ export const LearningQuestMap: React.FC<LearningQuestMapProps> = ({ onGameOver, 
                                             )
                                         })}
                                     </div>
-                                    
+
                                     {/* CHECK ANSWER BUTTON */}
                                     {selectedOption && !feedback && (
                                         <div className="mt-6 flex justify-center">
