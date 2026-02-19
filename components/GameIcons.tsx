@@ -16,7 +16,13 @@ import {
     Zap,
     Trophy,
     Map,
-    Highlighter
+    Highlighter,
+    Smartphone,
+    Lightbulb,
+    Monitor,
+    Bot,
+    Headphones,
+    Globe
 } from 'lucide-react';
 
 export {
@@ -36,5 +42,11 @@ export {
     Zap,
     Trophy,
     Map,
-    Highlighter
+    Highlighter,
+    Smartphone,
+    Lightbulb,
+    Monitor,
+    Bot,
+    Headphones,
+    Globe
 };

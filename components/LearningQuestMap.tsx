@@ -2,7 +2,18 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { LEARNING_QUEST_POOL, LEARNING_QUEST_PASSAGE } from '../constants';
 import { useHighlighter } from '../hooks/useHighlighter';
-import { Highlighter } from './GameIcons';
+import {
+    Highlighter,
+    BookOpen,
+    Smartphone,
+    Lightbulb,
+    Monitor,
+    Bot,
+    Headphones,
+    Brain,
+    Globe,
+    Clock
+} from './GameIcons';
 import useSound from 'use-sound';
 
 // Using constants directly to avoid import issues or ensuring they match exactly
@@ -19,14 +30,14 @@ interface LearningQuestMapProps {
 }
 
 const STAGES = [
-    { id: 1, name: "Digital Spark", icon: "💻" },
-    { id: 2, name: "Smart Apps", icon: "📱" },
-    { id: 3, name: "Virtual Class", icon: "🏫" },
-    { id: 4, name: "Cloud Library", icon: "☁️" },
-    { id: 5, name: "Blended Learning", icon: "🔄" },
-    { id: 6, name: "AI Assistant", icon: "🤖" },
-    { id: 7, name: "Global Classroom", icon: "🌐" },
-    { id: 8, name: "Innovation Lab", icon: "🔬" },
+    { id: 1, name: "Digital Spark", icon: <BookOpen size={20} /> },
+    { id: 2, name: "Smart Apps", icon: <Smartphone size={20} /> },
+    { id: 3, name: "Virtual Class", icon: <Lightbulb size={20} /> },
+    { id: 4, name: "Cloud Library", icon: <Monitor size={20} /> },
+    { id: 5, name: "Blended Learning", icon: <Bot size={20} /> },
+    { id: 6, name: "AI Assistant", icon: <Headphones size={20} /> },
+    { id: 7, name: "Global Classroom", icon: <Brain size={20} /> },
+    { id: 8, name: "Innovation Lab", icon: <Globe size={20} /> },
 ];
 
 export const LearningQuestMap: React.FC<LearningQuestMapProps> = ({ onGameOver, onWin }) => {
@@ -35,6 +46,7 @@ export const LearningQuestMap: React.FC<LearningQuestMapProps> = ({ onGameOver, 
     const [feedback, setFeedback] = useState<'correct' | 'incorrect' | null>(null);
     const [selectedOption, setSelectedOption] = useState<string | null>(null);
     const [score, setScore] = useState(0);
+    const [timeLeft, setTimeLeft] = useState(420); // 7 minutes = 420 seconds
 
     const {
         isHighlighterActive,
@@ -57,6 +69,26 @@ export const LearningQuestMap: React.FC<LearningQuestMapProps> = ({ onGameOver, 
         const questions = [...LEARNING_QUEST_POOL];
         setShuffledQuestions(questions);
     }, []);
+
+    // Timer Logic
+    useEffect(() => {
+        if (timeLeft <= 0) {
+            onGameOver();
+            return;
+        }
+
+        const timer = setInterval(() => {
+            setTimeLeft(prev => prev - 1);
+        }, 1000);
+
+        return () => clearInterval(timer);
+    }, [timeLeft, onGameOver]);
+
+    const formatTime = (seconds: number) => {
+        const mins = Math.floor(seconds / 60);
+        const secs = seconds % 60;
+        return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    };
 
     const handleAnswer = (optionId: string) => {
         if (selectedOption || feedback) return; // Prevent double clicks
@@ -94,41 +126,71 @@ export const LearningQuestMap: React.FC<LearningQuestMapProps> = ({ onGameOver, 
     return (
         <div className="flex flex-col h-[100dvh] bg-slate-50 overflow-hidden font-sans text-slate-800">
             {/* Header / Stats */}
-            <div className="bg-white p-3 shadow-sm flex flex-col md:flex-row justify-between items-center z-30 sticky top-0 border-b border-indigo-100 shrink-0 gap-2 md:gap-0">
-                <div className="flex justify-between w-full md:w-auto items-center">
-                    <div className="font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-pink-600 text-lg md:text-xl tracking-wide shrink-0">
-                        QUEST
+            <div className="bg-gradient-to-r from-[#1E3A8A] via-[#4F46E5] to-[#6366F1] shadow-md z-30 sticky top-0 shrink-0 text-white">
+
+                {/* Top Row: Title & Timer */}
+                <div className="p-4 pb-2 flex flex-col md:grid md:grid-cols-3 items-center gap-4 border-b border-white/10">
+
+                    {/* Empty Left Col (Desktop) for centering balance */}
+                    <div className="hidden md:block"></div>
+
+                    {/* Title Section (Centered) */}
+                    <div className="text-center w-full">
+                        <h1 className="text-xl md:text-2xl font-bold tracking-tight drop-shadow-md">English 10 – New Ways to Learn</h1>
+                        <p className="text-indigo-200 text-sm font-medium uppercase tracking-wider">Smart Learning Challenge</p>
                     </div>
-                    <div className="md:hidden text-xs font-bold bg-indigo-50 text-indigo-600 px-3 py-1 rounded-full border border-indigo-100">
-                        {currentStageIndex + 1}/8
+
+                    {/* Timer (Right on Desktop, Centered/Below on Mobile) */}
+                    <div className="flex justify-center md:justify-end w-full">
+                        <div className="flex items-center gap-3 bg-black/20 backdrop-blur-sm px-4 py-2 rounded-xl border border-white/10 shadow-inner w-fit">
+                            <Clock size={20} className="text-[#22D3EE] animate-pulse" />
+                            <div className="flex flex-col items-end leading-none">
+                                <span className="text-[10px] text-indigo-200 font-bold uppercase tracking-wider">Time Left</span>
+                                <span className="text-xl font-mono font-bold text-white tabular-nums">{formatTime(timeLeft)}</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <div className="flex-1 w-full md:w-auto mx-0 md:mx-4 overflow-x-auto no-scrollbar mask-gradient-x">
-                    {/* Horizontal Stages Bar */}
-                    <div className="flex items-center gap-2 md:gap-3 w-max px-2 py-1">
+                {/* Bottom Row: Progress Bar (Below Header) */}
+                <div className="w-full overflow-x-auto no-scrollbar mask-gradient-x flex justify-center py-3 bg-black/5">
+                    <div className="flex items-center gap-4 md:gap-8 px-4 min-w-max">
                         {STAGES.map((stage, index) => {
                             const isActive = index === currentStageIndex;
-                            const isPast = index < currentStageIndex;
+                            const isCompleted = index < currentStageIndex;
 
                             return (
-                                <div key={stage.id} className={`flex flex-col items-center gap-1 transition-all duration-300 ${isActive ? 'opacity-100 scale-110' : 'opacity-50 scale-95'}`}>
-                                    <div className={`w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center text-sm md:text-lg border-2 shadow-sm shrink-0
-                                        ${isActive ? 'bg-indigo-600 border-indigo-200 text-white' :
-                                            isPast ? 'bg-emerald-500 border-emerald-300 text-white' : 'bg-white border-slate-200 text-slate-300'}
-                                     `}>
-                                        {stage.icon}
+                                <div key={stage.id} className="flex flex-col items-center gap-2 group relative">
+                                    <div
+                                        className={`w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center transition-all duration-300 shadow-sm border-2
+                                            ${isActive
+                                                ? 'bg-[#22D3EE] border-[#22D3EE] text-[#1E3A8A] scale-110 shadow-[0_0_15px_rgba(34,211,238,0.5)]'
+                                                : isCompleted
+                                                    ? 'bg-[#A78BFA] border-[#A78BFA] text-white opacity-90'
+                                                    : 'bg-slate-200/10 border-white/10 text-slate-400'
+                                            }
+                                        `}
+                                    >
+                                        {React.cloneElement(stage.icon, {
+                                            size: isActive ? 24 : 20,
+                                            strokeWidth: isActive ? 2.5 : 2
+                                        })}
                                     </div>
-                                    {isActive && <div className="h-1 w-1 bg-indigo-600 rounded-full hidden md:block"></div>}
+                                    {/* Stage Name (Visible on Desktop or Active) */}
+                                    <div className={`hidden md:block text-[10px] uppercase font-bold tracking-wide transition-colors duration-300
+                                        ${isActive ? 'text-[#22D3EE]' : isCompleted ? 'text-indigo-200' : 'text-slate-400'}
+                                    `}>
+                                        {stage.name}
+                                    </div>
+                                    {/* Mobile Active Stage Name Overlay */}
+                                    <div className={`md:hidden absolute -bottom-4 whitespace-nowrap text-[9px] font-bold tracking-wide transition-opacity duration-300
+                                        ${isActive ? 'opacity-100 text-[#22D3EE]' : 'opacity-0'}
+                                    `}>
+                                        {stage.name}
+                                    </div>
                                 </div>
                             );
                         })}
-                    </div>
-                </div>
-
-                <div className="hidden md:flex items-center gap-2 shrink-0">
-                    <div className="text-sm font-bold bg-indigo-50 text-indigo-600 px-3 py-1 rounded-full border border-indigo-100">
-                        Stage {currentStageIndex + 1} / 8
                     </div>
                 </div>
             </div>
@@ -216,7 +278,7 @@ export const LearningQuestMap: React.FC<LearningQuestMapProps> = ({ onGameOver, 
                                 <div className="flex flex-col h-full justify-start md:justify-center">
                                     <div className="mb-4 md:mb-8 text-white">
                                         <span className="bg-white/20 px-3 py-1 rounded-full text-[10px] md:text-xs font-bold uppercase tracking-widest mb-3 inline-block border border-white/10">
-                                            Question {currentStageIndex + 1}
+                                            Stage {currentStageIndex + 1}
                                         </span>
                                         <h3 className="text-lg md:text-2xl font-bold leading-snug drop-shadow-sm">
                                             {currentQuestion.question}
