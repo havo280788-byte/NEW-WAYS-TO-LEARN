@@ -173,6 +173,17 @@ export const LEARNING_QUEST_POOL = [
     correctAnswerId: "F"
   },
   {
+    id: 'lq7',
+    question: "How do educational apps present information?",
+    options: [
+      { id: 'A', text: "In long academic texts" },
+      { id: 'B', text: "Through live video lessons" },
+      { id: 'C', text: "In bite-sized chunks" },
+      { id: 'D', text: "In printed worksheets" }
+    ],
+    correctAnswerId: "C"
+  },
+  {
     id: 'lq3',
     question: "Some apps already use augmented reality.",
     options: [
@@ -191,17 +202,6 @@ export const LEARNING_QUEST_POOL = [
       { id: 'DS', text: "Doesn't say" }
     ],
     correctAnswerId: "F"
-  },
-  {
-    id: 'lq7',
-    question: "What is one benefit of educational apps mentioned in the text?",
-    options: [
-      { id: 'A', text: "In long and complicated paragraphs" },
-      { id: 'B', text: "In short and easy-to-understand chunks" },
-      { id: 'C', text: "Only through videos" },
-      { id: 'D', text: "Without any explanation" }
-    ],
-    correctAnswerId: "B"
   },
   {
     id: 'lq5',
