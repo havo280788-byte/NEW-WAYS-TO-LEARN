@@ -392,16 +392,20 @@ export default function App() {
         <div className="bg-gradient-to-r from-indigo-800 to-blue-900 rounded-2xl md:rounded-3xl p-6 md:p-10 text-white shadow-xl relative overflow-hidden flex flex-col items-center text-center">
           <div className="relative z-10 w-full max-w-2xl mx-auto">
             <div className="inline-block bg-blue-600/30 backdrop-blur-md px-4 py-1.5 rounded-lg border border-blue-400/30 text-blue-100 font-bold text-xs md:text-sm uppercase tracking-widest mb-4 md:mb-6">
-              🟦 NEW WAYS TO LEARN
+              🟦 SMART LEARNING CHALLENGE
             </div>
 
-            <h1 className="text-3xl md:text-5xl font-extrabold mb-4 md:mb-6 tracking-tight leading-tight">
-              8-Question Challenge
+            <h1 className="text-3xl md:text-5xl font-extrabold mb-2 md:mb-4 tracking-tight leading-tight">
+              English 10 – New Ways to Learn
             </h1>
+
+            <p className="text-indigo-200 text-lg md:text-xl font-medium mb-6 md:mb-8">
+              Explore the future of education
+            </p>
 
             <div className="flex justify-center items-center gap-2 text-indigo-200 text-sm md:text-lg font-medium mb-8 md:mb-10">
               <Clock size={20} />
-              <span>Time limit: 6 minutes</span>
+              <span>Time limit: 7 minutes</span>
             </div>
 
             <button
@@ -760,21 +764,7 @@ export default function App() {
         />
 
         <div className="max-w-5xl mx-auto px-4 py-8">
-          {/* Tab Navigation */}
-          <div className="flex gap-2 mb-8 bg-white p-1 rounded-xl shadow-sm border border-slate-100 w-fit">
-            {['home', 'learn', 'stats'].map((tab) => (
-              <button
-                key={tab}
-                onClick={() => setActiveTab(tab as any)}
-                className={`px-6 py-2 rounded-lg font-bold text-sm transition-all ${activeTab === tab
-                  ? 'bg-indigo-600 text-white shadow-md'
-                  : 'text-slate-500 hover:bg-slate-50'
-                  }`}
-              >
-                {tab.charAt(0).toUpperCase() + tab.slice(1)}
-              </button>
-            ))}
-          </div>
+          {/* Tab Navigation Removed as per request */}
 
           {activeTab === 'home' && renderHome()}
           {activeTab === 'learn' && renderGame()}
