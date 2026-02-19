@@ -193,6 +193,17 @@ export const LEARNING_QUEST_POOL = [
     correctAnswerId: "F"
   },
   {
+    id: 'lq7',
+    question: "What is one benefit of educational apps mentioned in the text?",
+    options: [
+      { id: 'A', text: "In long and complicated paragraphs" },
+      { id: 'B', text: "In short and easy-to-understand chunks" },
+      { id: 'C', text: "Only through videos" },
+      { id: 'D', text: "Without any explanation" }
+    ],
+    correctAnswerId: "B"
+  },
+  {
     id: 'lq5',
     question: "Everyone believes apps will make us lazy.",
     options: [
@@ -201,28 +212,6 @@ export const LEARNING_QUEST_POOL = [
       { id: 'DS', text: "Doesn't say" }
     ],
     correctAnswerId: "F"
-  },
-  {
-    id: 'lq6',
-    question: "The author’s purpose is to …",
-    options: [
-      { id: 'A', text: "give us information about how apps are developing." },
-      { id: 'B', text: "explain predictions about future technology in education." },
-      { id: 'C', text: "inform us how to use the apps more efficiently." },
-      { id: 'D', text: "give us tips on choosing apps." }
-    ],
-    correctAnswerId: "A"
-  },
-  {
-    id: 'lq7',
-    question: "How do educational apps usually present information?",
-    options: [
-      { id: 'A', text: "In long and complicated paragraphs" },
-      { id: 'B', text: "In short and easy-to-understand chunks" },
-      { id: 'C', text: "Only through videos" },
-      { id: 'D', text: "Without any explanation" }
-    ],
-    correctAnswerId: "B"
   },
   {
     id: 'lq8',
@@ -234,6 +223,17 @@ export const LEARNING_QUEST_POOL = [
       { id: 'D', text: "They will make everyone lazy." }
     ],
     correctAnswerId: "C"
+  },
+  {
+    id: 'lq6',
+    question: "The author’s purpose is to …",
+    options: [
+      { id: 'A', text: "give us information about how apps are developing." },
+      { id: 'B', text: "explain predictions about future technology in education." },
+      { id: 'C', text: "inform us how to use the apps more efficiently." },
+      { id: 'D', text: "give us tips on choosing apps." }
+    ],
+    correctAnswerId: "A"
   }
 ];
 
