@@ -389,56 +389,34 @@ export default function App() {
 
     return (
       <div className="space-y-4 md:space-y-8 animate-in slide-in-from-bottom-4 duration-500 pb-20 md:pb-0">
-        <div className="bg-gradient-to-r from-indigo-800 to-blue-900 rounded-2xl md:rounded-3xl p-5 md:p-8 text-white shadow-xl relative overflow-hidden">
-          <div className="relative z-10">
-            <div className="flex justify-between items-start mb-4 md:mb-6">
-              <div>
-                <h1 className="text-2xl md:text-3xl font-extrabold mb-1 md:mb-2 tracking-tight">Welcome back! 👋</h1>
-                <p className="text-indigo-200 text-sm md:text-base">Ready to unlock your potential?</p>
-              </div>
-              <div className="bg-white/10 backdrop-blur-md p-2 md:p-3 rounded-xl md:rounded-2xl border border-white/20 flex flex-col items-center min-w-[70px] md:min-w-[90px]">
-                <Award className="text-yellow-300 mb-1 w-6 h-6 md:w-8 md:h-8" />
-                <span className="font-bold text-lg md:text-2xl">{currentLevel}</span>
-                <span className="text-[8px] md:text-[10px] uppercase tracking-wider font-bold text-indigo-200">Level</span>
-              </div>
+        <div className="bg-gradient-to-r from-indigo-800 to-blue-900 rounded-2xl md:rounded-3xl p-6 md:p-10 text-white shadow-xl relative overflow-hidden flex flex-col items-center text-center">
+          <div className="relative z-10 w-full max-w-2xl mx-auto">
+            <div className="inline-block bg-blue-600/30 backdrop-blur-md px-4 py-1.5 rounded-lg border border-blue-400/30 text-blue-100 font-bold text-xs md:text-sm uppercase tracking-widest mb-4 md:mb-6">
+              🟦 NEW WAYS TO LEARN
             </div>
 
-            <div className="bg-black/20 p-4 md:p-5 rounded-xl md:rounded-2xl backdrop-blur-sm border border-white/5 mb-6 md:mb-8">
-              <div className="flex justify-between text-xs md:text-sm font-bold mb-2 md:mb-3 text-indigo-100">
-                <span>Level {currentLevel}</span>
-                <span>{Math.round(progressToNext)}% to Level {currentLevel + 1}</span>
-              </div>
-              <div className="h-3 md:h-4 bg-indigo-900/50 rounded-full overflow-hidden border border-white/10">
-                <motion.div
-                  initial={{ width: 0 }}
-                  animate={{ width: `${progressToNext}%` }}
-                  transition={{ duration: 1, ease: "easeOut" }}
-                  className="h-full bg-gradient-to-r from-cyan-400 to-blue-500 rounded-full shadow-[0_0_15px_rgba(56,189,248,0.5)]"
-                />
-              </div>
-              <div className="mt-2 md:mt-3 text-[10px] md:text-xs font-medium text-indigo-300 text-right">
-                {Math.round(pointsForNextLevel - progress.totalPoints)} XP needed
-              </div>
+            <h1 className="text-3xl md:text-5xl font-extrabold mb-4 md:mb-6 tracking-tight leading-tight">
+              8-Question Challenge
+            </h1>
+
+            <div className="flex justify-center items-center gap-2 text-indigo-200 text-sm md:text-lg font-medium mb-8 md:mb-10">
+              <Clock size={20} />
+              <span>Time limit: 6 minutes</span>
             </div>
 
-            <div className="flex flex-col md:flex-row gap-3 md:gap-4">
-              <button
-                onClick={() => setActiveTab('learn')}
-                className="bg-white text-indigo-900 px-6 py-3 md:px-8 md:py-4 rounded-xl font-bold shadow-lg hover:bg-indigo-50 hover:shadow-xl transition-all active:scale-95 flex items-center justify-center gap-2 text-sm md:text-base"
-              >
-                Start Learning <ChevronRight size={18} className="md:w-5 md:h-5" />
-              </button>
-              <button
-                onClick={() => setShowQuestIntro(true)}
-                className="bg-gradient-to-r from-pink-500 to-rose-600 text-white px-6 py-3 md:px-8 md:py-4 rounded-xl font-bold shadow-lg hover:shadow-xl hover:scale-105 transition-all flex items-center justify-center gap-2 border border-white/20 text-sm md:text-base"
-              >
-                <Trophy size={18} className="md:w-5 md:h-5" />
-                <span>QUEST</span>
-              </button>
-            </div>
+            <button
+              onClick={() => setShowQuestIntro(true)}
+              className="bg-white text-indigo-900 px-8 py-4 md:px-12 md:py-5 rounded-2xl font-black text-lg md:text-xl shadow-[0_0_20px_rgba(255,255,255,0.3)] hover:shadow-[0_0_30px_rgba(255,255,255,0.5)] hover:bg-slate-50 hover:scale-105 transition-all active:scale-95 flex items-center justify-center gap-3 mx-auto uppercase tracking-wide"
+            >
+              🎮 START CHALLENGE
+            </button>
           </div>
-          <div className="absolute right-0 top-0 h-full w-1/3 opacity-5 pointer-events-none">
-            <Brain size={300} />
+
+          <div className="absolute right-[-50px] top-[-50px] opacity-10 pointer-events-none rotate-12">
+            <Brain size={400} />
+          </div>
+          <div className="absolute left-[-50px] bottom-[-50px] opacity-5 pointer-events-none -rotate-12">
+            <Trophy size={300} />
           </div>
         </div>
 

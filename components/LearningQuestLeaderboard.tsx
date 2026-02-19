@@ -13,6 +13,8 @@ export const LearningQuestLeaderboard: React.FC<LearningQuestLeaderboardProps> =
     const [entries, setEntries] = useState<QuestLeaderboardEntry[]>([]);
     const [isFull, setIsFull] = useState(false);
     const [statsData, setStatsData] = useState<any[]>([]);
+    const [connectionStatus, setConnectionStatus] = useState<'connecting' | 'connected' | 'error' | 'offline'>('connecting');
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
     const handleReset = async () => {
         if (confirm('Are you sure you want to PERMANENTLY delete all leaderboard data for EVERYONE? This cannot be undone.')) {
@@ -45,6 +47,8 @@ export const LearningQuestLeaderboard: React.FC<LearningQuestLeaderboardProps> =
         const q = query(collection(db, 'leaderboard'), orderBy('score', 'desc'), orderBy('time', 'asc'), limit(1000));
 
         const unsubscribe = onSnapshot(q, (querySnapshot) => {
+            setConnectionStatus('connected');
+            setErrorMessage(null);
             const fetchedEntries: QuestLeaderboardEntry[] = [];
             querySnapshot.forEach((doc) => {
                 fetchedEntries.push({ id: doc.id, ...doc.data() } as QuestLeaderboardEntry);
@@ -66,6 +70,8 @@ export const LearningQuestLeaderboard: React.FC<LearningQuestLeaderboardProps> =
 
         }, (error) => {
             console.error("Error getting leaderboard: ", error);
+            setConnectionStatus('error');
+            setErrorMessage(error.message);
             // Fallback to local storage on error
             const saved = localStorage.getItem('leaderboardLEARNINGQUEST');
             if (saved) {
@@ -191,6 +197,13 @@ export const LearningQuestLeaderboard: React.FC<LearningQuestLeaderboardProps> =
                         >
                             Reset Data
                         </button>
+                        <div className="mt-2 flex items-center gap-2">
+                            <span className={`w-2 h-2 rounded-full ${connectionStatus === 'connected' ? 'bg-emerald-400' : connectionStatus === 'connecting' ? 'bg-yellow-400 animate-pulse' : 'bg-red-500'}`}></span>
+                            <span className="text-[10px] font-mono opacity-80 uppercase tracking-widest">
+                                {connectionStatus === 'connected' ? 'LIVE SYNC' : connectionStatus === 'error' ? 'OFFLINE (LOCAL)' : 'CONNECTING...'}
+                            </span>
+                        </div>
+                        {errorMessage && <div className="text-[9px] text-red-200 mt-1 max-w-[200px] leading-tight bg-red-900/50 p-1 rounded">{errorMessage}</div>}
                     </div>
 
                     <div className="flex-1 overflow-y-auto p-0">

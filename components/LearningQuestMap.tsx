@@ -180,26 +180,26 @@ export const LearningQuestMap: React.FC<LearningQuestMapProps> = ({ onGameOver, 
                 </div>
 
                 {/* Right Panel: Question (Bottom on Mobile, Right on Desktop) */}
-                <div className="flex-1 md:w-1/2 bg-slate-50 relative z-20 overflow-hidden flex flex-col">
+                <div className="flex-1 md:w-1/2 relative z-20 overflow-hidden flex flex-col bg-gradient-to-br from-[#1E3A8A] to-[#E0E7FF]">
                     <div className="flex-1 overflow-y-auto p-4 md:p-8 custom-scrollbar">
                         <div className="max-w-2xl mx-auto flex flex-col justify-center min-h-full">
                             {feedback ? (
                                 <motion.div
                                     initial={{ opacity: 0, scale: 0.95 }}
                                     animate={{ opacity: 1, scale: 1 }}
-                                    className="text-center py-4"
+                                    className="text-center py-6 bg-white/10 backdrop-blur-md rounded-2xl shadow-xl border border-white/20 p-6"
                                 >
-                                    <div className={`inline-block p-4 rounded-full mb-4 shadow-sm ${feedback === 'correct' ? 'bg-emerald-100 text-emerald-600' : 'bg-red-100 text-red-600'}`}>
+                                    <div className={`inline-block p-4 rounded-full mb-4 shadow-lg ${feedback === 'correct' ? 'bg-[#22C55E] text-white' : 'bg-[#EF4444] text-white'}`}>
                                         {feedback === 'correct' ? (
                                             <svg xmlns="http://www.w3.org/2000/svg" className="w-8 h-8 md:w-12 md:h-12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
                                         ) : (
                                             <svg xmlns="http://www.w3.org/2000/svg" className="w-8 h-8 md:w-12 md:h-12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                                         )}
                                     </div>
-                                    <h2 className={`text-xl md:text-3xl font-black mb-2 ${feedback === 'correct' ? 'text-emerald-800' : 'text-red-800'}`}>
+                                    <h2 className="text-xl md:text-3xl font-black mb-2 text-white drop-shadow-md">
                                         {feedback === 'correct' ? 'Correct!' : 'Incorrect'}
                                     </h2>
-                                    <p className="text-slate-500 mb-6 text-sm md:text-lg">
+                                    <p className="text-indigo-100 mb-6 text-sm md:text-lg font-medium">
                                         {feedback === 'correct'
                                             ? "Great job! Ready for the next stage?"
                                             : `Answer: ${currentQuestion.options.find(o => o.id === currentQuestion.correctAnswerId)?.text}`
@@ -207,43 +207,69 @@ export const LearningQuestMap: React.FC<LearningQuestMapProps> = ({ onGameOver, 
                                     </p>
                                     <button
                                         onClick={handleContinue}
-                                        className={`font-bold py-3 md:py-4 px-8 md:px-12 rounded-xl shadow-lg transition-all transform hover:scale-105 active:scale-95 text-base md:text-lg w-full md:w-auto text-white
-                                            ${feedback === 'correct'
-                                                ? 'bg-emerald-600 hover:bg-emerald-700'
-                                                : 'bg-slate-600 hover:bg-slate-700'
-                                            }`}
+                                        className="font-bold py-3 md:py-4 px-8 md:px-12 rounded-xl shadow-xl transition-all transform hover:scale-105 active:scale-95 text-base md:text-lg w-full md:w-auto text-[#1E3A8A] bg-white hover:bg-slate-100"
                                     >
                                         Next Stage
                                     </button>
                                 </motion.div>
                             ) : (
                                 <div className="flex flex-col h-full justify-start md:justify-center">
-                                    <div className="mb-4 md:mb-8">
-                                        <span className="text-indigo-500 font-bold text-[10px] md:text-xs uppercase tracking-widest mb-2 block">Question {currentStageIndex + 1}</span>
-                                        <h3 className="text-lg md:text-2xl font-bold text-slate-800 leading-snug">
+                                    <div className="mb-4 md:mb-8 text-white">
+                                        <span className="bg-white/20 px-3 py-1 rounded-full text-[10px] md:text-xs font-bold uppercase tracking-widest mb-3 inline-block border border-white/10">
+                                            Question {currentStageIndex + 1}
+                                        </span>
+                                        <h3 className="text-lg md:text-2xl font-bold leading-snug drop-shadow-sm">
                                             {currentQuestion.question}
                                         </h3>
                                     </div>
 
                                     <div className={`grid gap-3 ${isThreeOption ? 'grid-cols-1 sm:grid-cols-3' : 'grid-cols-1 sm:grid-cols-2'} pb-8 md:pb-0`}>
-                                        {currentQuestion.options.map((opt) => (
-                                            <button
-                                                key={opt.id}
-                                                disabled={selectedOption !== null}
-                                                onClick={() => handleAnswer(opt.id)}
-                                                className={`p-3 md:p-5 rounded-xl border-2 text-left font-medium transition-all duration-200 flex sm:flex-col md:flex-row items-center justify-start gap-3 group
-                                                    ${selectedOption === opt.id
-                                                        ? 'bg-indigo-50 border-indigo-500 text-indigo-700'
-                                                        : 'bg-white border-slate-200 text-slate-600 hover:border-indigo-400 hover:bg-indigo-50 hover:text-indigo-700 shadow-sm hover:shadow-md'
-                                                    }
-                                                `}
-                                            >
-                                                <span className={`w-8 h-8 rounded-lg flex items-center justify-center font-bold text-sm shrink-0 transition-colors ${selectedOption === opt.id ? 'bg-indigo-200 text-indigo-700' : 'bg-slate-100 text-slate-500 group-hover:bg-indigo-200 group-hover:text-indigo-700'}`}>
-                                                    {opt.id}
-                                                </span>
-                                                <span className={`text-sm md:text-lg ${isThreeOption ? 'font-bold' : ''}`}>{opt.text}</span>
-                                            </button>
-                                        ))}
+                                        {currentQuestion.options.map((opt) => {
+                                            const isSelected = selectedOption === opt.id;
+
+                                            // Determine Button Color based on ID
+                                            let bgClass = "bg-white/90";
+                                            let textClass = "text-slate-700";
+                                            let borderClass = "border-white/50";
+                                            let activeClass = "";
+
+                                            if (opt.id === 'T' || opt.id === 'True') {
+                                                // True: #22C55E
+                                                activeClass = "bg-[#22C55E] text-white border-[#22C55E]";
+                                            } else if (opt.id === 'F' || opt.id === 'False') {
+                                                // False: #EF4444
+                                                activeClass = "bg-[#EF4444] text-white border-[#EF4444]";
+                                            } else if (opt.id === 'DS' || opt.id === 'Doesn\'t say') {
+                                                // Doesn't Say: #6366F1
+                                                activeClass = "bg-[#6366F1] text-white border-[#6366F1]";
+                                            } else {
+                                                // Default for A, B, C, D
+                                                activeClass = "bg-[#4F46E5] text-white border-[#4F46E5]";
+                                            }
+
+                                            return (
+                                                <button
+                                                    key={opt.id}
+                                                    disabled={selectedOption !== null}
+                                                    onClick={() => handleAnswer(opt.id)}
+                                                    className={`p-3 md:p-5 rounded-xl border-2 text-left font-medium transition-all duration-200 flex sm:flex-col md:flex-row items-center justify-start gap-3 group shadow-lg hover:scale-[1.02]
+                                                        ${isSelected
+                                                            ? activeClass
+                                                            : `${bgClass} ${textClass} ${borderClass} hover:bg-white`
+                                                        }
+                                                    `}
+                                                >
+                                                    <span className={`w-8 h-8 rounded-lg flex items-center justify-center font-bold text-sm shrink-0 transition-colors 
+                                                        ${isSelected
+                                                            ? 'bg-white/20 text-white'
+                                                            : 'bg-slate-100 text-slate-500 group-hover:bg-indigo-100 group-hover:text-indigo-600'
+                                                        }`}>
+                                                        {opt.id}
+                                                    </span>
+                                                    <span className={`text-sm md:text-lg ${isThreeOption ? 'font-bold' : ''}`}>{opt.text}</span>
+                                                </button>
+                                            )
+                                        })}
                                     </div>
                                 </div>
                             )}

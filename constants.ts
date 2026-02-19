@@ -210,7 +210,7 @@ export const LEARNING_QUEST_POOL = [
       { id: 'C', text: "inform us how to use the apps more efficiently." },
       { id: 'D', text: "give us tips on choosing apps." }
     ],
-    correctAnswerId: "B"
+    correctAnswerId: "A"
   },
   {
     id: 'lq7',
@@ -225,12 +225,12 @@ export const LEARNING_QUEST_POOL = [
   },
   {
     id: 'lq8',
-    question: "What does the writer suggest about the future of apps?",
+    question: "According to the text, what is certain about the apps of the future?",
     options: [
-      { id: 'A', text: "Apps will disappear soon." },
-      { id: 'B', text: "Apps will become more limited." },
-      { id: 'C', text: "Apps will become even more advanced and useful." },
-      { id: 'D', text: "Apps will stop using technology." }
+      { id: 'A', text: "They will completely replace teachers." },
+      { id: 'B', text: "They will disappear in the future." },
+      { id: 'C', text: "They will change our lives." },
+      { id: 'D', text: "They will make everyone lazy." }
     ],
     correctAnswerId: "C"
   }
