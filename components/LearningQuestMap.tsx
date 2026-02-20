@@ -304,25 +304,12 @@ export const LearningQuestMap: React.FC<LearningQuestMapProps> = ({ onGameOver, 
                                         {currentQuestion.options.map((opt) => {
                                             const isSelected = selectedOption === opt.id;
 
-                                            // Determine Button Color based on ID
+                                            // Uniform Button Color for all options (Purple/Indigo)
                                             let bgClass = "bg-white/90";
                                             let textClass = "text-slate-700";
                                             let borderClass = "border-white/50";
-                                            let activeClass = "";
-
-                                            if (opt.id === 'T' || opt.id === 'True') {
-                                                // True: #22C55E
-                                                activeClass = "bg-[#22C55E] text-white border-[#22C55E]";
-                                            } else if (opt.id === 'F' || opt.id === 'False') {
-                                                // False: #EF4444
-                                                activeClass = "bg-[#EF4444] text-white border-[#EF4444]";
-                                            } else if (opt.id === 'DS' || opt.id === 'Doesn\'t say') {
-                                                // Doesn't Say: #6366F1
-                                                activeClass = "bg-[#6366F1] text-white border-[#6366F1]";
-                                            } else {
-                                                // Default for A, B, C, D
-                                                activeClass = "bg-[#4F46E5] text-white border-[#4F46E5]";
-                                            }
+                                            // All selected options use #4F46E5 (Indigo) to look like Purple
+                                            let activeClass = "bg-[#4F46E5] text-white border-[#4F46E5]";
 
                                             return (
                                                 <button
