@@ -12,7 +12,10 @@ import {
     Headphones,
     Brain,
     Globe,
-    Clock
+    Clock,
+    ChevronLeft,
+    ChevronRight,
+    RotateCcw
 } from './GameIcons';
 import useSound from 'use-sound';
 
@@ -26,7 +29,8 @@ const SOUNDS = {
 
 interface LearningQuestMapProps {
     onGameOver: () => void;
-    onWin: (score: number) => void;
+    onWin: (score: number, answers: Record<string, string>) => void;
+    isTeacherMode?: boolean;
 }
 
 const STAGES = [
@@ -51,18 +55,20 @@ const STAGE_MESSAGES = [
     "🏆 Outstanding performance!"
 ];
 
-export const LearningQuestMap: React.FC<LearningQuestMapProps> = ({ onGameOver, onWin }) => {
+export const LearningQuestMap: React.FC<LearningQuestMapProps> = ({ onGameOver, onWin, isTeacherMode }) => {
     const [currentStageIndex, setCurrentStageIndex] = useState(0);
     const [shuffledQuestions, setShuffledQuestions] = useState<typeof LEARNING_QUEST_POOL>([]);
     const [feedback, setFeedback] = useState<'correct' | 'incorrect' | null>(null);
     const [selectedOption, setSelectedOption] = useState<string | null>(null);
     const [score, setScore] = useState(0);
     const [timeLeft, setTimeLeft] = useState(420); // 7 minutes = 420 seconds
+    const [answers, setAnswers] = useState<Record<string, string>>({});
 
     const {
         isHighlighterActive,
         toggleHighlighter,
         addHighlight,
+        clearHighlights,
         renderHighlightedText
     } = useHighlighter();
 
@@ -101,22 +107,49 @@ export const LearningQuestMap: React.FC<LearningQuestMapProps> = ({ onGameOver, 
         return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
     };
 
+    useEffect(() => {
+        if (isTeacherMode) {
+            setSelectedOption(answers[shuffledQuestions[currentStageIndex]?.id] || null);
+        }
+    }, [currentStageIndex, isTeacherMode, shuffledQuestions, answers]);
+
+    const handleReveal = () => {
+        if (isTeacherMode) {
+            const currentQ = shuffledQuestions[currentStageIndex];
+            setSelectedOption(currentQ.correctAnswerId);
+            setFeedback('correct');
+            setAnswers(prev => ({ ...prev, [currentQ.id]: currentQ.correctAnswerId }));
+        }
+    };
+
     const handleOptionSelect = (optionId: string) => {
-        if (feedback) return; // Prevent changing answer after feedback is shown
+        if (!isTeacherMode && feedback) return;
+
         setSelectedOption(optionId);
+
+        if (isTeacherMode) {
+            const currentQ = shuffledQuestions[currentStageIndex];
+            const isCorrect = optionId === currentQ.correctAnswerId;
+            setFeedback(isCorrect ? 'correct' : 'incorrect');
+            setAnswers(prev => ({ ...prev, [currentQ.id]: optionId }));
+
+            // Auto update score for teacher mode simulation if needed
+            if (isCorrect && answers[currentQ.id] !== optionId) {
+                setScore(prev => prev + 10);
+            }
+        }
     };
 
     const handleCheckAnswer = () => {
         if (!selectedOption || feedback) return;
 
         const currentQ = shuffledQuestions[currentStageIndex];
+        setAnswers(prev => ({ ...prev, [currentQ.id]: selectedOption }));
 
         if (selectedOption === currentQ.correctAnswerId) {
-            // playCorrect();
             setScore(prev => prev + 10);
             setFeedback('correct');
         } else {
-            // playIncorrect();
             setFeedback('incorrect');
         }
     };
@@ -125,10 +158,24 @@ export const LearningQuestMap: React.FC<LearningQuestMapProps> = ({ onGameOver, 
         setFeedback(null);
         setSelectedOption(null);
         if (currentStageIndex < 7) {
-            playLevelUp();
+            if (!isTeacherMode) playLevelUp();
             setCurrentStageIndex(prev => prev + 1);
         } else {
-            onWin(score);
+            onWin(score, answers);
+        }
+    };
+
+    const handlePrev = () => {
+        if (currentStageIndex > 0) {
+            setFeedback(null);
+            setCurrentStageIndex(prev => prev - 1);
+        }
+    };
+
+    const handleNext = () => {
+        if (currentStageIndex < 7) {
+            setFeedback(null);
+            setCurrentStageIndex(prev => prev + 1);
         }
     };
 
@@ -211,28 +258,40 @@ export const LearningQuestMap: React.FC<LearningQuestMapProps> = ({ onGameOver, 
             </div>
 
             {/* Main Split View */}
-            <div className="flex-1 flex flex-col md:flex-row overflow-hidden min-h-0 bg-slate-100">
+            <div className="flex-1 flex flex-col md:flex-row overflow-hidden min-h-0 bg-slate-100 gap-4 md:gap-5 p-4 md:p-6 lg:p-8">
 
                 {/* Left Panel: Reading Passage */}
-                <div className="flex-1 md:w-1/2 bg-white border-b-4 border-slate-200 md:border-b-0 md:border-r overflow-hidden flex flex-col shadow-sm relative z-10">
-                    <div className="flex items-center justify-between p-2 md:p-3 bg-white border-b border-slate-100 shrink-0">
+                <div className="flex-1 bg-white rounded-2xl md:rounded-3xl border border-slate-200 overflow-hidden flex flex-col shadow-sm relative z-10 max-h-[60vh] md:max-h-full">
+                    <div className="flex items-center justify-between p-3 md:p-4 bg-white border-b border-slate-100 shrink-0">
                         <div className="flex items-center gap-2 text-indigo-600 font-bold uppercase tracking-widest text-[10px] md:text-xs">
-                            <span className="bg-indigo-50 px-2 py-1 rounded-md border border-indigo-100">📖 Reading Passage</span>
+                            <span className="bg-indigo-50 px-2 py-1 rounded-md border border-indigo-100 italic">📖 Reading</span>
                         </div>
-                        <button
-                            onClick={toggleHighlighter}
-                            className={`p-1.5 rounded-lg transition-all flex items-center gap-2 text-[10px] md:text-xs font-bold ${isHighlighterActive
-                                ? 'bg-yellow-100 text-yellow-700 ring-2 ring-yellow-400 ring-offset-1'
-                                : 'bg-slate-100 text-slate-500 hover:bg-slate-200'
-                                }`}
-                            title="Toggle Highlighter"
-                        >
-                            <Highlighter size={14} className="md:w-3.5 md:h-3.5" />
-                            <span className="hidden sm:inline">Highlight</span>
-                        </button>
+                        <div className="flex items-center gap-2">
+                            {isTeacherMode && (
+                                <button
+                                    onClick={() => clearHighlights(QUEST_PASSAGE_ID)}
+                                    className="p-1.5 rounded-lg transition-all flex items-center gap-2 text-[10px] md:text-xs font-bold bg-red-50 text-red-600 hover:bg-red-100 border border-red-100"
+                                    title="Clear All Highlights"
+                                >
+                                    <RotateCcw size={14} className="md:w-3.5 md:h-3.5" />
+                                    <span className="hidden sm:inline">Clear</span>
+                                </button>
+                            )}
+                            <button
+                                onClick={toggleHighlighter}
+                                className={`p-1.5 rounded-lg transition-all flex items-center gap-2 text-[10px] md:text-xs font-bold ${isHighlighterActive
+                                    ? 'bg-yellow-100 text-yellow-700 ring-2 ring-yellow-400 ring-offset-1'
+                                    : 'bg-slate-100 text-slate-500 hover:bg-slate-200'
+                                    }`}
+                                title="Toggle Highlighter"
+                            >
+                                <Highlighter size={14} className="md:w-3.5 md:h-3.5" />
+                                <span className="hidden sm:inline">Highlight</span>
+                            </button>
+                        </div>
                     </div>
 
-                    <div className="flex-1 overflow-y-auto p-4 md:p-8 prose prose-indigo prose-sm md:prose-lg max-w-none custom-scrollbar">
+                    <div className="flex-1 overflow-y-auto p-5 md:p-8 prose prose-indigo max-w-none custom-scrollbar-thin">
                         {LEARNING_QUEST_PASSAGE.split('\n').map((paragraph, idx) => {
                             if (paragraph.startsWith('# ')) {
                                 return <h1 key={idx} className="text-xl md:text-3xl font-extrabold text-slate-900 mb-4 md:mb-6 leading-tight mt-0">{paragraph.replace('# ', '')}</h1>
@@ -243,7 +302,7 @@ export const LearningQuestMap: React.FC<LearningQuestMapProps> = ({ onGameOver, 
                             return (
                                 <p
                                     key={idx}
-                                    className={`mb-3 md:mb-4 text-slate-600 leading-relaxed text-sm md:text-lg ${isHighlighterActive ? 'cursor-text selection:bg-yellow-200' : ''}`}
+                                    className={`mb-3 md:mb-4 text-slate-600 font-medium text-sm md:text-lg leading-[1.6] md:leading-loose ${isHighlighterActive ? 'cursor-text selection:bg-yellow-200' : ''}`}
                                     onMouseUp={() => addHighlight(QUEST_PASSAGE_ID, idx, paragraph)}
                                     onTouchEnd={() => addHighlight(QUEST_PASSAGE_ID, idx, paragraph)}
                                 >
@@ -251,16 +310,26 @@ export const LearningQuestMap: React.FC<LearningQuestMapProps> = ({ onGameOver, 
                                 </p>
                             )
                         })}
-                        {/* Spacing at bottom to ensure last text is readable */}
-                        <div className="h-8"></div>
+                        <div className="h-4 md:h-8"></div>
                     </div>
                 </div>
 
                 {/* Right Panel: Question (Bottom on Mobile, Right on Desktop) */}
-                <div className="flex-1 md:w-1/2 relative z-20 overflow-hidden flex flex-col bg-gradient-to-br from-[#1E3A8A] to-[#E0E7FF]">
-                    <div className="flex-1 overflow-y-auto p-4 md:p-8 custom-scrollbar">
-                        <div className="max-w-2xl mx-auto flex flex-col justify-center min-h-full">
-                            {feedback ? (
+                <div className="flex-1 relative z-20 overflow-hidden flex flex-col bg-white rounded-2xl md:rounded-3xl border border-slate-200 shadow-lg">
+                    {isTeacherMode && (
+                        <div className="p-3 bg-indigo-600 text-white flex justify-between items-center shrink-0">
+                            <button onClick={handlePrev} disabled={currentStageIndex === 0} className="p-2 hover:bg-white/20 rounded-lg disabled:opacity-30">
+                                <ChevronLeft size={20} />
+                            </button>
+                            <span className="font-bold text-xs uppercase tracking-widest">Question Control</span>
+                            <button onClick={handleNext} disabled={currentStageIndex === 7} className="p-2 hover:bg-white/20 rounded-lg disabled:opacity-30">
+                                <ChevronRight size={20} />
+                            </button>
+                        </div>
+                    )}
+                    <div className="flex-1 overflow-y-auto p-5 md:p-8 custom-scrollbar-thin flex flex-col">
+                        <div className="max-w-2xl mx-auto flex flex-col h-full">
+                            {feedback && !isTeacherMode ? (
                                 <motion.div
                                     initial={{ opacity: 0, scale: 0.95 }}
                                     animate={{ opacity: 1, scale: 1 }}
@@ -291,61 +360,105 @@ export const LearningQuestMap: React.FC<LearningQuestMapProps> = ({ onGameOver, 
                                 </motion.div>
                             ) : (
                                 <div className="flex flex-col h-full justify-start md:justify-center">
-                                    <div className="mb-4 md:mb-8 text-white">
-                                        <span className="bg-white/20 px-3 py-1 rounded-full text-[10px] md:text-xs font-bold uppercase tracking-widest mb-3 inline-block border border-white/10">
-                                            Stage {currentStageIndex + 1}
-                                        </span>
-                                        <h3 className="text-lg md:text-2xl font-bold leading-snug drop-shadow-sm">
+                                    <div className="mb-4 md:mb-8 text-slate-800">
+                                        <div className="flex items-center gap-2 mb-3">
+                                            <span className="bg-indigo-100 text-indigo-700 px-3 py-1 rounded-full text-[10px] md:text-xs font-bold uppercase tracking-widest border border-indigo-200">
+                                                Stage {currentStageIndex + 1}
+                                            </span>
+                                            {isTeacherMode && (
+                                                <div className="flex items-center gap-2">
+                                                    <span className="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full text-[10px] md:text-xs font-bold uppercase tracking-widest border border-emerald-200">
+                                                        TEACHER PREVIEW
+                                                    </span>
+                                                    <button
+                                                        onClick={handleReveal}
+                                                        className="bg-indigo-100 text-indigo-700 px-3 py-1 rounded-full text-[10px] md:text-xs font-bold uppercase tracking-widest border border-indigo-200 hover:bg-indigo-200 transition-colors"
+                                                    >
+                                                        Reveal Answer
+                                                    </button>
+                                                </div>
+                                            )}
+                                        </div>
+                                        <h3 className="text-base md:text-2xl font-bold leading-snug text-slate-900">
                                             {currentQuestion.question}
                                         </h3>
                                     </div>
 
-                                    <div className={`grid gap-3 ${isThreeOption ? 'grid-cols-1 sm:grid-cols-3' : 'grid-cols-1 sm:grid-cols-2'} pb-8 md:pb-0`}>
+                                    <div className={`grid gap-3 ${isThreeOption ? 'grid-cols-1 sm:grid-cols-1' : 'grid-cols-1 sm:grid-cols-1'} pb-8 md:pb-0`}>
                                         {currentQuestion.options.map((opt) => {
                                             const isSelected = selectedOption === opt.id;
+                                            const isCorrect = opt.id === currentQuestion.correctAnswerId;
 
-                                            // Uniform Button Color for all options (Purple/Indigo)
-                                            let bgClass = "bg-white/90";
+                                            let borderClass = "border-slate-200";
+                                            let bgClass = "bg-white hover:bg-slate-50";
                                             let textClass = "text-slate-700";
-                                            let borderClass = "border-white/50";
-                                            // All selected options use #4F46E5 (Indigo) to look like Purple
-                                            let activeClass = "bg-[#4F46E5] text-white border-[#4F46E5]";
+                                            let iconWrapperClass = "bg-slate-100 text-slate-500";
+
+                                            if (isSelected) {
+                                                if (isTeacherMode) {
+                                                    if (isCorrect) {
+                                                        bgClass = "bg-emerald-50";
+                                                        borderClass = "border-emerald-500 scale-[1.02]";
+                                                        textClass = "text-emerald-900";
+                                                        iconWrapperClass = "bg-emerald-500 text-white";
+                                                    } else {
+                                                        bgClass = "bg-red-50";
+                                                        borderClass = "border-red-500 scale-[1.02]";
+                                                        textClass = "text-red-900";
+                                                        iconWrapperClass = "bg-red-500 text-white";
+                                                    }
+                                                } else {
+                                                    bgClass = "bg-indigo-600";
+                                                    borderClass = "border-indigo-600 scale-[1.02]";
+                                                    textClass = "text-white";
+                                                    iconWrapperClass = "bg-white/20 text-white";
+                                                }
+                                            }
 
                                             return (
                                                 <button
                                                     key={opt.id}
-                                                    disabled={feedback !== null}
+                                                    disabled={!isTeacherMode && feedback !== null}
                                                     onClick={() => handleOptionSelect(opt.id)}
-                                                    className={`p-3 md:p-5 rounded-xl border-2 text-left font-medium transition-all duration-200 flex sm:flex-col md:flex-row items-center justify-start gap-3 group shadow-lg hover:scale-[1.02]
-                                                        ${isSelected
-                                                            ? activeClass
-                                                            : `${bgClass} ${textClass} ${borderClass} hover:bg-white`
-                                                        }
+                                                    className={`p-3 md:p-5 rounded-2xl border-2 text-left font-medium transition-all duration-200 flex items-center justify-start gap-4 group shadow-sm
+                                                        ${bgClass} ${borderClass} ${textClass}
                                                     `}
                                                 >
-                                                    <span className={`w-8 h-8 rounded-lg flex items-center justify-center font-bold text-sm shrink-0 transition-colors 
-                                                        ${isSelected
-                                                            ? 'bg-white/20 text-white'
-                                                            : 'bg-slate-100 text-slate-500 group-hover:bg-indigo-100 group-hover:text-indigo-600'
-                                                        }`}>
+                                                    <span className={`w-10 h-10 rounded-xl flex items-center justify-center font-bold text-sm shrink-0 transition-colors ${iconWrapperClass}`}>
                                                         {opt.id}
                                                     </span>
-                                                    <span className={`text-sm md:text-lg ${isThreeOption ? 'font-bold' : ''}`}>{opt.text}</span>
+                                                    <span className={`text-sm md:text-lg font-medium`}>{opt.text}</span>
+                                                    {isTeacherMode && isSelected && (
+                                                        <div className="ml-auto">
+                                                            {isCorrect ? <div className="bg-emerald-500 text-white p-1 rounded-full"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></div> : <div className="bg-red-500 text-white p-1 rounded-full"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></div>}
+                                                        </div>
+                                                    )}
                                                 </button>
                                             )
                                         })}
                                     </div>
 
-                                    {/* CHECK ANSWER BUTTON */}
-                                    {selectedOption && !feedback && (
-                                        <div className="mt-6 flex justify-center">
+                                    {/* NAVIGATION FOR TEACHER OR CONTINUE FOR STUDENT */}
+                                    {isTeacherMode ? (
+                                        <div className="mt-8 flex gap-4">
                                             <button
-                                                onClick={handleCheckAnswer}
-                                                className="font-bold py-3 px-8 rounded-xl shadow-xl transition-all transform hover:scale-105 active:scale-95 text-base md:text-lg bg-[#F59E0B] text-white hover:bg-[#D97706] border-2 border-[#FBBF24]"
+                                                onClick={handleContinue}
+                                                className="flex-1 font-bold py-4 rounded-2xl shadow-lg transition-all transform hover:scale-[1.02] active:scale-95 text-lg bg-indigo-600 text-white hover:bg-indigo-700 uppercase tracking-wide"
                                             >
-                                                Check Answer
+                                                {currentStageIndex === 7 ? "View Results" : "Submit & Continue"}
                                             </button>
                                         </div>
+                                    ) : (
+                                        selectedOption && !feedback && (
+                                            <div className="mt-8 flex justify-center">
+                                                <button
+                                                    onClick={handleCheckAnswer}
+                                                    className="font-bold py-4 px-12 rounded-2xl shadow-xl transition-all transform hover:scale-[1.05] active:scale-95 text-lg bg-[#F59E0B] text-white hover:bg-[#D97706] border-b-4 border-amber-700 uppercase tracking-widest"
+                                                >
+                                                    Check Answer
+                                                </button>
+                                            </div>
+                                        )
                                     )}
                                 </div>
                             )}
@@ -353,6 +466,14 @@ export const LearningQuestMap: React.FC<LearningQuestMapProps> = ({ onGameOver, 
                     </div>
                 </div>
             </div>
+
+            <style dangerouslySetInnerHTML={{
+                __html: `
+                .custom-scrollbar-thin::-webkit-scrollbar { width: 4px; }
+                .custom-scrollbar-thin::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 4px; }
+                .custom-scrollbar-thin::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+                .custom-scrollbar-thin::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+            `}} />
         </div>
     );
 };

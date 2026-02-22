@@ -22,7 +22,13 @@ import {
     Monitor,
     Bot,
     Headphones,
-    Globe
+    Globe,
+    ChevronLeft,
+    RotateCcw,
+    User,
+    X,
+    Info,
+    Lock
 } from 'lucide-react';
 
 export {
@@ -48,5 +54,11 @@ export {
     Monitor,
     Bot,
     Headphones,
-    Globe
+    Globe,
+    ChevronLeft,
+    RotateCcw,
+    User,
+    X,
+    Info,
+    Lock
 };
