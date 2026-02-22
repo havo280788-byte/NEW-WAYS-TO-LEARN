@@ -1,22 +1,16 @@
 import React, { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import confetti from 'canvas-confetti';
-import { Clock, Award, CheckCircle } from './GameIcons';
 
 interface LearningQuestWinProps {
     name: string;
     score: number;
     completionTime: number;
-    onWaiting: () => void;
+    onPlayAgain: () => void;
+    onLeaderboard: () => void;
 }
 
-export const LearningQuestWin: React.FC<LearningQuestWinProps> = ({ name, score, completionTime, onWaiting }) => {
-    const accuracyCount = Math.round(score / 10);
-    const accuracyPercent = Math.round((accuracyCount / 8) * 100);
-
-    const minutes = Math.floor(completionTime / 60);
-    const seconds = completionTime % 60;
-    const timeStr = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+export const LearningQuestWin: React.FC<LearningQuestWinProps> = ({ name, score, completionTime, onPlayAgain, onLeaderboard }) => {
 
     useEffect(() => {
         const duration = 3 * 1000;
@@ -41,63 +35,56 @@ export const LearningQuestWin: React.FC<LearningQuestWinProps> = ({ name, score,
     }, []);
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/80 backdrop-blur-xl">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-emerald-900/40 backdrop-blur-md">
             <motion.div
-                initial={{ opacity: 0, scale: 0.8, y: 20 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                className="bg-white rounded-[2.5rem] shadow-2xl w-full max-w-md overflow-hidden relative z-10 text-center p-8 md:p-10 border border-white/20"
+                initial={{ opacity: 0, scale: 0.5 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ type: "spring", bounce: 0.5 }}
+                className="bg-white rounded-2xl md:rounded-3xl shadow-2xl w-full max-w-md overflow-hidden relative z-10 text-center p-6 md:p-8 border-4 border-yellow-400 mx-4 md:mx-0"
             >
-                <div className="text-7xl mb-6 filter drop-shadow-xl animate-bounce">🏆</div>
+                <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-yellow-400 via-orange-500 to-yellow-400"></div>
 
-                <h2 className="text-3xl font-black text-slate-900 mb-2 tracking-tighter uppercase">
-                    CHALLENGE COMPLETED!
+                <div className="text-6xl md:text-7xl mb-4 md:mb-6 filter drop-shadow-lg">🏆</div>
+
+                <h2 className="text-2xl md:text-3xl font-black text-indigo-800 mb-2 uppercase tracking-wide">
+                    CONGRATULATIONS!
                 </h2>
 
-                <p className="text-slate-500 mb-8 font-medium">
-                    Great job, <span className="text-emerald-600 font-bold">{name}</span>!
+                <p className="text-slate-600 mb-4 md:mb-6 font-medium text-base md:text-lg">
+                    <span className="font-bold text-indigo-600">{name}</span> – YOU HAVE MASTERED NEW WAYS TO LEARN!
                 </p>
 
-                <div className="grid grid-cols-2 gap-4 mb-8">
-                    <div className="bg-emerald-50 rounded-2xl p-5 border border-emerald-100 flex flex-col items-center">
-                        <div className="bg-white p-2 rounded-lg text-emerald-600 mb-3 shadow-sm">
-                            <CheckCircle size={20} />
-                        </div>
-                        <p className="text-[10px] font-black text-emerald-600 uppercase tracking-widest mb-1">ACCURACY</p>
-                        <p className="text-2xl font-black text-slate-800">{accuracyPercent}%</p>
-                        <p className="text-[11px] font-bold text-slate-400">({accuracyCount}/8)</p>
+                <div className="bg-emerald-50 rounded-xl p-3 md:p-4 mb-4 md:mb-6 border border-emerald-100 grid grid-cols-2 gap-3 md:gap-4">
+                    <div>
+                        <p className="text-xs text-emerald-500 font-bold uppercase mb-1">SCORE</p>
+                        <p className="text-3xl md:text-4xl font-black text-emerald-700">{score} <span className="text-base md:text-lg font-medium text-emerald-400">/ 80</span></p>
                     </div>
-
-                    <div className="bg-amber-50 rounded-2xl p-5 border border-amber-100 flex flex-col items-center">
-                        <div className="bg-white p-2 rounded-lg text-amber-600 mb-3 shadow-sm">
-                            <Clock size={20} />
-                        </div>
-                        <p className="text-[10px] font-black text-amber-600 uppercase tracking-widest mb-1">TIME</p>
-                        <p className="text-2xl font-black text-slate-800">{timeStr}</p>
+                    <div>
+                        <p className="text-xs text-emerald-500 font-bold uppercase mb-1">TIME</p>
+                        <p className="text-3xl md:text-4xl font-black text-emerald-700">{completionTime} <span className="text-base md:text-lg font-medium">s</span></p>
                     </div>
                 </div>
 
-                {accuracyPercent === 100 && (
-                    <motion.div
-                        initial={{ opacity: 0, scale: 0.9 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        className="mb-8 bg-gradient-to-r from-purple-50 to-indigo-50 border border-purple-100 p-4 rounded-2xl flex items-center gap-3 text-left"
-                    >
-                        <div className="bg-white p-2 rounded-xl text-purple-600 shadow-sm">
-                            <Award size={24} />
-                        </div>
-                        <div>
-                            <p className="text-[10px] font-black text-purple-600 uppercase tracking-widest">BADGE EARNED</p>
-                            <p className="text-sm font-bold text-slate-800 tracking-tight">AI Reading Pro</p>
-                        </div>
-                    </motion.div>
-                )}
+                <div className="mb-6 md:mb-8">
+                    <div className="inline-block bg-yellow-100 text-yellow-800 px-3 py-1.5 md:px-4 md:py-2 rounded-full font-bold text-xs md:text-sm border border-yellow-200 shadow-sm">
+                        🎓 DIGITAL LEARNING CHAMPION
+                    </div>
+                </div>
 
-                <button
-                    onClick={onWaiting}
-                    className="w-full bg-slate-900 text-white font-black py-5 rounded-2xl shadow-xl hover:bg-slate-800 active:scale-95 transition-all uppercase tracking-widest text-sm"
-                >
-                    WAITING FOR TEACHER REVIEW…
-                </button>
+                <div className="space-y-3">
+                    <button
+                        onClick={onLeaderboard}
+                        className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 md:py-4 rounded-xl shadow-lg transition-transform hover:scale-[1.02] active:scale-95 uppercase tracking-wide text-sm md:text-base"
+                    >
+                        LEADERBOARD
+                    </button>
+                    <button
+                        onClick={onPlayAgain}
+                        className="w-full bg-white hover:bg-slate-50 text-slate-700 font-bold py-3 md:py-3 rounded-xl border-2 border-slate-200 transition-all uppercase text-sm md:text-base"
+                    >
+                        PLAY AGAIN
+                    </button>
+                </div>
             </motion.div>
         </div>
     );

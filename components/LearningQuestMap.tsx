@@ -199,62 +199,39 @@ export const LearningQuestMap: React.FC<LearningQuestMapProps> = ({
     const isThreeOption = currentQuestion.options.length === 3;
 
     return (
-        <div className="flex flex-col h-[100dvh] bg-slate-50 overflow-hidden font-sans text-slate-800">
+        <div className="flex flex-col h-[100dvh] bg-slate-50 overflow-hidden font-sans text-slate-800 antialiased">
             {/* Header / Stats */}
-            <div className={`bg-gradient-to-r ${isTeacherMode ? 'from-emerald-700 via-emerald-600 to-green-600' : 'from-emerald-600 via-green-600 to-emerald-700'} shadow-md z-30 sticky top-0 shrink-0 text-white`}>
+            <div className="bg-[#0F172A] shadow-md z-30 sticky top-0 shrink-0 text-white py-3">
 
-                {/* Top Row: Title, Teacher Label & Timer */}
-                <div className="p-4 pb-2 flex flex-col md:flex-row items-center justify-between gap-4 border-b border-white/10">
+                {/* Top Row: Title & Timer */}
+                <div className="p-4 pb-2 flex flex-col md:grid md:grid-cols-3 items-center gap-4 border-b border-white/10">
 
-                    {/* Title Section */}
-                    <div className="flex flex-col items-center md:items-start text-center md:text-left">
-                        <h1 className="text-xl md:text-2xl font-black tracking-tight drop-shadow-md">English 10: New Ways to Learn</h1>
-                        <div className="flex items-center gap-2">
-                            <p className="text-emerald-100 text-[10px] font-black uppercase tracking-widest opacity-80">Reading Challenge</p>
-                            {isTeacherMode && (
-                                <span className="text-[10px] bg-white/20 text-white px-2 py-0.5 rounded-full font-black animate-pulse border border-white/30">
-                                    🟢 Teacher Mode (Not counted)
-                                </span>
-                            )}
-                        </div>
+                    {/* Empty Left Col (Desktop) for centering balance */}
+                    <div className="hidden md:block"></div>
+
+                    {/* Title Section (Centered) */}
+                    <div className="text-center w-full">
+                        <h1 className="text-xl md:text-2xl font-bold tracking-tight drop-shadow-md">English 10 – New Ways to Learn</h1>
+                        <p className="text-emerald-100 text-sm font-medium uppercase tracking-wider">Smart Learning Challenge</p>
                     </div>
 
-                    {/* Teacher Controls (Exclusive) */}
-                    {isTeacherMode && (
-                        <div className="flex items-center gap-2 bg-black/10 p-1.5 rounded-xl border border-white/10">
-                            <button
-                                onClick={onStartReview}
-                                className="px-3 py-1.5 bg-white/10 hover:bg-white/20 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-1.5"
-                            >
-                                <Zap size={14} /> Start Review
-                            </button>
-                            <button
-                                onClick={onShowStats}
-                                className="px-3 py-1.5 bg-white/10 hover:bg-white/20 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-1.5"
-                            >
-                                <BarChart2 size={14} /> Statistics
-                            </button>
-                            <button
-                                onClick={onShowLeaderboard}
-                                className="px-3 py-1.5 bg-white/10 hover:bg-white/20 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-1.5"
-                            >
-                                <Trophy size={14} /> Rankings
-                            </button>
-                        </div>
-                    )}
-
-                    {/* Timer (Hidden in Teacher Mode) */}
-                    {!isTeacherMode && (
-                        <div className="flex justify-center md:justify-end">
-                            <div className="flex items-center gap-3 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-xl border border-white/20 shadow-inner w-fit">
+                    {/* Timer (Right on Desktop, Centered/Below on Mobile) */}
+                    <div className="flex justify-center md:justify-end w-full">
+                        {!isTeacherMode && (
+                            <div className="flex items-center gap-3 bg-black/20 backdrop-blur-sm px-4 py-2 rounded-xl border border-white/10 shadow-inner w-fit">
                                 <Clock size={20} className="text-amber-300 animate-pulse" />
                                 <div className="flex flex-col items-end leading-none">
-                                    <span className="text-[10px] text-emerald-100 font-black uppercase tracking-widest">Time Left</span>
-                                    <span className="text-xl font-mono font-black text-white tabular-nums">{formatTime(timeLeft)}</span>
+                                    <span className="text-[10px] text-emerald-100 font-bold uppercase tracking-wider">Time Left</span>
+                                    <span className="text-xl font-mono font-bold text-white tabular-nums">{formatTime(timeLeft)}</span>
                                 </div>
                             </div>
-                        </div>
-                    )}
+                        )}
+                        {isTeacherMode && (
+                            <div className="flex items-center gap-2 bg-emerald-500/30 px-4 py-2 rounded-xl border border-emerald-400/30">
+                                <span className="text-xs font-black uppercase tracking-widest text-emerald-50">🟢 Teacher Preview</span>
+                            </div>
+                        )}
+                    </div>
                 </div>
 
                 {/* Bottom Row: Progress Bar (Below Header) */}
@@ -269,27 +246,27 @@ export const LearningQuestMap: React.FC<LearningQuestMapProps> = ({
                                     <div
                                         className={`w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center transition-all duration-300 shadow-sm border-2
                                             ${isActive
-                                                ? 'bg-white border-white text-emerald-600 scale-110 shadow-[0_0_15px_rgba(255,255,255,0.5)]'
+                                                ? 'bg-[#22D3EE] border-[#22D3EE] text-[#1E3A8A] scale-110 shadow-[0_0_15px_rgba(34,211,238,0.5)]'
                                                 : isCompleted
-                                                    ? 'bg-emerald-500 border-emerald-400 text-white opacity-90'
-                                                    : 'bg-white/10 border-white/10 text-emerald-100 opacity-40'
+                                                    ? 'bg-[#A78BFA] border-[#A78BFA] text-white opacity-90'
+                                                    : 'bg-slate-200/10 border-white/10 text-slate-400'
                                             }
                                         `}
                                     >
                                         {React.cloneElement(stage.icon, {
                                             size: isActive ? 24 : 20,
-                                            strokeWidth: isActive ? 3 : 2
+                                            strokeWidth: isActive ? 2.5 : 2
                                         })}
                                     </div>
                                     {/* Stage Name (Visible on Desktop or Active) */}
-                                    <div className={`hidden md:block text-[10px] uppercase font-black tracking-widest transition-colors duration-300
-                                        ${isActive ? 'text-white' : isCompleted ? 'text-emerald-100' : 'text-emerald-200/40'}
+                                    <div className={`hidden md:block text-[10px] uppercase font-bold tracking-wider transition-colors duration-300
+                                        ${isActive ? 'text-[#22D3EE]' : isCompleted ? 'text-indigo-200' : 'text-slate-400'}
                                     `}>
                                         {stage.name}
                                     </div>
                                     {/* Mobile Active Stage Name Overlay */}
-                                    <div className={`md:hidden absolute -bottom-4 whitespace-nowrap text-[9px] font-black tracking-widest transition-opacity duration-300
-                                        ${isActive ? 'opacity-100 text-white' : 'opacity-0'}
+                                    <div className={`md:hidden absolute -bottom-4 whitespace-nowrap text-[10px] font-bold tracking-wider transition-opacity duration-300
+                                        ${isActive ? 'opacity-100 text-[#22D3EE]' : 'opacity-0'}
                                     `}>
                                         {stage.name}
                                     </div>
@@ -301,10 +278,10 @@ export const LearningQuestMap: React.FC<LearningQuestMapProps> = ({
             </div>
 
             {/* Main Split View */}
-            <div className="flex-1 flex flex-col md:flex-row overflow-hidden min-h-0 bg-slate-100 gap-4 md:gap-5 p-4 md:p-6 lg:p-8">
+            <div className="flex-1 flex flex-col md:flex-row overflow-hidden min-h-0 bg-slate-100 gap-4 md:gap-5 p-3 md:p-5">
 
                 {/* Left Panel: Reading Passage */}
-                <div className="flex-1 bg-white rounded-2xl md:rounded-3xl border border-slate-200 overflow-hidden flex flex-col shadow-sm relative z-10 max-h-[60vh] md:max-h-full">
+                <div className="flex-1 md:w-[40%] bg-white rounded-2xl md:rounded-3xl border border-slate-200 overflow-hidden flex flex-col shadow-sm relative z-10 max-h-[60vh] md:max-h-[50vh]">
                     <div className="flex items-center justify-between p-3 md:p-4 bg-white border-b border-slate-100 shrink-0">
                         <div className="flex items-center gap-2 text-emerald-600 font-bold uppercase tracking-widest text-[10px] md:text-xs">
                             <span className="bg-emerald-50 px-2 py-1 rounded-md border border-emerald-100 italic">📖 Reading</span>
@@ -334,7 +311,7 @@ export const LearningQuestMap: React.FC<LearningQuestMapProps> = ({
                         </div>
                     </div>
 
-                    <div className="flex-1 overflow-y-auto p-5 md:p-8 prose prose-emerald max-w-none custom-scrollbar-thin">
+                    <div className="flex-1 overflow-y-auto p-5 md:p-5 prose prose-emerald max-w-none custom-scrollbar-thin">
                         {LEARNING_QUEST_PASSAGE.split('\n').map((paragraph, idx) => {
                             if (paragraph.startsWith('# ')) {
                                 return <h1 key={idx} className="text-xl md:text-3xl font-extrabold text-slate-900 mb-4 md:mb-6 leading-tight mt-0">{paragraph.replace('# ', '')}</h1>
@@ -345,7 +322,7 @@ export const LearningQuestMap: React.FC<LearningQuestMapProps> = ({
                             return (
                                 <p
                                     key={idx}
-                                    className={`mb-3 md:mb-4 text-slate-600 font-medium text-sm md:text-lg leading-[1.6] md:leading-loose ${isHighlighterActive ? 'cursor-text selection:bg-yellow-200' : ''}`}
+                                    className={`mb-3 md:mb-4 text-[#334155] font-normal text-sm leading-[1.6] ${isHighlighterActive ? 'cursor-text selection:bg-yellow-200' : ''}`}
                                     onMouseUp={() => addHighlight(QUEST_PASSAGE_ID, idx, paragraph)}
                                     onTouchEnd={() => addHighlight(QUEST_PASSAGE_ID, idx, paragraph)}
                                 >
@@ -358,7 +335,7 @@ export const LearningQuestMap: React.FC<LearningQuestMapProps> = ({
                 </div>
 
                 {/* Right Panel: Question (Bottom on Mobile, Right on Desktop) */}
-                <div className="flex-1 relative z-20 overflow-hidden flex flex-col bg-white rounded-2xl md:rounded-3xl border border-slate-200 shadow-lg">
+                <div className="flex-1 md:w-[60%] relative z-20 overflow-hidden flex flex-col bg-white rounded-2xl md:rounded-3xl border border-slate-200 shadow-lg">
                     {isTeacherMode && (
                         <div className="p-3 bg-emerald-600 text-white flex justify-between items-center shrink-0">
                             <button onClick={handlePrev} disabled={currentStageIndex === 0} className="p-2 hover:bg-white/20 rounded-lg disabled:opacity-30">
@@ -370,7 +347,7 @@ export const LearningQuestMap: React.FC<LearningQuestMapProps> = ({
                             </button>
                         </div>
                     )}
-                    <div className="flex-1 overflow-y-auto p-5 md:p-8 custom-scrollbar-thin flex flex-col">
+                    <div className="flex-1 overflow-hidden p-3 space-y-2 custom-scrollbar-thin flex flex-col">
                         <div className="max-w-2xl mx-auto flex flex-col h-full">
                             {feedback && !isTeacherMode ? (
                                 <motion.div
@@ -422,7 +399,7 @@ export const LearningQuestMap: React.FC<LearningQuestMapProps> = ({
                                                 </div>
                                             )}
                                         </div>
-                                        <h3 className="text-base md:text-2xl font-bold leading-snug text-slate-900">
+                                        <h3 className="text-base md:text-lg font-bold leading-snug text-slate-900">
                                             {currentQuestion.question}
                                         </h3>
                                     </div>
@@ -463,14 +440,14 @@ export const LearningQuestMap: React.FC<LearningQuestMapProps> = ({
                                                     key={opt.id}
                                                     disabled={!isTeacherMode && feedback !== null}
                                                     onClick={() => handleOptionSelect(opt.id)}
-                                                    className={`p-3 md:p-5 rounded-2xl border-2 text-left font-medium transition-all duration-200 flex items-center justify-start gap-4 group shadow-sm
+                                                    className={`p-3 md:p-5 rounded-2xl border-2 text-left transition-all duration-200 flex items-center justify-start gap-4 group shadow-sm
                                                         ${bgClass} ${borderClass} ${textClass}
                                                     `}
                                                 >
                                                     <span className={`w-10 h-10 rounded-xl flex items-center justify-center font-bold text-sm shrink-0 transition-colors ${iconWrapperClass}`}>
                                                         {opt.id}
                                                     </span>
-                                                    <span className={`text-sm md:text-lg font-medium`}>{opt.text}</span>
+                                                    <span className={`text-sm md:text-base font-medium`}>{opt.text}</span>
                                                     {isTeacherMode && isSelected && (
                                                         <div className="ml-auto">
                                                             {isCorrect ? <div className="bg-emerald-500 text-white p-1 rounded-full"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></div> : <div className="bg-red-500 text-white p-1 rounded-full"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></div>}
