@@ -67,7 +67,7 @@ const Header = ({
   <header className="sticky top-0 z-40 w-full bg-white/80 backdrop-blur-md border-b border-slate-200 shadow-sm">
     <div className="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
       <div className="flex items-center gap-2">
-        <div className={`p-2 rounded-lg text-white ${isTeacherMode ? 'bg-emerald-600' : 'bg-indigo-600'}`}>
+        <div className={`p-2 rounded-lg text-white ${isTeacherMode ? 'bg-emerald-600' : 'bg-emerald-600'}`}>
           <BookOpen size={20} />
         </div>
         <div>
@@ -85,7 +85,7 @@ const Header = ({
           <>
             <button
               onClick={onReview}
-              className="px-3 py-1.5 bg-indigo-50 text-indigo-600 rounded-lg text-sm font-bold hover:bg-indigo-100 transition-colors flex items-center gap-1"
+              className="px-3 py-1.5 bg-emerald-50 text-emerald-600 rounded-lg text-sm font-bold hover:bg-emerald-100 transition-colors flex items-center gap-1"
             >
               <Zap size={16} /> Review
             </button>
@@ -113,12 +113,6 @@ const Header = ({
               <Award size={18} />
               <span className="font-bold">{points} pts</span>
             </div>
-            <button
-              onClick={onTeacherLogin}
-              className="px-3 py-1.5 bg-slate-100 text-slate-600 rounded-lg text-sm font-bold hover:bg-slate-200 transition-colors flex items-center gap-1"
-            >
-              <Lock size={16} /> Teacher
-            </button>
           </>
         )}
         <div className="flex items-center gap-2">
@@ -411,8 +405,8 @@ export default function App() {
     setShowQuestIntro(true);
   };
 
-  const saveQuestToLeaderboard = () => {
-    if (!questParticipant) return;
+  const saveQuestToLeaderboard = async () => {
+    if (!questParticipant || isTeacherMode) return;
     const elapsedSeconds = Math.round((Date.now() - questParticipant.startTime) / 1000);
     const dateStr = new Date().toISOString().slice(0, 16).replace('T', ' ');
 
@@ -424,6 +418,13 @@ export default function App() {
       date: dateStr,
       selectedAnswers: selectedAnswers
     };
+
+    // Firestore Sync
+    try {
+      await addDoc(collection(db, 'leaderboard'), entry);
+    } catch (e) {
+      console.error("Firebase save error:", e);
+    }
 
     const saved = localStorage.getItem('leaderboardLEARNINGQUEST');
     let existing: QuestLeaderboardEntry[] = saved ? JSON.parse(saved) : [];
@@ -464,27 +465,27 @@ export default function App() {
 
     return (
       <div className="space-y-4 md:space-y-8 animate-in slide-in-from-bottom-4 duration-500 pb-20 md:pb-0">
-        <div className="bg-gradient-to-r from-indigo-800 to-blue-900 rounded-2xl md:rounded-3xl p-6 md:p-10 text-white shadow-xl relative overflow-hidden flex flex-col items-center text-center">
+        <div className="bg-gradient-to-r from-emerald-600 to-green-600 rounded-2xl md:rounded-3xl p-6 md:p-10 text-white shadow-xl relative overflow-hidden flex flex-col items-center text-center">
           <div className="relative z-10 w-full max-w-2xl mx-auto">
-            <div className="inline-block bg-blue-600/30 backdrop-blur-md px-4 py-1.5 rounded-lg border border-blue-400/30 text-blue-100 font-bold text-xs md:text-sm uppercase tracking-widest mb-4 md:mb-6">
-              🟦 SMART LEARNING CHALLENGE
+            <div className="inline-block bg-white/20 backdrop-blur-md px-4 py-1.5 rounded-lg border border-white/30 text-white font-bold text-xs md:text-sm uppercase tracking-widest mb-4 md:mb-6">
+              🌱 SMART LEARNING CHALLENGE
             </div>
 
             <h1 className="text-3xl md:text-5xl font-extrabold mb-2 md:mb-4 tracking-tight leading-tight">
               English 10 – New Ways to Learn
             </h1>
 
-            <p className="text-indigo-200 text-lg md:text-xl font-medium mb-6 md:mb-8">
+            <p className="text-emerald-50 text-lg md:text-xl font-medium mb-6 md:mb-8">
               Explore the future of education
             </p>
 
-            <div className="flex justify-center items-center gap-2 text-indigo-200 text-sm md:text-lg font-medium mb-8 md:mb-10">
+            <div className="flex justify-center items-center gap-2 text-emerald-50 text-sm md:text-lg font-medium mb-8 md:mb-10">
               <Clock size={20} />
               <span>Time limit: 7 minutes</span>
             </div>
             <button
               onClick={() => setShowQuestIntro(true)}
-              className="bg-white text-indigo-900 px-8 py-4 md:px-12 md:py-5 rounded-2xl font-black text-lg md:text-xl shadow-[0_0_20px_rgba(255,255,255,0.3)] hover:shadow-[0_0_30px_rgba(255,255,255,0.5)] hover:bg-slate-50 hover:scale-105 transition-all active:scale-95 flex items-center justify-center gap-3 mx-auto uppercase tracking-wide"
+              className="bg-[#F59E0B] text-white px-8 py-4 md:px-12 md:py-5 rounded-2xl font-black text-lg md:text-xl shadow-lg hover:shadow-xl hover:bg-[#D97706] hover:scale-105 transition-all active:scale-95 flex items-center justify-center gap-3 mx-auto uppercase tracking-wide border-b-4 border-amber-700"
             >
               🎮 START CHALLENGE
             </button>
@@ -751,13 +752,14 @@ export default function App() {
   );
 
   return (
-    <div className="min-h-screen bg-slate-50 font-sans text-slate-900 selection:bg-indigo-100 selection:text-indigo-900">
+    <div className="min-h-screen bg-slate-50 font-sans text-slate-900 selection:bg-emerald-100 selection:text-emerald-900">
 
       {/* LEARNING QUEST OVERLAYS */}
       {showQuestIntro && (
         <LearningQuestIntro
           onStart={handleQuestStart}
           onClose={() => setShowQuestIntro(false)}
+          onTeacherLogin={handleTeacherLogin}
         />
       )}
 
@@ -830,7 +832,7 @@ export default function App() {
         <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 p-4 z-30 flex justify-around shadow-[0_-5px_15px_rgba(0,0,0,0.05)]">
           <div className="flex flex-col items-center text-slate-400">
             <span className="text-xs font-bold">Level</span>
-            <span className="text-indigo-600 font-bold">{progress.level}</span>
+            <span className="text-emerald-600 font-bold">{progress.level}</span>
           </div>
           <div className="flex flex-col items-center text-slate-400">
             <span className="text-xs font-bold">Streak</span>
@@ -847,12 +849,12 @@ export default function App() {
       {chatOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
           <div className="bg-white w-full max-w-lg h-[600px] rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-in zoom-in slide-in-from-bottom-4 duration-300">
-            <div className="bg-indigo-600 p-4 flex justify-between items-center text-white">
+            <div className="bg-emerald-600 p-4 flex justify-between items-center text-white">
               <div className="flex items-center gap-2">
                 <div className="bg-white/20 p-2 rounded-lg"><MessageCircle size={20} /></div>
                 <div>
                   <h3 className="font-bold">AI Tutor</h3>
-                  <p className="text-xs text-indigo-200">Ask about meanings, grammar, or summary</p>
+                  <p className="text-xs text-emerald-100">Ask about meanings, grammar, or summary</p>
                 </div>
               </div>
               <button onClick={() => setChatOpen(false)} className="hover:bg-white/20 p-2 rounded-full transition-colors"><XCircle /></button>
@@ -867,7 +869,7 @@ export default function App() {
               {chatMessages.map((msg, i) => (
                 <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                   <div className={`max-w-[80%] p-4 rounded-2xl ${msg.role === 'user'
-                    ? 'bg-indigo-600 text-white rounded-tr-none'
+                    ? 'bg-emerald-600 text-white rounded-tr-none'
                     : 'bg-white border border-slate-200 text-slate-700 shadow-sm rounded-tl-none'
                     }`}>
                     {msg.text}
@@ -882,11 +884,11 @@ export default function App() {
                 onChange={(e) => setChatInput(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleChat()}
                 placeholder="Type your question..."
-                className="flex-1 border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-slate-50"
+                className="flex-1 border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-slate-50"
               />
               <button
                 onClick={handleChat}
-                className="bg-indigo-600 text-white p-3 rounded-xl hover:bg-indigo-700 transition-colors shadow-sm"
+                className="bg-emerald-600 text-white p-3 rounded-xl hover:bg-emerald-700 transition-colors shadow-sm"
               >
                 <ChevronRight />
               </button>
@@ -916,12 +918,12 @@ export default function App() {
                 value={settings.apiKey}
                 onChange={(e) => saveSettings({ ...settings, apiKey: e.target.value })}
                 placeholder="Enter your Google Gemini API Key"
-                className="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm font-mono transition-all"
+                className="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-sm font-mono transition-all"
               />
             </div>
             <p className="text-[10px] text-slate-500 mt-2 flex items-center gap-1">
-              <Info size={12} className="text-indigo-500" />
-              <span>Lấy API key tại <a href="https://aistudio.google.com/api-keys" target="_blank" rel="noopener noreferrer" className="text-indigo-600 font-bold hover:underline">Google AI Studio</a></span>
+              <Info size={12} className="text-emerald-500" />
+              <span>Lấy API key tại <a href="https://aistudio.google.com/api-keys" target="_blank" rel="noopener noreferrer" className="text-emerald-600 font-bold hover:underline">Google AI Studio</a></span>
             </p>
           </div>
 
@@ -932,7 +934,7 @@ export default function App() {
                 <button
                   key={model}
                   onClick={() => saveSettings({ ...settings, selectedModel: model })}
-                  className={`w-full p-3 rounded-xl border-2 text-left transition-all flex justify-between items-center ${settings.selectedModel === model ? 'border-indigo-500 bg-indigo-50 text-indigo-700' : 'border-slate-100 bg-slate-50 text-slate-500 hover:border-slate-200'}`}
+                  className={`w-full p-3 rounded-xl border-2 text-left transition-all flex justify-between items-center ${settings.selectedModel === model ? 'border-emerald-500 bg-emerald-50 text-emerald-700' : 'border-slate-100 bg-slate-50 text-slate-500 hover:border-slate-200'}`}
                 >
                   <div className="flex flex-col">
                     <span className="font-bold text-sm tracking-tight">{model}</span>
@@ -1022,7 +1024,7 @@ export default function App() {
           </div>
           <button
             onClick={validatePin}
-            className="w-full bg-indigo-600 text-white font-bold py-3 rounded-xl hover:bg-indigo-700 transition-colors shadow-lg active:scale-95 transform"
+            className="w-full bg-emerald-600 text-white font-bold py-3 rounded-xl hover:bg-emerald-700 transition-colors shadow-lg active:scale-95 transform"
           >
             Unlock Mode
           </button>
@@ -1066,7 +1068,7 @@ export default function App() {
 
               <button
                 onClick={() => settings.apiKey && setIsSettingsOpen(false)}
-                className={`w-full py-4 rounded-2xl font-black uppercase tracking-wider text-sm transition-all shadow-lg ${settings.apiKey ? 'bg-indigo-600 text-white hover:bg-indigo-700 active:scale-95' : 'bg-slate-200 text-slate-400 cursor-not-allowed'}`}
+                className={`w-full py-4 rounded-2xl font-black uppercase tracking-wider text-sm transition-all shadow-lg ${settings.apiKey ? 'bg-emerald-600 text-white hover:bg-emerald-700 active:scale-95' : 'bg-slate-200 text-slate-400 cursor-not-allowed'}`}
                 disabled={!settings.apiKey}
               >
                 Kích hoạt ứng dụng

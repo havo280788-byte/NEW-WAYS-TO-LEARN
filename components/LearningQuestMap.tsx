@@ -263,8 +263,8 @@ export const LearningQuestMap: React.FC<LearningQuestMapProps> = ({ onGameOver, 
                 {/* Left Panel: Reading Passage */}
                 <div className="flex-1 bg-white rounded-2xl md:rounded-3xl border border-slate-200 overflow-hidden flex flex-col shadow-sm relative z-10 max-h-[60vh] md:max-h-full">
                     <div className="flex items-center justify-between p-3 md:p-4 bg-white border-b border-slate-100 shrink-0">
-                        <div className="flex items-center gap-2 text-indigo-600 font-bold uppercase tracking-widest text-[10px] md:text-xs">
-                            <span className="bg-indigo-50 px-2 py-1 rounded-md border border-indigo-100 italic">📖 Reading</span>
+                        <div className="flex items-center gap-2 text-emerald-600 font-bold uppercase tracking-widest text-[10px] md:text-xs">
+                            <span className="bg-emerald-50 px-2 py-1 rounded-md border border-emerald-100 italic">📖 Reading</span>
                         </div>
                         <div className="flex items-center gap-2">
                             {isTeacherMode && (
@@ -274,7 +274,7 @@ export const LearningQuestMap: React.FC<LearningQuestMapProps> = ({ onGameOver, 
                                     title="Clear All Highlights"
                                 >
                                     <RotateCcw size={14} className="md:w-3.5 md:h-3.5" />
-                                    <span className="hidden sm:inline">Clear</span>
+                                    <span className="hidden sm:inline">Xóa Highlight</span>
                                 </button>
                             )}
                             <button
@@ -291,13 +291,13 @@ export const LearningQuestMap: React.FC<LearningQuestMapProps> = ({ onGameOver, 
                         </div>
                     </div>
 
-                    <div className="flex-1 overflow-y-auto p-5 md:p-8 prose prose-indigo max-w-none custom-scrollbar-thin">
+                    <div className="flex-1 overflow-y-auto p-5 md:p-8 prose prose-emerald max-w-none custom-scrollbar-thin">
                         {LEARNING_QUEST_PASSAGE.split('\n').map((paragraph, idx) => {
                             if (paragraph.startsWith('# ')) {
                                 return <h1 key={idx} className="text-xl md:text-3xl font-extrabold text-slate-900 mb-4 md:mb-6 leading-tight mt-0">{paragraph.replace('# ', '')}</h1>
                             }
                             if (paragraph.startsWith('**')) {
-                                return <h3 key={idx} className="text-base md:text-xl font-bold text-indigo-700 mt-4 md:mt-6 mb-2 md:mb-3">{paragraph.replaceAll('**', '')}</h3>
+                                return <h3 key={idx} className="text-base md:text-xl font-bold text-emerald-700 mt-4 md:mt-6 mb-2 md:mb-3">{paragraph.replaceAll('**', '')}</h3>
                             }
                             return (
                                 <p
@@ -317,7 +317,7 @@ export const LearningQuestMap: React.FC<LearningQuestMapProps> = ({ onGameOver, 
                 {/* Right Panel: Question (Bottom on Mobile, Right on Desktop) */}
                 <div className="flex-1 relative z-20 overflow-hidden flex flex-col bg-white rounded-2xl md:rounded-3xl border border-slate-200 shadow-lg">
                     {isTeacherMode && (
-                        <div className="p-3 bg-indigo-600 text-white flex justify-between items-center shrink-0">
+                        <div className="p-3 bg-emerald-600 text-white flex justify-between items-center shrink-0">
                             <button onClick={handlePrev} disabled={currentStageIndex === 0} className="p-2 hover:bg-white/20 rounded-lg disabled:opacity-30">
                                 <ChevronLeft size={20} />
                             </button>
@@ -345,7 +345,7 @@ export const LearningQuestMap: React.FC<LearningQuestMapProps> = ({ onGameOver, 
                                     <h2 className="text-xl md:text-3xl font-black mb-2 text-white drop-shadow-md">
                                         {feedback === 'correct' ? 'Correct!' : 'Incorrect'}
                                     </h2>
-                                    <p className="text-indigo-100 mb-6 text-sm md:text-lg font-medium">
+                                    <p className="text-emerald-50 mb-6 text-sm md:text-lg font-medium">
                                         {feedback === 'correct'
                                             ? STAGE_MESSAGES[currentStageIndex] || "Great job!"
                                             : "✔ Incorrect. Please review the passage."
@@ -362,7 +362,7 @@ export const LearningQuestMap: React.FC<LearningQuestMapProps> = ({ onGameOver, 
                                 <div className="flex flex-col h-full justify-start md:justify-center">
                                     <div className="mb-4 md:mb-8 text-slate-800">
                                         <div className="flex items-center gap-2 mb-3">
-                                            <span className="bg-indigo-100 text-indigo-700 px-3 py-1 rounded-full text-[10px] md:text-xs font-bold uppercase tracking-widest border border-indigo-200">
+                                            <span className="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full text-[10px] md:text-xs font-bold uppercase tracking-widest border border-emerald-200">
                                                 Stage {currentStageIndex + 1}
                                             </span>
                                             {isTeacherMode && (
@@ -372,7 +372,7 @@ export const LearningQuestMap: React.FC<LearningQuestMapProps> = ({ onGameOver, 
                                                     </span>
                                                     <button
                                                         onClick={handleReveal}
-                                                        className="bg-indigo-100 text-indigo-700 px-3 py-1 rounded-full text-[10px] md:text-xs font-bold uppercase tracking-widest border border-indigo-200 hover:bg-indigo-200 transition-colors"
+                                                        className="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full text-[10px] md:text-xs font-bold uppercase tracking-widest border border-emerald-200 hover:bg-emerald-200 transition-colors"
                                                     >
                                                         Reveal Answer
                                                     </button>
@@ -408,8 +408,8 @@ export const LearningQuestMap: React.FC<LearningQuestMapProps> = ({ onGameOver, 
                                                         iconWrapperClass = "bg-red-500 text-white";
                                                     }
                                                 } else {
-                                                    bgClass = "bg-indigo-600";
-                                                    borderClass = "border-indigo-600 scale-[1.02]";
+                                                    bgClass = "bg-[#F59E0B]";
+                                                    borderClass = "border-[#F59E0B] scale-[1.02]";
                                                     textClass = "text-white";
                                                     iconWrapperClass = "bg-white/20 text-white";
                                                 }
@@ -443,7 +443,7 @@ export const LearningQuestMap: React.FC<LearningQuestMapProps> = ({ onGameOver, 
                                         <div className="mt-8 flex gap-4">
                                             <button
                                                 onClick={handleContinue}
-                                                className="flex-1 font-bold py-4 rounded-2xl shadow-lg transition-all transform hover:scale-[1.02] active:scale-95 text-lg bg-indigo-600 text-white hover:bg-indigo-700 uppercase tracking-wide"
+                                                className="flex-1 font-bold py-4 rounded-2xl shadow-lg transition-all transform hover:scale-[1.02] active:scale-95 text-lg bg-emerald-600 text-white hover:bg-emerald-700 uppercase tracking-wide"
                                             >
                                                 {currentStageIndex === 7 ? "View Results" : "Submit & Continue"}
                                             </button>

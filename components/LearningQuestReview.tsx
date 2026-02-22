@@ -74,7 +74,7 @@ export const LearningQuestReview: React.FC<LearningQuestReviewProps> = ({ onClos
                                     setSelectedEntry(entry || null);
                                     setCurrentQuestionIndex(0);
                                 }}
-                                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-bold text-slate-700 outline-none focus:ring-2 focus:ring-indigo-500 appearance-none"
+                                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-bold text-slate-700 outline-none focus:ring-2 focus:ring-emerald-500 appearance-none"
                             >
                                 <option value="">Select a Student...</option>
                                 {entries.map((entry, idx) => (
@@ -95,11 +95,11 @@ export const LearningQuestReview: React.FC<LearningQuestReviewProps> = ({ onClos
             <div className="flex-1 flex flex-col md:flex-row overflow-hidden min-h-0 bg-slate-100 gap-4 md:gap-5 p-4 md:p-6 lg:p-8">
                 {isLoading ? (
                     <div className="flex-1 flex items-center justify-center">
-                        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+                        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600"></div>
                     </div>
                 ) : !selectedEntry ? (
                     <div className="flex-1 flex flex-col items-center justify-center bg-white rounded-3xl border border-dashed border-slate-300">
-                        <div className="bg-indigo-50 p-6 rounded-full text-indigo-500 mb-4">
+                        <div className="bg-emerald-50 p-6 rounded-full text-emerald-500 mb-4">
                             <User size={48} />
                         </div>
                         <h3 className="text-xl font-bold text-slate-800">No Student Selected</h3>
@@ -110,12 +110,12 @@ export const LearningQuestReview: React.FC<LearningQuestReviewProps> = ({ onClos
                         {/* Left: Reading Passage */}
                         <div className="flex-1 bg-white rounded-2xl md:rounded-3xl border border-slate-200 overflow-hidden flex flex-col shadow-sm max-h-[40vh] md:max-h-full">
                             <div className="p-4 border-b border-slate-100 bg-white sticky top-0 shrink-0">
-                                <p className="text-[10px] uppercase font-black tracking-widest text-indigo-600">Reading Context</p>
+                                <p className="text-[10px] uppercase font-black tracking-widest text-emerald-600">Reading Context</p>
                             </div>
-                            <div className="flex-1 overflow-y-auto p-5 md:p-8 prose prose-indigo max-w-none custom-scrollbar-thin">
+                            <div className="flex-1 overflow-y-auto p-5 md:p-8 prose prose-emerald max-w-none custom-scrollbar-thin">
                                 {LEARNING_QUEST_PASSAGE.split('\n').map((paragraph, idx) => {
                                     if (paragraph.startsWith('# ')) return <h1 key={idx} className="text-xl md:text-2xl font-bold text-slate-900 mb-4">{paragraph.replace('# ', '')}</h1>;
-                                    if (paragraph.startsWith('**')) return <h3 key={idx} className="text-sm md:text-base font-bold text-indigo-700 mt-4 mb-2">{paragraph.replaceAll('**', '')}</h3>;
+                                    if (paragraph.startsWith('**')) return <h3 key={idx} className="text-sm md:text-base font-bold text-emerald-700 mt-4 mb-2">{paragraph.replaceAll('**', '')}</h3>;
                                     return <p key={idx} className="mb-3 text-slate-600 text-sm md:text-base leading-relaxed">{paragraph}</p>;
                                 })}
                             </div>
@@ -124,13 +124,13 @@ export const LearningQuestReview: React.FC<LearningQuestReviewProps> = ({ onClos
                         {/* Right: Review UI */}
                         <div className="flex-1 flex flex-col bg-white rounded-2xl md:rounded-3xl border border-slate-200 shadow-lg overflow-hidden">
                             {/* Student Header */}
-                            <div className="bg-indigo-600 p-4 text-white shrink-0">
+                            <div className="bg-emerald-600 p-4 text-white shrink-0">
                                 <div className="flex items-center justify-between mb-2">
                                     <div className="flex items-center gap-2">
                                         <div className="bg-white/20 p-1.5 rounded-lg"><User size={16} /></div>
                                         <span className="font-bold text-sm">{selectedEntry.name}</span>
                                     </div>
-                                    <div className="flex gap-4 text-xs font-bold text-indigo-100">
+                                    <div className="flex gap-4 text-xs font-bold text-emerald-100">
                                         <div className="flex items-center gap-1"><Trophy size={14} /> {selectedEntry.score}/80</div>
                                         <div className="flex items-center gap-1"><Clock size={14} /> {Math.floor(selectedEntry.time / 60)}m {selectedEntry.time % 60}s</div>
                                     </div>
