@@ -347,8 +347,8 @@ export const LearningQuestMap: React.FC<LearningQuestMapProps> = ({
                             </button>
                         </div>
                     )}
-                    <div className="flex-1 overflow-hidden p-3 space-y-2 custom-scrollbar-thin flex flex-col">
-                        <div className="max-w-2xl mx-auto flex flex-col h-full">
+                    <div className="flex-1 overflow-y-auto p-3 md:p-4 space-y-1 custom-scrollbar-thin flex flex-col">
+                        <div className="max-w-2xl mx-auto flex flex-col">
                             {feedback && !isTeacherMode ? (
                                 <motion.div
                                     initial={{ opacity: 0, scale: 0.95 }}
@@ -380,7 +380,7 @@ export const LearningQuestMap: React.FC<LearningQuestMapProps> = ({
                                 </motion.div>
                             ) : (
                                 <div className="flex flex-col h-full justify-start md:justify-center">
-                                    <div className="mb-4 md:mb-8 text-slate-800">
+                                    <div className="mb-3 md:mb-5 text-slate-800">
                                         <div className="flex items-center gap-2 mb-3">
                                             <span className="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full text-[10px] md:text-xs font-bold uppercase tracking-widest border border-emerald-200">
                                                 Stage {currentStageIndex + 1}
@@ -440,11 +440,11 @@ export const LearningQuestMap: React.FC<LearningQuestMapProps> = ({
                                                     key={opt.id}
                                                     disabled={!isTeacherMode && feedback !== null}
                                                     onClick={() => handleOptionSelect(opt.id)}
-                                                    className={`p-3 md:p-5 rounded-2xl border-2 text-left transition-all duration-200 flex items-center justify-start gap-4 group shadow-sm
+                                                    className={`p-2.5 md:p-3.5 rounded-2xl border-2 text-left transition-all duration-200 flex items-center justify-start gap-3 group shadow-sm
                                                         ${bgClass} ${borderClass} ${textClass}
                                                     `}
                                                 >
-                                                    <span className={`w-10 h-10 rounded-xl flex items-center justify-center font-bold text-sm shrink-0 transition-colors ${iconWrapperClass}`}>
+                                                    <span className={`w-8 h-8 rounded-xl flex items-center justify-center font-bold text-sm shrink-0 transition-colors ${iconWrapperClass}`}>
                                                         {opt.id}
                                                     </span>
                                                     <span className={`text-sm md:text-base font-medium`}>{opt.text}</span>
@@ -460,7 +460,7 @@ export const LearningQuestMap: React.FC<LearningQuestMapProps> = ({
 
                                     {/* NAVIGATION FOR TEACHER OR CONTINUE FOR STUDENT */}
                                     {isTeacherMode ? (
-                                        <div className="mt-8 flex gap-4">
+                                        <div className="mt-4 flex gap-4">
                                             <button
                                                 onClick={handleContinue}
                                                 className="flex-1 font-bold py-4 rounded-2xl shadow-lg transition-all transform hover:scale-[1.02] active:scale-95 text-lg bg-emerald-600 text-white hover:bg-emerald-700 uppercase tracking-wide"
@@ -470,10 +470,10 @@ export const LearningQuestMap: React.FC<LearningQuestMapProps> = ({
                                         </div>
                                     ) : (
                                         selectedOption && !feedback && (
-                                            <div className="mt-8 flex justify-center">
+                                            <div className="mt-4 flex justify-center">
                                                 <button
                                                     onClick={handleCheckAnswer}
-                                                    className="font-bold py-4 px-12 rounded-2xl shadow-xl transition-all transform hover:scale-[1.05] active:scale-95 text-lg bg-[#F59E0B] text-white hover:bg-[#D97706] border-b-4 border-amber-700 uppercase tracking-widest"
+                                                    className="font-bold py-3 px-8 rounded-2xl shadow-xl transition-all transform hover:scale-[1.05] active:scale-95 text-lg bg-[#F59E0B] text-white hover:bg-[#D97706] border-b-4 border-amber-700 uppercase tracking-widest"
                                                 >
                                                     Check Answer
                                                 </button>
