@@ -171,7 +171,7 @@ export const LearningQuestMap: React.FC<LearningQuestMapProps> = ({
         setFeedback(null);
         setSelectedOption(null);
         if (currentStageIndex < 7) {
-            if (!isTeacherMode) playLevelUp();
+            playLevelUp();
             setCurrentStageIndex(prev => prev + 1);
         } else {
             onWin(score, answers);
@@ -199,9 +199,9 @@ export const LearningQuestMap: React.FC<LearningQuestMapProps> = ({
     const isThreeOption = currentQuestion.options.length === 3;
 
     return (
-        <div className="flex flex-col h-[100dvh] bg-slate-50 overflow-hidden font-sans text-slate-800 antialiased">
+        <div className="flex flex-col h-[100dvh] bg-slate-50 overflow-hidden font-sans text-slate-800">
             {/* Header / Stats */}
-            <div className="bg-[#0F172A] shadow-md z-30 sticky top-0 shrink-0 text-white py-3">
+            <div className="bg-gradient-to-r from-[#1E3A8A] via-[#4F46E5] to-[#6366F1] shadow-md z-30 sticky top-0 shrink-0 text-white">
 
                 {/* Top Row: Title & Timer */}
                 <div className="p-4 pb-2 flex flex-col md:grid md:grid-cols-3 items-center gap-4 border-b border-white/10">
@@ -212,25 +212,18 @@ export const LearningQuestMap: React.FC<LearningQuestMapProps> = ({
                     {/* Title Section (Centered) */}
                     <div className="text-center w-full">
                         <h1 className="text-xl md:text-2xl font-bold tracking-tight drop-shadow-md">English 10 – New Ways to Learn</h1>
-                        <p className="text-emerald-100 text-sm font-medium uppercase tracking-wider">Smart Learning Challenge</p>
+                        <p className="text-indigo-100 text-sm font-medium uppercase tracking-wider">Smart Learning Challenge</p>
                     </div>
 
                     {/* Timer (Right on Desktop, Centered/Below on Mobile) */}
                     <div className="flex justify-center md:justify-end w-full">
-                        {!isTeacherMode && (
-                            <div className="flex items-center gap-3 bg-black/20 backdrop-blur-sm px-4 py-2 rounded-xl border border-white/10 shadow-inner w-fit">
-                                <Clock size={20} className="text-amber-300 animate-pulse" />
-                                <div className="flex flex-col items-end leading-none">
-                                    <span className="text-[10px] text-emerald-100 font-bold uppercase tracking-wider">Time Left</span>
-                                    <span className="text-xl font-mono font-bold text-white tabular-nums">{formatTime(timeLeft)}</span>
-                                </div>
+                        <div className="flex items-center gap-3 bg-black/20 backdrop-blur-sm px-4 py-2 rounded-xl border border-white/10 shadow-inner w-fit">
+                            <Clock size={20} className="text-[#22D3EE] animate-pulse" />
+                            <div className="flex flex-col items-end leading-none">
+                                <span className="text-[10px] text-indigo-200 font-bold uppercase tracking-wider">Time Left</span>
+                                <span className="text-xl font-mono font-bold text-white tabular-nums">{formatTime(timeLeft)}</span>
                             </div>
-                        )}
-                        {isTeacherMode && (
-                            <div className="flex items-center gap-2 bg-emerald-500/30 px-4 py-2 rounded-xl border border-emerald-400/30">
-                                <span className="text-xs font-black uppercase tracking-widest text-emerald-50">🟢 Teacher Preview</span>
-                            </div>
-                        )}
+                        </div>
                     </div>
                 </div>
 
@@ -278,25 +271,15 @@ export const LearningQuestMap: React.FC<LearningQuestMapProps> = ({
             </div>
 
             {/* Main Split View */}
-            <div className="flex-1 flex flex-col md:flex-row overflow-hidden min-h-0 bg-slate-100 gap-4 md:gap-5 p-3 md:p-5">
+            <div className="flex-1 flex flex-col md:flex-row overflow-hidden min-h-0 bg-slate-100 gap-2 md:gap-6 p-4 md:p-6 lg:p-8">
 
                 {/* Left Panel: Reading Passage */}
-                <div className="flex-1 md:w-[40%] bg-white rounded-2xl md:rounded-3xl border border-slate-200 overflow-hidden flex flex-col shadow-sm relative z-10 max-h-[60vh] md:max-h-[50vh]">
+                <div className="flex-1 md:w-1/2 bg-white rounded-2xl md:rounded-3xl border border-slate-200 overflow-hidden flex flex-col shadow-sm relative z-10 max-h-full">
                     <div className="flex items-center justify-between p-3 md:p-4 bg-white border-b border-slate-100 shrink-0">
-                        <div className="flex items-center gap-2 text-emerald-600 font-bold uppercase tracking-widest text-[10px] md:text-xs">
-                            <span className="bg-emerald-50 px-2 py-1 rounded-md border border-emerald-100 italic">📖 Reading</span>
+                        <div className="flex items-center gap-2 text-indigo-600 font-bold uppercase tracking-widest text-[10px] md:text-xs">
+                            <span className="bg-indigo-50 px-2 py-1 rounded-md border border-indigo-100 leading-none">📖 Reading Passage</span>
                         </div>
                         <div className="flex items-center gap-2">
-                            {isTeacherMode && (
-                                <button
-                                    onClick={() => clearHighlights(QUEST_PASSAGE_ID)}
-                                    className="p-1.5 rounded-lg transition-all flex items-center gap-2 text-[10px] md:text-xs font-bold bg-red-50 text-red-600 hover:bg-red-100 border border-red-100"
-                                    title="Clear All Highlights"
-                                >
-                                    <RotateCcw size={14} className="md:w-3.5 md:h-3.5" />
-                                    <span className="hidden sm:inline">Xóa Highlight</span>
-                                </button>
-                            )}
                             <button
                                 onClick={toggleHighlighter}
                                 className={`p-1.5 rounded-lg transition-all flex items-center gap-2 text-[10px] md:text-xs font-bold ${isHighlighterActive
@@ -311,18 +294,18 @@ export const LearningQuestMap: React.FC<LearningQuestMapProps> = ({
                         </div>
                     </div>
 
-                    <div className="flex-1 overflow-y-auto p-5 md:p-5 prose prose-emerald max-w-none custom-scrollbar-thin">
+                    <div className="flex-1 overflow-y-auto p-5 md:p-8 prose prose-emerald max-w-none custom-scrollbar-thin">
                         {LEARNING_QUEST_PASSAGE.split('\n').map((paragraph, idx) => {
                             if (paragraph.startsWith('# ')) {
                                 return <h1 key={idx} className="text-xl md:text-3xl font-extrabold text-slate-900 mb-4 md:mb-6 leading-tight mt-0">{paragraph.replace('# ', '')}</h1>
                             }
                             if (paragraph.startsWith('**')) {
-                                return <h3 key={idx} className="text-base md:text-xl font-bold text-emerald-700 mt-4 md:mt-6 mb-2 md:mb-3">{paragraph.replaceAll('**', '')}</h3>
+                                return <h3 key={idx} className="text-base md:text-xl font-bold text-indigo-700 mt-4 md:mt-6 mb-2 md:mb-3">{paragraph.replaceAll('**', '')}</h3>
                             }
                             return (
                                 <p
                                     key={idx}
-                                    className={`mb-3 md:mb-4 text-[#334155] font-normal text-sm leading-[1.6] ${isHighlighterActive ? 'cursor-text selection:bg-yellow-200' : ''}`}
+                                    className={`mb-3 md:mb-4 text-slate-600 font-medium text-sm md:text-xl leading-relaxed ${isHighlighterActive ? 'cursor-text selection:bg-yellow-200' : ''}`}
                                     onMouseUp={() => addHighlight(QUEST_PASSAGE_ID, idx, paragraph)}
                                     onTouchEnd={() => addHighlight(QUEST_PASSAGE_ID, idx, paragraph)}
                                 >
@@ -334,21 +317,9 @@ export const LearningQuestMap: React.FC<LearningQuestMapProps> = ({
                     </div>
                 </div>
 
-                {/* Right Panel: Question (Bottom on Mobile, Right on Desktop) */}
-                <div className="flex-1 md:w-[60%] relative z-20 overflow-hidden flex flex-col bg-white rounded-2xl md:rounded-3xl border border-slate-200 shadow-lg">
-                    {isTeacherMode && (
-                        <div className="p-3 bg-emerald-600 text-white flex justify-between items-center shrink-0">
-                            <button onClick={handlePrev} disabled={currentStageIndex === 0} className="p-2 hover:bg-white/20 rounded-lg disabled:opacity-30">
-                                <ChevronLeft size={20} />
-                            </button>
-                            <span className="font-bold text-xs uppercase tracking-widest">Question Control</span>
-                            <button onClick={handleNext} disabled={currentStageIndex === 7} className="p-2 hover:bg-white/20 rounded-lg disabled:opacity-30">
-                                <ChevronRight size={20} />
-                            </button>
-                        </div>
-                    )}
-                    <div className="flex-1 overflow-y-auto p-3 md:p-4 space-y-1 custom-scrollbar-thin flex flex-col">
-                        <div className="max-w-2xl mx-auto flex flex-col">
+                <div className="flex-1 md:w-1/2 relative z-20 overflow-hidden flex flex-col bg-white rounded-2xl md:rounded-3xl border border-slate-200 shadow-lg">
+                    <div className="flex-1 overflow-y-auto p-5 md:p-8 custom-scrollbar-thin flex flex-col">
+                        <div className="max-w-2xl mx-auto flex flex-col h-full">
                             {feedback && !isTeacherMode ? (
                                 <motion.div
                                     initial={{ opacity: 0, scale: 0.95 }}
@@ -365,7 +336,7 @@ export const LearningQuestMap: React.FC<LearningQuestMapProps> = ({
                                     <h2 className="text-xl md:text-3xl font-black mb-2 text-white drop-shadow-md">
                                         {feedback === 'correct' ? 'Correct!' : 'Incorrect'}
                                     </h2>
-                                    <p className="text-emerald-50 mb-6 text-sm md:text-lg font-medium">
+                                    <p className="text-indigo-50 mb-6 text-sm md:text-lg font-medium">
                                         {feedback === 'correct'
                                             ? STAGE_MESSAGES[currentStageIndex] || "Great job!"
                                             : "✔ Incorrect. Please review the passage."
@@ -382,24 +353,11 @@ export const LearningQuestMap: React.FC<LearningQuestMapProps> = ({
                                 <div className="flex flex-col h-full justify-start md:justify-center">
                                     <div className="mb-3 md:mb-5 text-slate-800">
                                         <div className="flex items-center gap-2 mb-3">
-                                            <span className="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full text-[10px] md:text-xs font-bold uppercase tracking-widest border border-emerald-200">
+                                            <span className="bg-indigo-100 text-indigo-700 px-3 py-1 rounded-full text-[10px] md:text-xs font-bold uppercase tracking-widest border border-indigo-200 leading-none">
                                                 Stage {currentStageIndex + 1}
                                             </span>
-                                            {isTeacherMode && (
-                                                <div className="flex items-center gap-2">
-                                                    <span className="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full text-[10px] md:text-xs font-bold uppercase tracking-widest border border-emerald-200">
-                                                        TEACHER PREVIEW
-                                                    </span>
-                                                    <button
-                                                        onClick={handleReveal}
-                                                        className="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full text-[10px] md:text-xs font-bold uppercase tracking-widest border border-emerald-200 hover:bg-emerald-200 transition-colors"
-                                                    >
-                                                        Reveal Answer
-                                                    </button>
-                                                </div>
-                                            )}
                                         </div>
-                                        <h3 className="text-base md:text-lg font-bold leading-snug text-slate-900">
+                                        <h3 className="text-base md:text-2xl font-bold leading-snug text-slate-900">
                                             {currentQuestion.question}
                                         </h3>
                                     </div>
@@ -415,24 +373,10 @@ export const LearningQuestMap: React.FC<LearningQuestMapProps> = ({
                                             let iconWrapperClass = "bg-slate-100 text-slate-500";
 
                                             if (isSelected) {
-                                                if (isTeacherMode) {
-                                                    if (isCorrect) {
-                                                        bgClass = "bg-emerald-50";
-                                                        borderClass = "border-emerald-500 scale-[1.02]";
-                                                        textClass = "text-emerald-900";
-                                                        iconWrapperClass = "bg-emerald-500 text-white";
-                                                    } else {
-                                                        bgClass = "bg-red-50";
-                                                        borderClass = "border-red-500 scale-[1.02]";
-                                                        textClass = "text-red-900";
-                                                        iconWrapperClass = "bg-red-500 text-white";
-                                                    }
-                                                } else {
-                                                    bgClass = "bg-[#F59E0B]";
-                                                    borderClass = "border-[#F59E0B] scale-[1.02]";
-                                                    textClass = "text-white";
-                                                    iconWrapperClass = "bg-white/20 text-white";
-                                                }
+                                                bgClass = "bg-[#4F46E5]";
+                                                borderClass = "border-[#4F46E5] scale-[1.02]";
+                                                textClass = "text-white";
+                                                iconWrapperClass = "bg-white/20 text-white";
                                             }
 
                                             return (
@@ -440,45 +384,28 @@ export const LearningQuestMap: React.FC<LearningQuestMapProps> = ({
                                                     key={opt.id}
                                                     disabled={!isTeacherMode && feedback !== null}
                                                     onClick={() => handleOptionSelect(opt.id)}
-                                                    className={`p-2.5 md:p-3.5 rounded-2xl border-2 text-left transition-all duration-200 flex items-center justify-start gap-3 group shadow-sm
+                                                    className={`p-3 md:p-5 rounded-2xl border-2 text-left font-medium transition-all duration-200 flex items-center justify-start gap-4 group shadow-sm
                                                         ${bgClass} ${borderClass} ${textClass}
                                                     `}
                                                 >
-                                                    <span className={`w-8 h-8 rounded-xl flex items-center justify-center font-bold text-sm shrink-0 transition-colors ${iconWrapperClass}`}>
+                                                    <span className={`w-10 h-10 rounded-xl flex items-center justify-center font-bold text-sm shrink-0 transition-colors ${iconWrapperClass}`}>
                                                         {opt.id}
                                                     </span>
-                                                    <span className={`text-sm md:text-base font-medium`}>{opt.text}</span>
-                                                    {isTeacherMode && isSelected && (
-                                                        <div className="ml-auto">
-                                                            {isCorrect ? <div className="bg-emerald-500 text-white p-1 rounded-full"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></div> : <div className="bg-red-500 text-white p-1 rounded-full"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></div>}
-                                                        </div>
-                                                    )}
+                                                    <span className={`text-sm md:text-lg font-medium`}>{opt.text}</span>
                                                 </button>
                                             )
                                         })}
                                     </div>
 
-                                    {/* NAVIGATION FOR TEACHER OR CONTINUE FOR STUDENT */}
-                                    {isTeacherMode ? (
-                                        <div className="mt-4 flex gap-4">
+                                    {selectedOption && !feedback && (
+                                        <div className="mt-8 flex justify-center">
                                             <button
-                                                onClick={handleContinue}
-                                                className="flex-1 font-bold py-4 rounded-2xl shadow-lg transition-all transform hover:scale-[1.02] active:scale-95 text-lg bg-emerald-600 text-white hover:bg-emerald-700 uppercase tracking-wide"
+                                                onClick={handleCheckAnswer}
+                                                className="font-bold py-4 px-12 rounded-2xl shadow-xl transition-all transform hover:scale-[1.05] active:scale-95 text-lg bg-indigo-600 text-white hover:bg-indigo-700 border-b-4 border-indigo-800 uppercase tracking-widest"
                                             >
-                                                {currentStageIndex === 7 ? "View Results" : "Submit & Continue"}
+                                                Check Answer
                                             </button>
                                         </div>
-                                    ) : (
-                                        selectedOption && !feedback && (
-                                            <div className="mt-4 flex justify-center">
-                                                <button
-                                                    onClick={handleCheckAnswer}
-                                                    className="font-bold py-3 px-8 rounded-2xl shadow-xl transition-all transform hover:scale-[1.05] active:scale-95 text-lg bg-[#F59E0B] text-white hover:bg-[#D97706] border-b-4 border-amber-700 uppercase tracking-widest"
-                                                >
-                                                    Check Answer
-                                                </button>
-                                            </div>
-                                        )
                                     )}
                                 </div>
                             )}

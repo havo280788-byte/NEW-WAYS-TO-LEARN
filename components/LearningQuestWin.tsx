@@ -35,7 +35,7 @@ export const LearningQuestWin: React.FC<LearningQuestWinProps> = ({ name, score,
     }, []);
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-emerald-900/40 backdrop-blur-md">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-indigo-900/40 backdrop-blur-md">
             <motion.div
                 initial={{ opacity: 0, scale: 0.5 }}
                 animate={{ opacity: 1, scale: 1 }}
@@ -54,14 +54,14 @@ export const LearningQuestWin: React.FC<LearningQuestWinProps> = ({ name, score,
                     <span className="font-bold text-indigo-600">{name}</span> – YOU HAVE MASTERED NEW WAYS TO LEARN!
                 </p>
 
-                <div className="bg-emerald-50 rounded-xl p-3 md:p-4 mb-4 md:mb-6 border border-emerald-100 grid grid-cols-2 gap-3 md:gap-4">
+                <div className="bg-indigo-50 rounded-xl p-3 md:p-4 mb-4 md:mb-6 border border-indigo-100 grid grid-cols-2 gap-3 md:gap-4">
                     <div>
-                        <p className="text-xs text-emerald-500 font-bold uppercase mb-1">SCORE</p>
-                        <p className="text-3xl md:text-4xl font-black text-emerald-700">{score} <span className="text-base md:text-lg font-medium text-emerald-400">/ 80</span></p>
+                        <p className="text-xs text-indigo-500 font-bold uppercase mb-1">SCORE</p>
+                        <p className="text-3xl md:text-4xl font-black text-indigo-700">{score} <span className="text-base md:text-lg font-medium text-indigo-400">/ 80</span></p>
                     </div>
                     <div>
-                        <p className="text-xs text-emerald-500 font-bold uppercase mb-1">TIME</p>
-                        <p className="text-3xl md:text-4xl font-black text-emerald-700">{completionTime} <span className="text-base md:text-lg font-medium">s</span></p>
+                        <p className="text-xs text-indigo-500 font-bold uppercase mb-1">TIME</p>
+                        <p className="text-3xl md:text-4xl font-black text-indigo-700">{completionTime} <span className="text-base md:text-lg font-medium">s</span></p>
                     </div>
                 </div>
 
@@ -74,7 +74,7 @@ export const LearningQuestWin: React.FC<LearningQuestWinProps> = ({ name, score,
                 <div className="space-y-3">
                     <button
                         onClick={onLeaderboard}
-                        className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 md:py-4 rounded-xl shadow-lg transition-transform hover:scale-[1.02] active:scale-95 uppercase tracking-wide text-sm md:text-base"
+                        className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 md:py-4 rounded-xl shadow-lg transition-transform hover:scale-[1.02] active:scale-95 uppercase tracking-wide text-sm md:text-base"
                     >
                         LEADERBOARD
                     </button>

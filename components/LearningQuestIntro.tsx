@@ -5,10 +5,9 @@ import { User, BookOpen, ChevronRight, Lock } from './GameIcons';
 interface LearningQuestIntroProps {
     onStart: (name: string, className: string) => void;
     onClose: () => void;
-    onTeacherLogin: () => void;
 }
 
-export const LearningQuestIntro: React.FC<LearningQuestIntroProps> = ({ onStart, onClose, onTeacherLogin }) => {
+export const LearningQuestIntro: React.FC<LearningQuestIntroProps> = ({ onStart, onClose }) => {
     const [name, setName] = useState('');
     const [className, setClassName] = useState('');
     const [error, setError] = useState('');
@@ -110,14 +109,6 @@ export const LearningQuestIntro: React.FC<LearningQuestIntroProps> = ({ onStart,
                         >
                             START CHALLENGE
                             <ChevronRight size={18} className="group-hover:translate-x-1 transition-transform" />
-                        </button>
-
-                        <button
-                            onClick={onTeacherLogin}
-                            className="hidden md:flex w-full items-center justify-center gap-2 py-2 text-[11px] font-bold text-slate-400 hover:text-purple-600 transition-colors uppercase tracking-widest"
-                        >
-                            <Lock size={12} />
-                            Teacher
                         </button>
                     </div>
                 </div>

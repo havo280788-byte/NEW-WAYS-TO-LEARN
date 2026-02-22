@@ -47,21 +47,11 @@ const Header = ({
   points,
   streak,
   onOpenSettings,
-  isTeacherMode,
-  onReview,
-  onLeaderboard,
-  onExitTeacher,
-  onTeacherLogin,
   settings
 }: {
   points: number;
   streak: number;
   onOpenSettings: () => void;
-  isTeacherMode: boolean;
-  onReview: () => void;
-  onLeaderboard: () => void;
-  onExitTeacher: () => void;
-  onTeacherLogin: () => void;
   settings: AppSettings;
 }) => (
   <header className="sticky top-0 z-40 w-full bg-white/80 backdrop-blur-md border-b border-slate-200 shadow-sm">
@@ -72,49 +62,18 @@ const Header = ({
         </div>
         <div>
           <span className="font-bold text-slate-800 hidden sm:block">Eng10: New Ways to Learn</span>
-          {isTeacherMode && (
-            <span className="text-[10px] bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full font-bold ml-2 animate-pulse">
-              🟢 TEACHER MODE
-            </span>
-          )}
         </div>
       </div>
 
       <div className="flex items-center gap-2 md:gap-4">
-        {isTeacherMode ? (
-          <>
-            <button
-              onClick={onReview}
-              className="px-3 py-1.5 bg-emerald-50 text-emerald-600 rounded-lg text-sm font-bold hover:bg-emerald-100 transition-colors flex items-center gap-1"
-            >
-              <Zap size={16} /> Review
-            </button>
-            <button
-              onClick={onLeaderboard}
-              className="px-3 py-1.5 bg-amber-50 text-amber-600 rounded-lg text-sm font-bold hover:bg-amber-100 transition-colors flex items-center gap-1"
-            >
-              <Trophy size={16} /> Rankings
-            </button>
-            <button
-              onClick={onExitTeacher}
-              className="p-2 text-slate-400 hover:text-red-500 transition-colors"
-              title="Exit Teacher Mode"
-            >
-              <LogOut size={20} />
-            </button>
-          </>
-        ) : (
-          <>
-            <div className="flex items-center gap-1 bg-amber-50 text-amber-600 px-3 py-1 rounded-full border border-amber-100">
-              <span className="text-lg">🔥</span>
-              <span className="font-bold">{streak}</span>
-            </div>
-            <div className="flex items-center gap-1 bg-emerald-50 text-emerald-600 px-3 py-1 rounded-full border border-emerald-100">
-              <Award size={18} />
-              <span className="font-bold">{points} pts</span>
-            </div>
-          </>
-        )}
+        <div className="flex items-center gap-1 bg-amber-50 text-amber-600 px-3 py-1 rounded-full border border-amber-100">
+          <span className="text-lg">🔥</span>
+          <span className="font-bold">{streak}</span>
+        </div>
+        <div className="flex items-center gap-1 bg-emerald-50 text-emerald-600 px-3 py-1 rounded-full border border-emerald-100">
+          <Award size={18} />
+          <span className="font-bold">{points} pts</span>
+        </div>
         <div className="flex items-center gap-2">
           <button
             onClick={onOpenSettings}
@@ -167,11 +126,6 @@ export default function App() {
   const [questParticipant, setQuestParticipant] = useState<QuestParticipant | null>(null);
   const [questState, setQuestState] = useState<'intro' | 'playing' | 'gameover' | 'win' | 'leaderboard' | 'review'>('intro');
   const [questScore, setQuestScore] = useState(0);
-  const [isTeacherMode, setIsTeacherMode] = useState(false);
-  const [selectedAnswers, setSelectedAnswers] = useState<Record<string, string>>({});
-  const [isPinModalOpen, setIsPinModalOpen] = useState(false);
-  const [pinInput, setPinInput] = useState('');
-  const [pinError, setPinError] = useState(false);
 
   // Highlighter State
   const {
@@ -376,7 +330,6 @@ export default function App() {
   const handleQuestStart = (name: string, className: string) => {
     setQuestParticipant({ name, className, startTime: Date.now() });
     setQuestScore(0);
-    setSelectedAnswers({});
     setShowQuestIntro(false);
     setQuestState('playing');
   };
@@ -385,9 +338,8 @@ export default function App() {
     setQuestState('gameover');
   };
 
-  const handleQuestWin = (score: number, answers: Record<string, string>) => {
+  const handleQuestWin = (score: number) => {
     setQuestScore(score);
-    setSelectedAnswers(answers);
     setQuestState('win');
   };
 
@@ -398,7 +350,7 @@ export default function App() {
   };
 
   const saveQuestToLeaderboard = async () => {
-    if (!questParticipant || isTeacherMode) return;
+    if (!questParticipant) return;
     const elapsedSeconds = Math.round((Date.now() - questParticipant.startTime) / 1000);
     const dateStr = new Date().toISOString().slice(0, 16).replace('T', ' ');
 
@@ -407,8 +359,7 @@ export default function App() {
       className: questParticipant.className,
       time: elapsedSeconds,
       score: questScore,
-      date: dateStr,
-      selectedAnswers: selectedAnswers
+      date: dateStr
     };
 
     // Firestore Sync
@@ -428,22 +379,7 @@ export default function App() {
     }
   };
 
-  const handleTeacherLogin = () => {
-    setIsPinModalOpen(true);
-    setPinInput('');
-    setPinError(false);
-  };
 
-  const validatePin = () => {
-    if (pinInput === '1234') {
-      setIsTeacherMode(true);
-      setIsPinModalOpen(false);
-      showToast("Teacher Mode Activated", 'success');
-    } else {
-      setPinError(true);
-      setTimeout(() => setPinError(false), 2000);
-    }
-  };
 
   // --- Views ---
 
@@ -752,7 +688,6 @@ export default function App() {
         <LearningQuestIntro
           onStart={handleQuestStart}
           onClose={() => setShowQuestIntro(false)}
-          onTeacherLogin={handleTeacherLogin}
         />
       )}
 
@@ -761,7 +696,6 @@ export default function App() {
           <LearningQuestMap
             onGameOver={handleQuestGameOver}
             onWin={handleQuestWin}
-            isTeacherMode={isTeacherMode}
           />
         </div>
       )}
@@ -787,7 +721,7 @@ export default function App() {
       )}
 
       {questState === 'leaderboard' && (
-        <LearningQuestLeaderboard onClose={handleQuestPlayAgain} isTeacherMode={isTeacherMode} />
+        <LearningQuestLeaderboard onClose={handleQuestPlayAgain} />
       )}
 
       {questState === 'review' && (
@@ -800,14 +734,6 @@ export default function App() {
         points={progress.totalPoints}
         streak={progress.streakDays}
         onOpenSettings={() => setIsSettingsOpen(true)}
-        isTeacherMode={isTeacherMode}
-        onReview={() => setQuestState('review')}
-        onLeaderboard={() => setQuestState('leaderboard')}
-        onExitTeacher={() => {
-          setIsTeacherMode(false);
-          setQuestState('intro');
-        }}
-        onTeacherLogin={handleTeacherLogin}
         settings={settings}
       />
 
@@ -984,46 +910,6 @@ export default function App() {
       </Modal>
 
       <LevelUpModal isOpen={levelUpModalOpen} level={progress.level} onClose={() => setLevelUpModalOpen(false)} />
-
-      <Modal
-        isOpen={isPinModalOpen}
-        onClose={() => setIsPinModalOpen(false)}
-        title="Teacher Verification"
-      >
-        <div className="space-y-4">
-          <p className="text-sm text-slate-500 font-medium text-center">Enter your Teacher PIN to continue.</p>
-          <div className="space-y-1">
-            <input
-              type="password"
-              placeholder="••••"
-              value={pinInput}
-              onChange={(e) => {
-                setPinInput(e.target.value);
-                setPinError(false);
-              }}
-              onKeyDown={(e) => e.key === 'Enter' && validatePin()}
-              className={`w-full bg-slate-50 border ${pinError ? 'border-red-500 focus:ring-red-500' : 'border-slate-200 focus:ring-indigo-500'} rounded-xl px-4 py-3 text-2xl font-black tracking-[0.5em] text-center outline-none focus:ring-2 transition-all`}
-              autoFocus
-            />
-            {pinError && (
-              <motion.p
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="text-xs text-red-500 font-bold text-center"
-              >
-                Incorrect PIN.
-              </motion.p>
-            )}
-          </div>
-          <button
-            onClick={validatePin}
-            className="w-full bg-emerald-600 text-white font-bold py-3 rounded-xl hover:bg-emerald-700 transition-colors shadow-lg active:scale-95 transform"
-          >
-            Unlock Mode
-          </button>
-        </div>
-      </Modal>
-
     </div>
   );
 }
