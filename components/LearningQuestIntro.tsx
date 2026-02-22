@@ -114,7 +114,7 @@ export const LearningQuestIntro: React.FC<LearningQuestIntroProps> = ({ onStart,
 
                         <button
                             onClick={onTeacherLogin}
-                            className="w-full flex items-center justify-center gap-2 py-2 text-[11px] font-bold text-slate-400 hover:text-purple-600 transition-colors uppercase tracking-widest"
+                            className="hidden md:flex w-full items-center justify-center gap-2 py-2 text-[11px] font-bold text-slate-400 hover:text-purple-600 transition-colors uppercase tracking-widest"
                         >
                             <Lock size={12} />
                             Teacher

@@ -15,7 +15,10 @@ import {
     Clock,
     ChevronLeft,
     ChevronRight,
-    RotateCcw
+    RotateCcw,
+    Zap,
+    Trophy,
+    BarChart2
 } from './GameIcons';
 import useSound from 'use-sound';
 
@@ -31,6 +34,9 @@ interface LearningQuestMapProps {
     onGameOver: () => void;
     onWin: (score: number, answers: Record<string, string>) => void;
     isTeacherMode?: boolean;
+    onShowStats?: () => void;
+    onShowLeaderboard?: () => void;
+    onStartReview?: () => void;
 }
 
 const STAGES = [
@@ -55,7 +61,14 @@ const STAGE_MESSAGES = [
     "🏆 Outstanding performance!"
 ];
 
-export const LearningQuestMap: React.FC<LearningQuestMapProps> = ({ onGameOver, onWin, isTeacherMode }) => {
+export const LearningQuestMap: React.FC<LearningQuestMapProps> = ({
+    onGameOver,
+    onWin,
+    isTeacherMode,
+    onShowStats,
+    onShowLeaderboard,
+    onStartReview
+}) => {
     const [currentStageIndex, setCurrentStageIndex] = useState(0);
     const [shuffledQuestions, setShuffledQuestions] = useState<typeof LEARNING_QUEST_POOL>([]);
     const [feedback, setFeedback] = useState<'correct' | 'incorrect' | null>(null);
@@ -188,30 +201,60 @@ export const LearningQuestMap: React.FC<LearningQuestMapProps> = ({ onGameOver, 
     return (
         <div className="flex flex-col h-[100dvh] bg-slate-50 overflow-hidden font-sans text-slate-800">
             {/* Header / Stats */}
-            <div className="bg-gradient-to-r from-[#1E3A8A] via-[#4F46E5] to-[#6366F1] shadow-md z-30 sticky top-0 shrink-0 text-white">
+            <div className={`bg-gradient-to-r ${isTeacherMode ? 'from-emerald-700 via-emerald-600 to-green-600' : 'from-emerald-600 via-green-600 to-emerald-700'} shadow-md z-30 sticky top-0 shrink-0 text-white`}>
 
-                {/* Top Row: Title & Timer */}
-                <div className="p-4 pb-2 flex flex-col md:grid md:grid-cols-3 items-center gap-4 border-b border-white/10">
+                {/* Top Row: Title, Teacher Label & Timer */}
+                <div className="p-4 pb-2 flex flex-col md:flex-row items-center justify-between gap-4 border-b border-white/10">
 
-                    {/* Empty Left Col (Desktop) for centering balance */}
-                    <div className="hidden md:block"></div>
-
-                    {/* Title Section (Centered) */}
-                    <div className="text-center w-full">
-                        <h1 className="text-xl md:text-2xl font-bold tracking-tight drop-shadow-md">English 10 – New Ways to Learn</h1>
-                        <p className="text-indigo-200 text-sm font-medium uppercase tracking-wider">Smart Learning Challenge</p>
-                    </div>
-
-                    {/* Timer (Right on Desktop, Centered/Below on Mobile) */}
-                    <div className="flex justify-center md:justify-end w-full">
-                        <div className="flex items-center gap-3 bg-black/20 backdrop-blur-sm px-4 py-2 rounded-xl border border-white/10 shadow-inner w-fit">
-                            <Clock size={20} className="text-[#22D3EE] animate-pulse" />
-                            <div className="flex flex-col items-end leading-none">
-                                <span className="text-[10px] text-indigo-200 font-bold uppercase tracking-wider">Time Left</span>
-                                <span className="text-xl font-mono font-bold text-white tabular-nums">{formatTime(timeLeft)}</span>
-                            </div>
+                    {/* Title Section */}
+                    <div className="flex flex-col items-center md:items-start text-center md:text-left">
+                        <h1 className="text-xl md:text-2xl font-black tracking-tight drop-shadow-md">English 10: New Ways to Learn</h1>
+                        <div className="flex items-center gap-2">
+                            <p className="text-emerald-100 text-[10px] font-black uppercase tracking-widest opacity-80">Reading Challenge</p>
+                            {isTeacherMode && (
+                                <span className="text-[10px] bg-white/20 text-white px-2 py-0.5 rounded-full font-black animate-pulse border border-white/30">
+                                    🟢 Teacher Mode (Not counted)
+                                </span>
+                            )}
                         </div>
                     </div>
+
+                    {/* Teacher Controls (Exclusive) */}
+                    {isTeacherMode && (
+                        <div className="flex items-center gap-2 bg-black/10 p-1.5 rounded-xl border border-white/10">
+                            <button
+                                onClick={onStartReview}
+                                className="px-3 py-1.5 bg-white/10 hover:bg-white/20 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-1.5"
+                            >
+                                <Zap size={14} /> Start Review
+                            </button>
+                            <button
+                                onClick={onShowStats}
+                                className="px-3 py-1.5 bg-white/10 hover:bg-white/20 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-1.5"
+                            >
+                                <BarChart2 size={14} /> Statistics
+                            </button>
+                            <button
+                                onClick={onShowLeaderboard}
+                                className="px-3 py-1.5 bg-white/10 hover:bg-white/20 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-1.5"
+                            >
+                                <Trophy size={14} /> Rankings
+                            </button>
+                        </div>
+                    )}
+
+                    {/* Timer (Hidden in Teacher Mode) */}
+                    {!isTeacherMode && (
+                        <div className="flex justify-center md:justify-end">
+                            <div className="flex items-center gap-3 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-xl border border-white/20 shadow-inner w-fit">
+                                <Clock size={20} className="text-amber-300 animate-pulse" />
+                                <div className="flex flex-col items-end leading-none">
+                                    <span className="text-[10px] text-emerald-100 font-black uppercase tracking-widest">Time Left</span>
+                                    <span className="text-xl font-mono font-black text-white tabular-nums">{formatTime(timeLeft)}</span>
+                                </div>
+                            </div>
+                        </div>
+                    )}
                 </div>
 
                 {/* Bottom Row: Progress Bar (Below Header) */}
@@ -226,27 +269,27 @@ export const LearningQuestMap: React.FC<LearningQuestMapProps> = ({ onGameOver, 
                                     <div
                                         className={`w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center transition-all duration-300 shadow-sm border-2
                                             ${isActive
-                                                ? 'bg-[#22D3EE] border-[#22D3EE] text-[#1E3A8A] scale-110 shadow-[0_0_15px_rgba(34,211,238,0.5)]'
+                                                ? 'bg-white border-white text-emerald-600 scale-110 shadow-[0_0_15px_rgba(255,255,255,0.5)]'
                                                 : isCompleted
-                                                    ? 'bg-[#A78BFA] border-[#A78BFA] text-white opacity-90'
-                                                    : 'bg-slate-200/10 border-white/10 text-slate-400'
+                                                    ? 'bg-emerald-500 border-emerald-400 text-white opacity-90'
+                                                    : 'bg-white/10 border-white/10 text-emerald-100 opacity-40'
                                             }
                                         `}
                                     >
                                         {React.cloneElement(stage.icon, {
                                             size: isActive ? 24 : 20,
-                                            strokeWidth: isActive ? 2.5 : 2
+                                            strokeWidth: isActive ? 3 : 2
                                         })}
                                     </div>
                                     {/* Stage Name (Visible on Desktop or Active) */}
-                                    <div className={`hidden md:block text-[10px] uppercase font-bold tracking-wide transition-colors duration-300
-                                        ${isActive ? 'text-[#22D3EE]' : isCompleted ? 'text-indigo-200' : 'text-slate-400'}
+                                    <div className={`hidden md:block text-[10px] uppercase font-black tracking-widest transition-colors duration-300
+                                        ${isActive ? 'text-white' : isCompleted ? 'text-emerald-100' : 'text-emerald-200/40'}
                                     `}>
                                         {stage.name}
                                     </div>
                                     {/* Mobile Active Stage Name Overlay */}
-                                    <div className={`md:hidden absolute -bottom-4 whitespace-nowrap text-[9px] font-bold tracking-wide transition-opacity duration-300
-                                        ${isActive ? 'opacity-100 text-[#22D3EE]' : 'opacity-0'}
+                                    <div className={`md:hidden absolute -bottom-4 whitespace-nowrap text-[9px] font-black tracking-widest transition-opacity duration-300
+                                        ${isActive ? 'opacity-100 text-white' : 'opacity-0'}
                                     `}>
                                         {stage.name}
                                     </div>

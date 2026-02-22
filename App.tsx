@@ -165,7 +165,7 @@ export default function App() {
   // Learning Quest State
   const [showQuestIntro, setShowQuestIntro] = useState(false);
   const [questParticipant, setQuestParticipant] = useState<QuestParticipant | null>(null);
-  const [questState, setQuestState] = useState<'intro' | 'playing' | 'gameover' | 'win' | 'leaderboard' | 'review'>('intro');
+  const [questState, setQuestState] = useState<'intro' | 'playing' | 'gameover' | 'win' | 'leaderboard' | 'review' | 'waiting'>('intro');
   const [questScore, setQuestScore] = useState(0);
   const [isTeacherMode, setIsTeacherMode] = useState(false);
   const [selectedAnswers, setSelectedAnswers] = useState<Record<string, string>>({});
@@ -395,6 +395,10 @@ export default function App() {
     setQuestState('intro');
     setQuestParticipant(null);
     setShowQuestIntro(true);
+  };
+
+  const handleQuestWaiting = () => {
+    setQuestState('waiting');
   };
 
   const saveQuestToLeaderboard = async () => {
@@ -762,6 +766,9 @@ export default function App() {
             onGameOver={handleQuestGameOver}
             onWin={handleQuestWin}
             isTeacherMode={isTeacherMode}
+            onShowStats={() => setQuestState('leaderboard')}
+            onShowLeaderboard={() => setQuestState('leaderboard')}
+            onStartReview={() => setQuestState('review')}
           />
         </div>
       )}
@@ -778,12 +785,36 @@ export default function App() {
           name={questParticipant.name}
           score={questScore}
           completionTime={Math.round((Date.now() - questParticipant.startTime) / 1000)}
-          onPlayAgain={handleQuestPlayAgain}
-          onLeaderboard={() => {
-            saveQuestToLeaderboard();
-            setQuestState('leaderboard');
-          }}
+          onWaiting={handleQuestWaiting}
         />
+      )}
+
+      {questState === 'waiting' && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-emerald-900/90 backdrop-blur-md text-white text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="max-w-md"
+          >
+            <div className="bg-white/10 p-6 rounded-3xl backdrop-blur-lg border border-white/20 shadow-2xl">
+              <div className="text-6xl mb-6">📢</div>
+              <h2 className="text-3xl font-black mb-4 uppercase tracking-tighter">Please look at the board</h2>
+              <p className="text-emerald-100 text-lg font-medium">Wait for your teacher to continue the review session.</p>
+              <div className="mt-8 flex justify-center">
+                <div className="flex gap-1">
+                  {[0, 1, 2].map((i) => (
+                    <motion.div
+                      key={i}
+                      animate={{ opacity: [0.3, 1, 0.3] }}
+                      transition={{ duration: 1.5, repeat: Infinity, delay: i * 0.2 }}
+                      className="w-2 h-2 bg-white rounded-full"
+                    />
+                  ))}
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        </div>
       )}
 
       {questState === 'leaderboard' && (
