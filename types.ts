@@ -79,7 +79,10 @@ export interface QuestLeaderboardEntry {
   time: number; // seconds
   score: number; // Max 80
   date: string; // YYYY-MM-DD HH:MM
+  selectedAnswers?: Record<string, string>; // questionId -> optionId
 }
+
+export type QuestionSkill = 'Fact Retrieval' | 'Reference' | 'Inference' | 'Detail/Scanning';
 
 // Compatibility for remote files that might not have been deleted
 export type OceanLeaderboardEntry = QuestLeaderboardEntry;

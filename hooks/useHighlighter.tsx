@@ -181,12 +181,20 @@ export const useHighlighter = () => {
         return parts;
     };
 
+    const clearHighlights = useCallback((passageId: string) => {
+        setHighlights((prev: HighlightMap) => ({
+            ...prev,
+            [passageId]: {}
+        }));
+    }, []);
+
     return {
         highlights,
         isHighlighterActive,
         toggleHighlighter,
         addHighlight,
         removeHighlight,
+        clearHighlights,
         renderHighlightedText
     };
 };

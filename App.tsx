@@ -20,6 +20,7 @@ import { LearningQuestMap } from './components/LearningQuestMap';
 import { LearningQuestGameOver } from './components/LearningQuestGameOver';
 import { LearningQuestWin } from './components/LearningQuestWin';
 import { LearningQuestLeaderboard } from './components/LearningQuestLeaderboard';
+import { LearningQuestReview } from './components/LearningQuestReview';
 
 // --- Components ---
 
@@ -45,30 +46,71 @@ const Modal = ({ isOpen, onClose, title, children }: { isOpen: boolean; onClose:
 const Header = ({
   points,
   streak,
-  onOpenSettings
+  onOpenSettings,
+  isTeacherMode,
+  onReview,
+  onLeaderboard,
+  onExitTeacher
 }: {
   points: number;
   streak: number;
-  onOpenSettings: () => void
+  onOpenSettings: () => void;
+  isTeacherMode: boolean;
+  onReview: () => void;
+  onLeaderboard: () => void;
+  onExitTeacher: () => void;
 }) => (
   <header className="sticky top-0 z-40 w-full bg-white/80 backdrop-blur-md border-b border-slate-200 shadow-sm">
     <div className="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
       <div className="flex items-center gap-2">
-        <div className="bg-indigo-600 text-white p-2 rounded-lg">
+        <div className={`p-2 rounded-lg text-white ${isTeacherMode ? 'bg-emerald-600' : 'bg-indigo-600'}`}>
           <BookOpen size={20} />
         </div>
-        <span className="font-bold text-slate-800 hidden sm:block">Eng10: New Ways to Learn</span>
+        <div>
+          <span className="font-bold text-slate-800 hidden sm:block">Eng10: New Ways to Learn</span>
+          {isTeacherMode && (
+            <span className="text-[10px] bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full font-bold ml-2 animate-pulse">
+              🟢 TEACHER MODE
+            </span>
+          )}
+        </div>
       </div>
 
-      <div className="flex items-center gap-4">
-        <div className="flex items-center gap-1 bg-amber-50 text-amber-600 px-3 py-1 rounded-full border border-amber-100">
-          <span className="text-lg">🔥</span>
-          <span className="font-bold">{streak}</span>
-        </div>
-        <div className="flex items-center gap-1 bg-emerald-50 text-emerald-600 px-3 py-1 rounded-full border border-emerald-100">
-          <Award size={18} />
-          <span className="font-bold">{points} pts</span>
-        </div>
+      <div className="flex items-center gap-2 md:gap-4">
+        {isTeacherMode ? (
+          <>
+            <button
+              onClick={onReview}
+              className="px-3 py-1.5 bg-indigo-50 text-indigo-600 rounded-lg text-sm font-bold hover:bg-indigo-100 transition-colors flex items-center gap-1"
+            >
+              <Zap size={16} /> Review
+            </button>
+            <button
+              onClick={onLeaderboard}
+              className="px-3 py-1.5 bg-amber-50 text-amber-600 rounded-lg text-sm font-bold hover:bg-amber-100 transition-colors flex items-center gap-1"
+            >
+              <Trophy size={16} /> Rankings
+            </button>
+            <button
+              onClick={onExitTeacher}
+              className="p-2 text-slate-400 hover:text-red-500 transition-colors"
+              title="Exit Teacher Mode"
+            >
+              <LogOut size={20} />
+            </button>
+          </>
+        ) : (
+          <>
+            <div className="flex items-center gap-1 bg-amber-50 text-amber-600 px-3 py-1 rounded-full border border-amber-100">
+              <span className="text-lg">🔥</span>
+              <span className="font-bold">{streak}</span>
+            </div>
+            <div className="flex items-center gap-1 bg-emerald-50 text-emerald-600 px-3 py-1 rounded-full border border-emerald-100">
+              <Award size={18} />
+              <span className="font-bold">{points} pts</span>
+            </div>
+          </>
+        )}
         <button
           onClick={onOpenSettings}
           className="p-2 text-slate-500 hover:bg-slate-100 rounded-full transition-colors"
@@ -117,8 +159,10 @@ export default function App() {
   // Learning Quest State
   const [showQuestIntro, setShowQuestIntro] = useState(false);
   const [questParticipant, setQuestParticipant] = useState<QuestParticipant | null>(null);
-  const [questState, setQuestState] = useState<'intro' | 'playing' | 'gameover' | 'win' | 'leaderboard'>('intro');
+  const [questState, setQuestState] = useState<'intro' | 'playing' | 'gameover' | 'win' | 'leaderboard' | 'review'>('intro');
   const [questScore, setQuestScore] = useState(0);
+  const [isTeacherMode, setIsTeacherMode] = useState(false);
+  const [selectedAnswers, setSelectedAnswers] = useState<Record<string, string>>({});
 
   // Highlighter State
   const {
@@ -323,6 +367,7 @@ export default function App() {
   const handleQuestStart = (name: string, className: string) => {
     setQuestParticipant({ name, className, startTime: Date.now() });
     setQuestScore(0);
+    setSelectedAnswers({});
     setShowQuestIntro(false);
     setQuestState('playing');
   };
@@ -331,8 +376,9 @@ export default function App() {
     setQuestState('gameover');
   };
 
-  const handleQuestWin = (score: number) => {
+  const handleQuestWin = (score: number, answers: Record<string, string>) => {
     setQuestScore(score);
+    setSelectedAnswers(answers);
     setQuestState('win');
   };
 
@@ -352,7 +398,8 @@ export default function App() {
       className: questParticipant.className,
       time: elapsedSeconds,
       score: questScore,
-      date: dateStr
+      date: dateStr,
+      selectedAnswers: selectedAnswers
     };
 
     const saved = localStorage.getItem('leaderboardLEARNINGQUEST');
@@ -414,6 +461,24 @@ export default function App() {
             >
               🎮 START CHALLENGE
             </button>
+
+            {/* Teacher Entry (Desktop only) */}
+            <div className="hidden md:flex justify-center mt-6">
+              <button
+                onClick={() => {
+                  const pin = prompt("Enter Teacher PIN:");
+                  if (pin === "1234") {
+                    setIsTeacherMode(true);
+                    showToast("Teacher Mode Activated", 'success');
+                  } else if (pin !== null) {
+                    showToast("Invalid PIN", 'error');
+                  }
+                }}
+                className="flex items-center gap-2 text-indigo-300 hover:text-white transition-colors text-sm font-bold bg-white/10 px-4 py-2 rounded-xl backdrop-blur-sm border border-white/10"
+              >
+                <Key size={16} /> Teacher Access
+              </button>
+            </div>
           </div>
 
           <div className="absolute right-[-50px] top-[-50px] opacity-10 pointer-events-none rotate-12">
@@ -726,6 +791,7 @@ export default function App() {
           <LearningQuestMap
             onGameOver={handleQuestGameOver}
             onWin={handleQuestWin}
+            isTeacherMode={isTeacherMode}
           />
         </div>
       )}
@@ -751,7 +817,11 @@ export default function App() {
       )}
 
       {questState === 'leaderboard' && (
-        <LearningQuestLeaderboard onClose={handleQuestPlayAgain} />
+        <LearningQuestLeaderboard onClose={handleQuestPlayAgain} isTeacherMode={isTeacherMode} />
+      )}
+
+      {questState === 'review' && (
+        <LearningQuestReview onClose={handleQuestPlayAgain} />
       )}
 
 
@@ -761,6 +831,13 @@ export default function App() {
           points={progress.totalPoints}
           streak={progress.streakDays}
           onOpenSettings={() => setIsSettingsOpen(true)}
+          isTeacherMode={isTeacherMode}
+          onReview={() => setQuestState('review')}
+          onLeaderboard={() => setQuestState('leaderboard')}
+          onExitTeacher={() => {
+            setIsTeacherMode(false);
+            setQuestState('intro');
+          }}
         />
 
         <div className="max-w-5xl mx-auto px-4 py-8">
