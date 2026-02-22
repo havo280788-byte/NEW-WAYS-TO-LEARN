@@ -116,19 +116,11 @@ const Header = ({
           </>
         )}
         <div className="flex items-center gap-2">
-          {!settings.apiKey && (
-            <span className="text-[10px] text-red-500 font-bold hidden md:inline animate-pulse">
-              Lấy API key để sử dụng app
-            </span>
-          )}
           <button
             onClick={onOpenSettings}
             className="p-2 text-slate-500 hover:bg-slate-100 rounded-full transition-colors relative"
           >
             <Settings size={20} />
-            {!settings.apiKey && (
-              <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full border border-white" />
-            )}
           </button>
         </div>
       </div>
@@ -679,20 +671,21 @@ export default function App() {
           </div>
 
           {/* AI Tutor Toggle */}
-          {/* AI Tutor Toggle */}
-          <button
-            onClick={() => setChatOpen(true)}
-            className="bg-indigo-600 text-white p-3 md:p-4 rounded-xl shadow-lg flex items-center justify-between hover:bg-indigo-700 transition-colors"
-          >
-            <div className="flex items-center gap-2 md:gap-3">
-              <div className="bg-white/20 p-1.5 md:p-2 rounded-lg"><MessageCircle size={16} className="md:w-5 md:h-5" /></div>
-              <div className="text-left">
-                <div className="font-bold text-xs md:text-sm">Need help?</div>
-                <div className="text-[10px] md:text-xs text-indigo-200 hidden sm:block">Ask the AI Tutor about this text</div>
+          {settings.apiKey && (
+            <button
+              onClick={() => setChatOpen(true)}
+              className="bg-emerald-600 text-white p-3 md:p-4 rounded-xl shadow-lg flex items-center justify-between hover:bg-emerald-700 transition-colors"
+            >
+              <div className="flex items-center gap-2 md:gap-3">
+                <div className="bg-white/20 p-1.5 md:p-2 rounded-lg"><MessageCircle size={16} className="md:w-5 md:h-5" /></div>
+                <div className="text-left">
+                  <div className="font-bold text-xs md:text-sm">Need help?</div>
+                  <div className="text-[10px] md:text-xs text-emerald-100 hidden sm:block">Ask the AI Tutor about this text</div>
+                </div>
               </div>
-            </div>
-            <ChevronRight size={16} className="md:w-5 md:h-5" />
-          </button>
+              <ChevronRight size={16} className="md:w-5 md:h-5" />
+            </button>
+          )}
         </div>
       </div>
     );
@@ -1031,52 +1024,6 @@ export default function App() {
         </div>
       </Modal>
 
-      {/* Mandatory API Key Modal */}
-      {!settings.apiKey && (
-        <div className="fixed inset-0 z-[100] bg-slate-900/80 backdrop-blur-lg flex items-center justify-center p-4">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            className="bg-white rounded-3xl shadow-2xl w-full max-w-md p-8 text-center border border-white/20"
-          >
-            <div className="bg-red-50 w-16 h-16 rounded-2xl flex items-center justify-center text-red-500 mx-auto mb-6">
-              <Key size={32} />
-            </div>
-            <h2 className="text-2xl font-black text-slate-800 mb-2">Cần API Key Gemini</h2>
-            <p className="text-slate-500 text-sm mb-8">Bạn cần nhập API key để sử dụng các tính năng thông minh của ứng dụng này.</p>
-
-            <div className="space-y-4">
-              <div className="relative">
-                <Key className="absolute left-3 top-3.5 text-slate-400" size={18} />
-                <input
-                  type="password"
-                  value={settings.apiKey}
-                  onChange={(e) => saveSettings({ ...settings, apiKey: e.target.value })}
-                  placeholder="Nhập API key của bạn..."
-                  className="w-full pl-10 pr-4 py-3.5 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 outline-none transition-all font-mono text-center"
-                  autoFocus
-                />
-              </div>
-
-              <div className="bg-indigo-50 p-4 rounded-2xl text-left border border-indigo-100">
-                <p className="text-xs text-indigo-700 font-bold mb-1">Cách lấy API Key:</p>
-                <p className="text-[11px] text-indigo-600 leading-relaxed italic">
-                  Truy cập <a href="https://aistudio.google.com/api-keys" target="_blank" rel="noopener noreferrer" className="font-black underline mx-1">Google AI Studio</a>
-                  để nhận key miễn phí và dán vào đây.
-                </p>
-              </div>
-
-              <button
-                onClick={() => settings.apiKey && setIsSettingsOpen(false)}
-                className={`w-full py-4 rounded-2xl font-black uppercase tracking-wider text-sm transition-all shadow-lg ${settings.apiKey ? 'bg-emerald-600 text-white hover:bg-emerald-700 active:scale-95' : 'bg-slate-200 text-slate-400 cursor-not-allowed'}`}
-                disabled={!settings.apiKey}
-              >
-                Kích hoạt ứng dụng
-              </button>
-            </div>
-          </motion.div>
-        </div>
-      )}
     </div>
   );
 }

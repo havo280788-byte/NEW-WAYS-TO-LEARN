@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
+import { User, BookOpen, ChevronRight, Lock } from './GameIcons';
 
 interface LearningQuestIntroProps {
     onStart: (name: string, className: string) => void;
@@ -21,75 +22,101 @@ export const LearningQuestIntro: React.FC<LearningQuestIntroProps> = ({ onStart,
     };
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-emerald-900/40 backdrop-blur-md">
-            {/* Green Gradient Background */}
-            <div className="absolute inset-0 z-0 bg-gradient-to-br from-emerald-800 via-green-900 to-emerald-950 opacity-95" />
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-md">
+            {/* Background Gradient */}
+            <div className="absolute inset-0 z-0 bg-gradient-to-br from-indigo-900 via-slate-900 to-purple-900 opacity-90" />
 
             <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.9 }}
-                className="bg-white rounded-2xl md:rounded-3xl shadow-2xl w-full max-w-md overflow-hidden relative z-10 border border-white/20 mx-4 md:mx-0 max-h-[90vh] flex flex-col"
+                initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.9, y: 20 }}
+                className="bg-white rounded-[2rem] shadow-2xl w-full max-w-md overflow-hidden relative z-10 border border-white/20 mx-4 md:mx-0 flex flex-col"
             >
-                <button
-                    onClick={onClose}
-                    className="absolute top-3 right-3 md:top-4 md:right-4 text-slate-400 hover:text-slate-600 z-10 p-2"
-                >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-                </button>
+                {/* Header Section */}
+                <div className="relative pt-10 pb-6 px-8 text-center flex flex-col items-center">
+                    <button
+                        onClick={onClose}
+                        className="absolute top-6 right-6 text-slate-300 hover:text-slate-500 transition-colors"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                    </button>
 
-                <div className="p-6 md:p-8 flex flex-col items-center text-center overflow-y-auto">
-                    <h2 className="text-xs md:text-sm font-bold text-emerald-600 mb-2 uppercase tracking-wide">
-                        NEW WAYS TO LEARN
-                    </h2>
-                    <h3 className="text-xl md:text-2xl font-extrabold text-slate-800 mb-4 md:mb-6 uppercase tracking-wide leading-tight">
-                        READING CHALLENGE
-                    </h3>
-
-                    <p className="text-slate-500 mb-6 md:mb-8 text-sm md:text-base">Enter your details to start the quest!</p>
-
-                    <div className="w-full space-y-4 text-left">
-                        <div>
-                            <label htmlFor="playerName" className="block text-xs font-bold text-slate-700 uppercase mb-2 ml-1">Full Name</label>
-                            <input
-                                id="playerName"
-                                type="text"
-                                value={name}
-                                onChange={(e) => { setName(e.target.value); setError(''); }}
-                                placeholder="Enter your full name"
-                                className="w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 outline-none transition-all text-sm md:text-base"
-                            />
-                        </div>
-
-                        <div>
-                            <label htmlFor="playerClass" className="block text-xs font-bold text-slate-700 uppercase mb-2 ml-1">Class</label>
-                            <input
-                                id="playerClass"
-                                type="text"
-                                value={className}
-                                onChange={(e) => { setClassName(e.target.value); setError(''); }}
-                                placeholder="Enter your class"
-                                className="w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 outline-none transition-all text-sm md:text-base"
-                            />
-                        </div>
-
-                        {error && <p className="text-red-500 text-sm text-center font-medium bg-red-50 p-2 rounded-lg">{error}</p>}
-
-                        <button
-                            onClick={handleStart}
-                            className="w-full bg-[#F59E0B] text-white font-bold py-3 md:py-4 rounded-xl shadow-lg hover:shadow-xl hover:bg-[#D97706] hover:scale-[1.02] transform active:scale-95 transition-all mt-4 text-base md:text-lg tracking-wide uppercase border-b-4 border-amber-700"
-                        >
-                            START
-                        </button>
+                    <div className="inline-block bg-blue-50 text-blue-600 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest mb-4 border border-blue-100">
+                        Reading Challenge
                     </div>
 
-                    {/* Teacher Access (Desktop only) */}
-                    <div className="hidden md:block absolute bottom-4 right-4">
+                    <h1 className="text-4xl md:text-5xl font-black text-slate-900 tracking-tighter mb-1">
+                        ENGLISH 10
+                    </h1>
+                    <h2 className="text-sm md:text-base font-bold text-slate-500 uppercase tracking-[0.2em] mb-4">
+                        NEW WAYS TO LEARN
+                    </h2>
+
+                    <p className="text-slate-400 text-sm font-medium max-w-[240px]">
+                        Ready to explore new ways of learning English?
+                    </p>
+                </div>
+
+                {/* Form Section */}
+                <div className="px-8 pb-10 space-y-5">
+                    <div className="space-y-4">
+                        <div className="space-y-2">
+                            <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Full Name</label>
+                            <div className="relative group">
+                                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-purple-500 transition-colors">
+                                    <User size={18} />
+                                </div>
+                                <input
+                                    type="text"
+                                    value={name}
+                                    onChange={(e) => { setName(e.target.value); setError(''); }}
+                                    placeholder="Enter your name"
+                                    className="w-full pl-12 pr-4 py-3.5 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-purple-500 focus:ring-4 focus:ring-purple-50 outline-none transition-all text-sm font-bold text-slate-700"
+                                />
+                            </div>
+                        </div>
+
+                        <div className="space-y-2">
+                            <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Class</label>
+                            <div className="relative group">
+                                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-purple-500 transition-colors">
+                                    <BookOpen size={18} />
+                                </div>
+                                <input
+                                    type="text"
+                                    value={className}
+                                    onChange={(e) => { setClassName(e.target.value); setError(''); }}
+                                    placeholder="e.g. 10A1"
+                                    className="w-full pl-12 pr-4 py-3.5 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-purple-500 focus:ring-4 focus:ring-purple-50 outline-none transition-all text-sm font-bold text-slate-700"
+                                />
+                            </div>
+                        </div>
+                    </div>
+
+                    {error && (
+                        <motion.p
+                            initial={{ opacity: 0, y: -10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            className="text-red-500 text-[11px] text-center font-bold bg-red-50 py-2 rounded-xl border border-red-100"
+                        >
+                            {error}
+                        </motion.p>
+                    )}
+
+                    <div className="space-y-4 pt-2">
+                        <button
+                            onClick={handleStart}
+                            className="group w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-black py-4 rounded-2xl shadow-xl shadow-purple-200 hover:shadow-purple-300 hover:scale-[1.02] hover:brightness-110 transform active:scale-95 transition-all text-sm tracking-widest uppercase flex items-center justify-center gap-3"
+                        >
+                            START CHALLENGE
+                            <ChevronRight size={18} className="group-hover:translate-x-1 transition-transform" />
+                        </button>
+
                         <button
                             onClick={onTeacherLogin}
-                            className="flex items-center gap-1 text-[10px] font-bold text-emerald-600/50 hover:text-emerald-600 transition-colors uppercase tracking-widest"
+                            className="w-full flex items-center justify-center gap-2 py-2 text-[11px] font-bold text-slate-400 hover:text-purple-600 transition-colors uppercase tracking-widest"
                         >
-                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                            <Lock size={12} />
                             Teacher
                         </button>
                     </div>
