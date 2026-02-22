@@ -4,22 +4,35 @@ import { MODELS } from "../types";
 // This class handles API keys dynamically passed from the UI
 export class GeminiService {
   private apiKey: string;
+  private preferredModel: string;
 
-  constructor(apiKey: string) {
+  constructor(apiKey: string, preferredModel: string = MODELS[0]) {
     this.apiKey = apiKey;
+    this.preferredModel = preferredModel;
   }
 
   private async callModelWithFallback(
-    prompt: string, 
-    modelIndex: number = 0,
+    prompt: string,
+    modelIndex: number = -1,
     systemInstruction?: string
   ): Promise<string | null> {
     if (!this.apiKey) {
       throw new Error("API Key is missing");
     }
 
-    const modelName = MODELS[modelIndex];
-    
+    // Use preferredModel for the first call (modelIndex === -1)
+    const modelName = modelIndex === -1 ? this.preferredModel : MODELS[modelIndex];
+
+    // Calculate next fallback index
+    let nextIndex = -1;
+    if (modelIndex === -1) {
+      // Find index of preferred model to know where to go next
+      const currentIndex = MODELS.indexOf(this.preferredModel);
+      nextIndex = currentIndex + 1;
+    } else {
+      nextIndex = modelIndex + 1;
+    }
+
     try {
       const ai = new GoogleGenAI({ apiKey: this.apiKey });
       const response = await ai.models.generateContent({
@@ -28,7 +41,7 @@ export class GeminiService {
         config: {
           systemInstruction: systemInstruction,
           // Low temperature for more deterministic/factual educational content
-          temperature: 0.3, 
+          temperature: 0.3,
         }
       });
 
@@ -36,15 +49,15 @@ export class GeminiService {
 
     } catch (error: any) {
       console.error(`Error calling ${modelName}:`, error);
-      
+
       // Check for 429 (Resource Exhausted) or 503 (Service Unavailable)
       const isTransientError = error.message?.includes('429') || error.message?.includes('503');
 
-      if (isTransientError && modelIndex < MODELS.length - 1) {
-        console.log(`Falling back to ${MODELS[modelIndex + 1]}...`);
-        return this.callModelWithFallback(prompt, modelIndex + 1, systemInstruction);
+      if (isTransientError && nextIndex > 0 && nextIndex < MODELS.length) {
+        console.log(`Falling back to ${MODELS[nextIndex]}...`);
+        return this.callModelWithFallback(prompt, nextIndex, systemInstruction);
       }
-      
+
       throw error;
     }
   }
@@ -61,8 +74,8 @@ export class GeminiService {
       Keep your answer simple, clear, and encouraging. Use emojis occasionally.
       If the answer isn't in the text, say so politely.
     `;
-    
-    const response = await this.callModelWithFallback(prompt, 0, "You are a helpful English tutor.");
+
+    const response = await this.callModelWithFallback(prompt, -1, "You are a helpful English tutor.");
     return response || "I'm sorry, I couldn't generate a response at the moment. Please check your connection or API key.";
   }
 

@@ -42,7 +42,7 @@ export const LearningQuestIntro: React.FC<LearningQuestIntroProps> = ({ onStart,
                         NEW WAYS TO LEARN
                     </h2>
                     <h3 className="text-xl md:text-2xl font-extrabold text-slate-800 mb-4 md:mb-6 uppercase tracking-wide leading-tight">
-                        LEARNING EVOLUTION QUEST
+                        READING CHALLENGE
                     </h3>
 
                     <p className="text-slate-500 mb-6 md:mb-8 text-sm md:text-base">Enter your details to start the quest!</p>

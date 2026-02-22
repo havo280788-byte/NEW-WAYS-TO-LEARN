@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   BookOpen, Award, BarChart2, Settings, Brain, ChevronRight,
-  CheckCircle, XCircle, RefreshCw, MessageCircle, Clock, Key, LogOut, Zap, Trophy, Map, Highlighter, Lock
+  CheckCircle, XCircle, RefreshCw, MessageCircle, Clock, Key, LogOut, Zap, Trophy, Map, Highlighter, Lock, Info
 } from './components/GameIcons';
 import useSound from 'use-sound';
 import { useHighlighter } from './hooks/useHighlighter';
@@ -51,7 +51,8 @@ const Header = ({
   onReview,
   onLeaderboard,
   onExitTeacher,
-  onTeacherLogin
+  onTeacherLogin,
+  settings
 }: {
   points: number;
   streak: number;
@@ -61,6 +62,7 @@ const Header = ({
   onLeaderboard: () => void;
   onExitTeacher: () => void;
   onTeacherLogin: () => void;
+  settings: AppSettings;
 }) => (
   <header className="sticky top-0 z-40 w-full bg-white/80 backdrop-blur-md border-b border-slate-200 shadow-sm">
     <div className="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
@@ -119,12 +121,22 @@ const Header = ({
             </button>
           </>
         )}
-        <button
-          onClick={onOpenSettings}
-          className="p-2 text-slate-500 hover:bg-slate-100 rounded-full transition-colors"
-        >
-          <Settings size={20} />
-        </button>
+        <div className="flex items-center gap-2">
+          {!settings.apiKey && (
+            <span className="text-[10px] text-red-500 font-bold hidden md:inline animate-pulse">
+              Lấy API key để sử dụng app
+            </span>
+          )}
+          <button
+            onClick={onOpenSettings}
+            className="p-2 text-slate-500 hover:bg-slate-100 rounded-full transition-colors relative"
+          >
+            <Settings size={20} />
+            {!settings.apiKey && (
+              <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full border border-white" />
+            )}
+          </button>
+        </div>
       </div>
     </div>
   </header>
@@ -312,7 +324,7 @@ export default function App() {
     }
 
     setIsLoading(true);
-    const gemini = new GeminiService(settings.apiKey);
+    const gemini = new GeminiService(settings.apiKey, settings.selectedModel);
     try {
       const jsonStr = await gemini.generateQuiz("Advantages of Online Learning");
       if (jsonStr) {
@@ -352,7 +364,7 @@ export default function App() {
     const currentPassage = activeSession ? passages.find(p => p.id === activeSession.passageId) : null;
     const context = currentPassage ? currentPassage.content : "General inquiry about English reading comprehension.";
 
-    const gemini = new GeminiService(settings.apiKey);
+    const gemini = new GeminiService(settings.apiKey, settings.selectedModel);
     try {
       const reply = await gemini.getTutorHelp(userMsg, context);
       setChatMessages(prev => [...prev, { role: 'ai', text: reply }]);
@@ -788,22 +800,24 @@ export default function App() {
       )}
 
 
+      {/* Header (Always Accessible) */}
+      <Header
+        points={progress.totalPoints}
+        streak={progress.streakDays}
+        onOpenSettings={() => setIsSettingsOpen(true)}
+        isTeacherMode={isTeacherMode}
+        onReview={() => setQuestState('review')}
+        onLeaderboard={() => setQuestState('leaderboard')}
+        onExitTeacher={() => {
+          setIsTeacherMode(false);
+          setQuestState('intro');
+        }}
+        onTeacherLogin={handleTeacherLogin}
+        settings={settings}
+      />
+
       {/* MAIN APP LAYOUT (Hidden if playing quest, or visible behind overlays) */}
       <div className={`transition-all ${questState === 'playing' ? 'blur-sm scale-95 opacity-50 pointer-events-none' : ''}`}>
-        <Header
-          points={progress.totalPoints}
-          streak={progress.streakDays}
-          onOpenSettings={() => setIsSettingsOpen(true)}
-          isTeacherMode={isTeacherMode}
-          onReview={() => setQuestState('review')}
-          onLeaderboard={() => setQuestState('leaderboard')}
-          onExitTeacher={() => {
-            setIsTeacherMode(false);
-            setQuestState('intro');
-          }}
-          onTeacherLogin={handleTeacherLogin}
-        />
-
         <div className="max-w-5xl mx-auto px-4 py-8">
           {/* Tab Navigation Removed as per request */}
 
@@ -892,24 +906,48 @@ export default function App() {
 
       {/* Settings Modal */}
       <Modal isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} title="Settings">
-        <div className="space-y-4">
+        <div className="space-y-6">
           <div>
-            <label className="block text-sm font-bold text-slate-700 mb-1">API Key (Gemini)</label>
-            <div className="relative">
+            <label className="block text-sm font-bold text-slate-700 mb-2">API Key (Gemini)</label>
+            <div className="relative group">
               <Key className="absolute left-3 top-3 text-slate-400" size={16} />
               <input
                 type="password"
                 value={settings.apiKey}
                 onChange={(e) => saveSettings({ ...settings, apiKey: e.target.value })}
                 placeholder="Enter your Google Gemini API Key"
-                className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-sm font-mono"
+                className="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm font-mono transition-all"
               />
             </div>
-            <p className="text-xs text-slate-400 mt-1">Required for AI features. Stored locally on your device.</p>
+            <p className="text-[10px] text-slate-500 mt-2 flex items-center gap-1">
+              <Info size={12} className="text-indigo-500" />
+              <span>Lấy API key tại <a href="https://aistudio.google.com/api-keys" target="_blank" rel="noopener noreferrer" className="text-indigo-600 font-bold hover:underline">Google AI Studio</a></span>
+            </p>
           </div>
 
           <div>
-            <label className="block text-sm font-bold text-slate-700 mb-1">Theme</label>
+            <label className="block text-sm font-bold text-slate-700 mb-2">AI Model</label>
+            <div className="space-y-2">
+              {MODELS.map(model => (
+                <button
+                  key={model}
+                  onClick={() => saveSettings({ ...settings, selectedModel: model })}
+                  className={`w-full p-3 rounded-xl border-2 text-left transition-all flex justify-between items-center ${settings.selectedModel === model ? 'border-indigo-500 bg-indigo-50 text-indigo-700' : 'border-slate-100 bg-slate-50 text-slate-500 hover:border-slate-200'}`}
+                >
+                  <div className="flex flex-col">
+                    <span className="font-bold text-sm tracking-tight">{model}</span>
+                    <span className="text-[10px] opacity-70">
+                      {model === 'gemini-3-flash-preview' ? 'Cân bằng tốc độ và trí tuệ' : model === 'gemini-3-pro-preview' ? 'Thông minh nhất' : 'Nhỏ gọn & hiệu quả'}
+                    </span>
+                  </div>
+                  {settings.selectedModel === model && <CheckCircle size={16} />}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-bold text-slate-700 mb-2">Theme</label>
             <div className="flex gap-2">
               <button
                 onClick={() => saveSettings({ ...settings, theme: 'light' })}
@@ -990,6 +1028,53 @@ export default function App() {
           </button>
         </div>
       </Modal>
+
+      {/* Mandatory API Key Modal */}
+      {!settings.apiKey && (
+        <div className="fixed inset-0 z-[100] bg-slate-900/80 backdrop-blur-lg flex items-center justify-center p-4">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            className="bg-white rounded-3xl shadow-2xl w-full max-w-md p-8 text-center border border-white/20"
+          >
+            <div className="bg-red-50 w-16 h-16 rounded-2xl flex items-center justify-center text-red-500 mx-auto mb-6">
+              <Key size={32} />
+            </div>
+            <h2 className="text-2xl font-black text-slate-800 mb-2">Cần API Key Gemini</h2>
+            <p className="text-slate-500 text-sm mb-8">Bạn cần nhập API key để sử dụng các tính năng thông minh của ứng dụng này.</p>
+
+            <div className="space-y-4">
+              <div className="relative">
+                <Key className="absolute left-3 top-3.5 text-slate-400" size={18} />
+                <input
+                  type="password"
+                  value={settings.apiKey}
+                  onChange={(e) => saveSettings({ ...settings, apiKey: e.target.value })}
+                  placeholder="Nhập API key của bạn..."
+                  className="w-full pl-10 pr-4 py-3.5 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 outline-none transition-all font-mono text-center"
+                  autoFocus
+                />
+              </div>
+
+              <div className="bg-indigo-50 p-4 rounded-2xl text-left border border-indigo-100">
+                <p className="text-xs text-indigo-700 font-bold mb-1">Cách lấy API Key:</p>
+                <p className="text-[11px] text-indigo-600 leading-relaxed italic">
+                  Truy cập <a href="https://aistudio.google.com/api-keys" target="_blank" rel="noopener noreferrer" className="font-black underline mx-1">Google AI Studio</a>
+                  để nhận key miễn phí và dán vào đây.
+                </p>
+              </div>
+
+              <button
+                onClick={() => settings.apiKey && setIsSettingsOpen(false)}
+                className={`w-full py-4 rounded-2xl font-black uppercase tracking-wider text-sm transition-all shadow-lg ${settings.apiKey ? 'bg-indigo-600 text-white hover:bg-indigo-700 active:scale-95' : 'bg-slate-200 text-slate-400 cursor-not-allowed'}`}
+                disabled={!settings.apiKey}
+              >
+                Kích hoạt ứng dụng
+              </button>
+            </div>
+          </motion.div>
+        </div>
+      )}
     </div>
   );
 }
